@@ -5,7 +5,7 @@ number-sections: true
 title: "si: code and prose exploring Spatial Interaction models"
 bibliography: data-raw/references.bib
 execute:
-  cache: true
+  cache: false
   fig.path: "man/figures/README-"
 ---
 
