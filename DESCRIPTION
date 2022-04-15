@@ -18,6 +18,7 @@ Imports:
     dplyr,
     geodist,
     od,
-    sf
+    sf,
+    rlang
 URL: https://github.com/robinlovelace/si
 BugReports: https://github.com/robinlovelace/si/issues
