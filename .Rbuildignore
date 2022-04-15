@@ -1,6 +1,6 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
-^README\.Rmd$
+^README\.qmd
 ^data-raw$
 ^\.github$
 ^_pkgdown\.yml$
