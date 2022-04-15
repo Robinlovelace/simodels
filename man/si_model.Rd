@@ -30,10 +30,12 @@ fun_dd = function(od, d = "distance_euclidean", beta = 0.3) exp(-beta * od[[d]] 
 od_dd = si_model(od, fun = fun_dd)
 plot(od$distance_euclidean, od_dd$res)
 fun = function(od, O, n, d, beta) od[[O]] * od[[n]] * exp(-beta * od[[d]]/1000)
-od_output = si_model(od, fun = fun, beta = 0.3, O = "origin_all", n = "destination_all", d = "distance_euclidean")
+od_output = si_model(od, fun = fun, beta = 0.3, O = "origin_all", 
+  n = "destination_all", d = "distance_euclidean")
 head(od_output)
 plot(od$distance_euclidean, od_output$res)
-od_pconst = si_model(od, fun = fun, beta = 0.3, O = "origin_all", n = "destination_all", d = "distance_euclidean", var_p = origin_all)
+od_pconst = si_model(od, fun = fun, beta = 0.3, O = "origin_all", n = "destination_all",
+  d = "distance_euclidean", var_p = origin_all)
 plot(od_pconst$distance_euclidean, od_pconst$res_constrained)
 plot(od_pconst["res"], logz = TRUE)
 }

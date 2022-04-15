@@ -2,3 +2,4 @@
 
 export(si_model)
 export(si_to_od)
+importFrom(rlang,.data)
