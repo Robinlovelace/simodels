@@ -1,0 +1,26 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# si
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+The goal of this 'si' repo is to demonstrate Spatial Interaction models from first principles.
+At present it just contains prose and reproducible code demonstrating how they work.
+In future it may be turned into software, e.g. an R package, for others wanting to develop spatial interaction models.
+
+
+
