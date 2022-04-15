@@ -98,7 +98,7 @@ centroids = centroids %>%
 tm_shape(zones) + tm_polygons("all", palette = "viridis")
 ```
 
-![](README_files/figure-gfm/inputs-1.png)
+![](man/figures/README-inputs-1.png)
 
 ``` r
 od_df = od::points_to_od(centroids)
@@ -139,7 +139,7 @@ tm_shape(zones) +
   tm_lines("flow")
 ```
 
-![](README_files/figure-gfm/unconstrained-1.png)
+![](man/figures/README-unconstrained-1.png)
 
 We can plot the ‘distance decay’ curve associated with this SIM is as
 follows:
@@ -157,7 +157,7 @@ od_df %>%
   geom_point(aes(length, fc))
 ```
 
-![](README_files/figure-gfm/distance_decay-1.png)
+![](man/figures/README-distance_decay-1.png)
 
 We can make this production constrained as follows:
 
@@ -191,7 +191,7 @@ tm_shape(zones) +
   tm_lines("flow_constrained")
 ```
 
-![](README_files/figure-gfm/constrained-1.png)
+![](man/figures/README-constrained-1.png)
 
 # <span class="header-section-number">3</span> Validation
 
@@ -233,7 +233,7 @@ od_dfjc %>%
   geom_point(aes(all, flow_constrained))
 ```
 
-![](README_files/figure-gfm/validation-1.png)
+![](man/figures/README-validation-1.png)
 
 ``` r
 cor(od_dfjc$all, od_dfjc$flow_constrained)^2
