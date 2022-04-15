@@ -36,6 +36,6 @@ head(od_output)
 plot(od$distance_euclidean, od_output$res)
 od_pconst = si_model(od, fun = fun, beta = 0.3, O = "origin_all", n = "destination_all",
   d = "distance_euclidean", var_p = origin_all)
-plot(od_pconst$distance_euclidean, od_pconst$res_constrained)
+plot(od_pconst$distance_euclidean, od_pconst$res)
 plot(od_pconst["res"], logz = TRUE)
 }
