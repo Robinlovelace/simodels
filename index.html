@@ -50,6 +50,12 @@
 <li class="nav-item">
   <a class="nav-link" href="reference/index.html">Reference</a>
 </li>
+<li class="nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="articles/sims.html">An introduction to spatial interaction models: from first principles</a>
+  </div>
+</li>
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="search.json" id="search-input" placeholder="Search for" autocomplete="off">
@@ -70,196 +76,30 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9">
-<p>The goal of this ‘si’ repo is to demonstrate Spatial Interaction models from first principles. At present it just contains prose and reproducible code demonstrating how they work. In future it may be turned into software, e.g. an R package, for others wanting to develop spatial interaction models.</p>
-<div class="section level1">
-<div class="page-header"><h1 id="1-what-are-sims">
-<span class="header-section-number">1</span> What are SIMs?<a class="anchor" aria-label="anchor" href="#1-what-are-sims"></a>
-</h1></div>
-<p>Spatial Interaction Models (SIMs) are mathematical models for estimating movement between spatial entities developed by Alan Wilson in the late 1960s and early 1970, with considerable uptake and refinement for transport modelling since then Boyce and Williams (2015). There are four main types of traditional SIMs (Wilson 1971):</p>
+<p>The goal of {si} is to demonstrate Spatial Interaction models from first principles (see the <code>sims</code> vignette for a more detailed description of SIMs and implementation in R without using this package for reference). The package also contains reproducible code and documentation demonstrating how they work.</p>
+<p>Spatial Interaction Models (SIMs) estimate movement between spatial entities. They have been central to transport modelling since the 1960s, with many refinements over the <a href="https://www.researchgate.net/publication/284345182_Forecasting_urban_travel_Past_present_and_future" class="external-link">decades</a>. There are four main <a href="https://doi.org/10.1016/j.jtrangeo.2015.12.008" class="external-link">types</a> of traditional SIM:</p>
 <ul>
 <li><p>Unconstrained</p></li>
 <li><p>Production-constrained</p></li>
 <li><p>Attraction-constrained</p></li>
 <li><p>Doubly-constrained</p></li>
 </ul>
-<p>Traditional ‘gravity model’ based SIMs can be defined as follows, based on the original definition (Wilson 1971):</p>
-<div class="figure">
-<embed src="https://latex.codecogs.com/svg.latex?T_%7Bi%20j%7D%3DK%20%5Cfrac%7BW_%7Bi%7D%5E%7B%281%29%7D%20W_%7Bj%7D%5E%7B%282%29%7D%7D%7Bc_%7Bi%20j%7D%5E%7Bn%7D%7D" title="T_{i j}=K \frac{W_{i}^{(1)} W_{j}^{(2)}}{c_{i j}^{n}}"></embed><p class="caption">T_{i j}=K </p>
-</div>
-<p>“where <embed src="https://latex.codecogs.com/svg.latex?T_%7Bi%20j%7D" title="T_{i j}"></embed> is a measure of the interaction between zones <embed src="https://latex.codecogs.com/svg.latex?i" title="i"></embed> and <embed src="https://latex.codecogs.com/svg.latex?W_%7Bi%7D%5E%7B%281%29%7D" title="W_{i}^{(1)}"></embed> is a measure of the ‘mass term’ associated with zone <embed src="https://latex.codecogs.com/svg.latex?z_i" title="z_i"></embed>, <embed src="https://latex.codecogs.com/svg.latex?W_%7Bj%7D%5E%7B%282%29%7D" title="W_{j}^{(2)}"></embed> is a measure of the ‘mass term’ associated with zone <embed src="https://latex.codecogs.com/svg.latex?z_j" title="z_j"></embed>, and <embed src="https://latex.codecogs.com/svg.latex?c_%7Bij%7D" title="c_{ij}"></embed> is a measure of the distance, or generalised cost of travel, between zone <embed src="https://latex.codecogs.com/svg.latex?i" title="i"></embed> and zone <embed src="https://latex.codecogs.com/svg.latex?j" title="j"></embed>”. <embed src="https://latex.codecogs.com/svg.latex?K" title="K"></embed> is a ‘constant of proportionality’ and <embed src="https://latex.codecogs.com/svg.latex?n" title="n"></embed> is a parameter to be estimated.</p>
-<p>Redefining the <embed src="https://latex.codecogs.com/svg.latex?W" title="W"></embed> terms as <embed src="https://latex.codecogs.com/svg.latex?m" title="m"></embed> and <embed src="https://latex.codecogs.com/svg.latex?n" title="n"></embed> for origins and destinations respectively (Simini et al. 2012), this classic definition of the ‘gravity model’ can be written as follows:</p>
-<div class="figure">
-<embed src="https://latex.codecogs.com/svg.latex?T_%7Bi%20j%7D%3DK%20%5Cfrac%7Bm_%7Bi%7D%20n_%7Bj%7D%7D%7Bc_%7Bi%20j%7D%5E%7Bn%7D%7D" title="T_{i j}=K \frac{m_{i} n_{j}}{c_{i j}^{n}}"></embed><p class="caption">T_{i j}=K </p>
-</div>
-<p>For the purposes of this project, we will focus on production-constrained SIMs. These can be defined as follows (Wilson 1971):</p>
-<div class="figure">
-<embed src="https://latex.codecogs.com/svg.latex?T_%7Bij%7D%20%3D%20A_iO_in_jf%28c_%7Bij%7D%29" title="T_{ij} = A_iO_in_jf(c_{ij})"></embed><p class="caption">T_{ij} = A_iO_in_jf(c_{ij})</p>
-</div>
-<p>where <embed src="https://latex.codecogs.com/svg.latex?A" title="A"></embed> is a balancing factor defined as:</p>
-<div class="figure">
-<embed src="https://latex.codecogs.com/svg.latex?A_%7Bi%7D%3D%5Cfrac%7B1%7D%7B%5Csum_%7Bj%7D%20m_%7Bj%7D%20%5Cmathrm%7Bf%7D%5Cleft%28c_%7Bi%20j%7D%5Cright%29%7D" title="A_{i}=\frac{1}{\sum_{j} m_{j} \mathrm{f}\left(c_{i j}\right)}"></embed><p class="caption">A_{i}=</p>
-</div>
-<p><embed src="https://latex.codecogs.com/svg.latex?O_i" title="O_i"></embed> is analogous to the travel demand in zone <embed src="https://latex.codecogs.com/svg.latex?i" title="i"></embed>, which can be roughly approximated by its population.</p>
-<!-- $$ -->
-<!-- T_{ij} = \frac{m_{i}^{\alpha} n_{j} ^{\beta}} {f(r_{ij})} -->
-<!-- $$ -->
-<!-- ## Radiation models -->
-<!-- A more recent type of SIM is the radiation model @simini_universal_2012: -->
-<!-- $$ -->
-<!-- \langle T_{ij} \rangle = T_i \frac{m_{i} n_{j}} {(m_i + s_{ij})(m_i + n_j + s_{ij}) } -->
-<!-- $$ -->
-<!-- where $s_{ij}$ is defined as the total population living within a circle, the centre of which lies in the centroid of zone $i$ and the radius of which is the distance between zones $i$ and $j$. Thus, the greater the population living within the commute distance, the lower the estimated flow rate. -->
+<p>The focus of this package is currently on unconstrained and production-constrained SIMs.</p>
+<div class="section level1">
+<div class="page-header"><h1 id="1-implementations-in-other-languages">
+<span class="header-section-number">1</span> Implementations in other languages<a class="anchor" aria-label="anchor" href="#1-implementations-in-other-languages"></a>
+</h1></div>
+<p>We would be interested to hear how the approach presented in this package compared with other implementations such as those presented in the links below. If anyone would like to try the approach or implement it in another language feel free to get in touch via the issue tracker.</p>
 </div>
 <div class="section level1">
-<h1 id="2-implementation-in-r">
-<span class="header-section-number">2</span> Implementation in R<a class="anchor" aria-label="anchor" href="#2-implementation-in-r"></a>
-</h1>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/r-tmap/tmap" class="external-link">tmap</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://itsleeds.github.io/pct/" class="external-link">pct</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span></code></pre></div>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">zones</span> <span class="op">=</span> <span class="fu">get_pct_zones</span><span class="op">(</span>region <span class="op">=</span> <span class="st">"west-yorkshire"</span>, geography <span class="op">=</span> <span class="st">"msoa"</span><span class="op">)</span>
-<span class="va">centroids</span> <span class="op">=</span> <span class="fu">get_pct_centroids</span><span class="op">(</span>region <span class="op">=</span> <span class="st">"west-yorkshire"</span>, geography <span class="op">=</span> <span class="st">"msoa"</span><span class="op">)</span>
-<span class="va">zones</span> <span class="op">=</span> <span class="va">zones</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">lad_name</span> <span class="op">==</span> <span class="st">"Leeds"</span><span class="op">)</span>
-<span class="va">centroids</span> <span class="op">=</span> <span class="va">centroids</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">lad_name</span> <span class="op">==</span> <span class="st">"Leeds"</span><span class="op">)</span>
-<span class="fu">tm_shape</span><span class="op">(</span><span class="va">zones</span><span class="op">)</span> <span class="op">+</span> <span class="fu">tm_polygons</span><span class="op">(</span><span class="st">"all"</span>, palette <span class="op">=</span> <span class="st">"viridis"</span><span class="op">)</span></code></pre></div>
-<p><img src="reference/figures/README-inputs-1.png"></p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">od_df</span> <span class="op">=</span> <span class="fu">od</span><span class="fu">::</span><span class="fu"><a href="https://itsleeds.github.io/od/reference/points_to_od.html" class="external-link">points_to_od</a></span><span class="op">(</span><span class="va">centroids</span><span class="op">)</span>
-<span class="va">od_sfc</span> <span class="op">=</span> <span class="fu">od</span><span class="fu">::</span><span class="fu"><a href="https://itsleeds.github.io/od/reference/odc_to_sfc.html" class="external-link">odc_to_sfc</a></span><span class="op">(</span><span class="va">od_df</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span><span class="op">)</span>
-<span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_crs.html" class="external-link">st_crs</a></span><span class="op">(</span><span class="va">od_sfc</span><span class="op">)</span> <span class="op">=</span> <span class="fl">4326</span>
-<span class="va">od_df</span><span class="op">$</span><span class="va">length</span> <span class="op">=</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_measures.html" class="external-link">st_length</a></span><span class="op">(</span><span class="va">od_sfc</span><span class="op">)</span>
-<span class="va">od_df</span> <span class="op">=</span> <span class="va">od_df</span> <span class="op">%&gt;%</span> <span class="fu">transmute</span><span class="op">(</span>
-  <span class="va">O</span>, <span class="va">D</span>, length <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="va">length</span><span class="op">)</span> <span class="op">/</span> <span class="fl">1000</span>,
-  flow <span class="op">=</span> <span class="cn">NA</span>, fc <span class="op">=</span> <span class="cn">NA</span>
-  <span class="op">)</span>
-<span class="va">od_df</span> <span class="op">=</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/sf.html" class="external-link">st_sf</a></span><span class="op">(</span><span class="va">od_df</span>, geometry <span class="op">=</span> <span class="va">od_sfc</span>, crs <span class="op">=</span> <span class="fl">4326</span><span class="op">)</span></code></pre></div>
-<p>An unconstrained spatial interaction model can be written as follows, with a more-or-less arbitrary value for <code>beta</code> which can be optimised later:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">beta</span> <span class="op">=</span> <span class="fl">0.3</span>
-<span class="va">i</span> <span class="op">=</span> <span class="fl">1</span>
-<span class="va">j</span> <span class="op">=</span> <span class="fl">2</span>
-<span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">zones</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
-  <span class="kw">for</span><span class="op">(</span><span class="va">j</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">zones</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
-    <span class="va">O</span> <span class="op">=</span> <span class="va">zones</span><span class="op">$</span><span class="va">all</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>
-    <span class="va">n</span> <span class="op">=</span> <span class="va">zones</span><span class="op">$</span><span class="va">all</span><span class="op">[</span><span class="va">j</span><span class="op">]</span>
-    <span class="va">ij</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="va">od_df</span><span class="op">$</span><span class="va">O</span> <span class="op">==</span> <span class="va">zones</span><span class="op">$</span><span class="va">geo_code</span><span class="op">[</span><span class="va">i</span><span class="op">]</span> <span class="op">&amp;</span> <span class="va">od_df</span><span class="op">$</span><span class="va">D</span> <span class="op">==</span> <span class="va">zones</span><span class="op">$</span><span class="va">geo_code</span><span class="op">[</span><span class="va">j</span><span class="op">]</span><span class="op">)</span>
-    <span class="va">od_df</span><span class="op">$</span><span class="va">fc</span><span class="op">[</span><span class="va">ij</span><span class="op">]</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="op">-</span><span class="va">beta</span> <span class="op">*</span> <span class="va">od_df</span><span class="op">$</span><span class="va">length</span><span class="op">[</span><span class="va">ij</span><span class="op">]</span><span class="op">)</span>
-    <span class="va">od_df</span><span class="op">$</span><span class="va">flow</span><span class="op">[</span><span class="va">ij</span><span class="op">]</span> <span class="op">=</span> <span class="va">O</span> <span class="op">*</span> <span class="va">n</span> <span class="op">*</span> <span class="va">od_df</span><span class="op">$</span><span class="va">fc</span><span class="op">[</span><span class="va">ij</span><span class="op">]</span>
-  <span class="op">}</span>
-<span class="op">}</span>
-<span class="va">od_top</span> <span class="op">=</span> <span class="va">od_df</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">O</span> <span class="op">!=</span> <span class="va">D</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu">top_n</span><span class="op">(</span>n <span class="op">=</span> <span class="fl">2000</span>, wt <span class="op">=</span> <span class="va">flow</span><span class="op">)</span>
-
-<span class="fu">tm_shape</span><span class="op">(</span><span class="va">zones</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">tm_borders</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">tm_shape</span><span class="op">(</span><span class="va">od_top</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">tm_lines</span><span class="op">(</span><span class="st">"flow"</span><span class="op">)</span></code></pre></div>
-<p><img src="reference/figures/README-unconstrained-1.png"></p>
-<p>We can plot the ‘distance decay’ curve associated with this SIM is as follows:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">od_df</span><span class="op">$</span><span class="va">fc</span><span class="op">)</span></code></pre></div>
-<div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a>     Min.   1st Qu.    Median      Mean   3rd Qu.      Max. </span>
-<span id="cb6-2"><a href="#cb6-2"></a><span class="fl">0.0002404</span> <span class="fl">0.0256166</span> <span class="fl">0.0801970</span> <span class="fl">0.1495649</span> <span class="fl">0.2035826</span> <span class="fl">1.0000000</span> </span></code></pre></div>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">od_df</span> <span class="op">%&gt;%</span> 
-  <span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span><span class="va">length</span>, <span class="va">fc</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p><img src="reference/figures/README-distance_decay-1.png"></p>
-<p>We can make this production constrained as follows:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">od_dfj</span> <span class="op">=</span> <span class="fu">left_join</span><span class="op">(</span>
-  <span class="va">od_df</span>,
-  <span class="va">zones</span> <span class="op">%&gt;%</span> <span class="fu">select</span><span class="op">(</span>O <span class="op">=</span> <span class="va">geo_code</span>, <span class="va">all</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_drop_geometry</a></span><span class="op">(</span><span class="op">)</span>
-<span class="op">)</span></code></pre></div>
-<div class="sourceCode" id="cb9"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>Joining, by =<span class="st"> "O"</span></span></code></pre></div>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">od_dfj</span> <span class="op">=</span> <span class="va">od_dfj</span> <span class="op">%&gt;%</span> 
-  <span class="fu">group_by</span><span class="op">(</span><span class="va">O</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu">mutate</span><span class="op">(</span>flow_constrained <span class="op">=</span> <span class="va">flow</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">flow</span><span class="op">)</span> <span class="op">*</span> <span class="fu">first</span><span class="op">(</span><span class="va">all</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu">ungroup</span><span class="op">(</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">od_dfj</span><span class="op">$</span><span class="va">flow_constrained</span><span class="op">)</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">zones</span><span class="op">$</span><span class="va">all</span><span class="op">)</span></code></pre></div>
-<div class="sourceCode" id="cb11"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>[<span class="dv">1</span>] <span class="ot">TRUE</span></span></code></pre></div>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">od_top</span> <span class="op">=</span> <span class="va">od_dfj</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">O</span> <span class="op">!=</span> <span class="va">D</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu">top_n</span><span class="op">(</span>n <span class="op">=</span> <span class="fl">2000</span>, wt <span class="op">=</span> <span class="va">flow_constrained</span><span class="op">)</span>
-
-<span class="fu">tm_shape</span><span class="op">(</span><span class="va">zones</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">tm_borders</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">tm_shape</span><span class="op">(</span><span class="va">od_top</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">tm_lines</span><span class="op">(</span><span class="st">"flow_constrained"</span><span class="op">)</span></code></pre></div>
-<p><img src="reference/figures/README-constrained-1.png"></p>
-</div>
-<div class="section level1">
-<h1 id="3-validation">
-<span class="header-section-number">3</span> Validation<a class="anchor" aria-label="anchor" href="#3-validation"></a>
-</h1>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">od_census</span> <span class="op">=</span> <span class="fu">get_od</span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<div class="sourceCode" id="cb14"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a>No region provided. Returning national OD data.</span>
-<span id="cb14-2"><a href="#cb14-2"></a></span>
-<span id="cb14-3"><a href="#cb14-3"></a>Rows<span class="op">:</span><span class="st"> </span><span class="dv">2402201</span> Columns<span class="op">:</span><span class="st"> </span><span class="dv">14</span></span>
-<span id="cb14-4"><a href="#cb14-4"></a>── Column specification ────────────────────────────────────────────────────────</span>
-<span id="cb14-5"><a href="#cb14-5"></a>Delimiter<span class="op">:</span><span class="st"> ","</span></span>
-<span id="cb14-6"><a href="#cb14-6"></a><span class="kw">chr</span>  (<span class="dv">2</span>)<span class="op">:</span><span class="st"> </span>Area of residence, Area of workplace</span>
-<span id="cb14-7"><a href="#cb14-7"></a><span class="kw">dbl</span> (<span class="dv">12</span>)<span class="op">:</span><span class="st"> </span>All categories<span class="op">:</span><span class="st"> </span>Method of travel to work, Work mainly at or from h...</span>
-<span id="cb14-8"><a href="#cb14-8"></a></span>
-<span id="cb14-9"><a href="#cb14-9"></a>ℹ Use <span class="st">`</span><span class="dt">spec()</span><span class="st">`</span> to retrieve the full column specification <span class="cf">for</span> this data.</span>
-<span id="cb14-10"><a href="#cb14-10"></a>ℹ Specify the column types or set <span class="st">`</span><span class="dt">show_col_types = FALSE</span><span class="st">`</span> to quiet this message.</span>
-<span id="cb14-11"><a href="#cb14-11"></a>Rows<span class="op">:</span><span class="st"> </span><span class="dv">7201</span> Columns<span class="op">:</span><span class="st"> </span><span class="dv">6</span></span>
-<span id="cb14-12"><a href="#cb14-12"></a>── Column specification ────────────────────────────────────────────────────────</span>
-<span id="cb14-13"><a href="#cb14-13"></a>Delimiter<span class="op">:</span><span class="st"> ","</span></span>
-<span id="cb14-14"><a href="#cb14-14"></a><span class="kw">chr</span> (<span class="dv">2</span>)<span class="op">:</span><span class="st"> </span>MSOA11CD, MSOA11NM</span>
-<span id="cb14-15"><a href="#cb14-15"></a><span class="kw">dbl</span> (<span class="dv">4</span>)<span class="op">:</span><span class="st"> </span>BNGEAST, BNGNORTH, LONGITUDE, LATITUDE</span>
-<span id="cb14-16"><a href="#cb14-16"></a></span>
-<span id="cb14-17"><a href="#cb14-17"></a>ℹ Use <span class="st">`</span><span class="dt">spec()</span><span class="st">`</span> to retrieve the full column specification <span class="cf">for</span> this data.</span>
-<span id="cb14-18"><a href="#cb14-18"></a>ℹ Specify the column types or set <span class="st">`</span><span class="dt">show_col_types = FALSE</span><span class="st">`</span> to quiet this message.</span></code></pre></div>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">od_census_min</span> <span class="op">=</span> <span class="va">od_census</span> <span class="op">%&gt;%</span> 
-  <span class="fu">rename</span><span class="op">(</span>O <span class="op">=</span> <span class="va">geo_code1</span>, D <span class="op">=</span> <span class="va">geo_code2</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">O</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">zones</span><span class="op">$</span><span class="va">geo_code</span> <span class="op">&amp;</span> <span class="va">D</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">zones</span><span class="op">$</span><span class="va">geo_code</span><span class="op">)</span>
-<span class="va">od_dfjc</span> <span class="op">=</span> <span class="fu">inner_join</span><span class="op">(</span><span class="va">od_dfj</span> <span class="op">%&gt;%</span> <span class="fu">select</span><span class="op">(</span><span class="op">-</span><span class="va">all</span><span class="op">)</span>, <span class="va">od_census_min</span><span class="op">)</span></code></pre></div>
-<div class="sourceCode" id="cb16"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a>Joining, by =<span class="st"> </span><span class="kw">c</span>(<span class="st">"O"</span>, <span class="st">"D"</span>)</span></code></pre></div>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">od_dfjc</span> <span class="op">%&gt;%</span> 
-  <span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span><span class="va">all</span>, <span class="va">flow_constrained</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p><img src="reference/figures/README-validation-1.png"></p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">od_dfjc</span><span class="op">$</span><span class="va">all</span>, <span class="va">od_dfjc</span><span class="op">$</span><span class="va">flow_constrained</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span></code></pre></div>
-<div class="sourceCode" id="cb19"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a>[<span class="dv">1</span>] <span class="fl">0.1735933</span></span></code></pre></div>
-</div>
-<div class="section level1">
-<h1 id="4-implementation-in-python">
-<span class="header-section-number">4</span> Implementation in Python<a class="anchor" aria-label="anchor" href="#4-implementation-in-python"></a>
-</h1>
-<p>TBC.</p>
-</div>
-<div class="section level1">
-<h1 id="5-resources">
-<span class="header-section-number">5</span> Resources<a class="anchor" aria-label="anchor" href="#5-resources"></a>
+<h1 id="2-resources">
+<span class="header-section-number">2</span> Resources<a class="anchor" aria-label="anchor" href="#2-resources"></a>
 </h1>
 <ul>
-<li><p>Reproducible code implementing SIMs in R (based on the outdated <code>sp</code> class system): <a href="https://rpubs.com/adam_dennett/257231" class="external-link uri">https://rpubs.com/adam_dennett/257231</a></p></li>
-<li>
-</li>
+<li><p>Reproducible <a href="https://rpubs.com/adam_dennett/257231" class="external-link">code</a> implementing SIMs in R by Adam Dennet, based on the outdated <code>sp</code> class system, and based on <a href="https://github.com/adamdennett/LondonSchoolsSIM/blob/main/Schools.Rmd" class="external-link"><code>sf</code> classes</a></p></li>
+<li><p>The <a href="https://github.com/LukeCe/spflow" class="external-link"><code>spflow</code> R package</a> on CRAN</p></li>
+<li><p>The <a href="https://spint.readthedocs.io/en/latest/" class="external-link"><code>spint</code> Python package</a></p></li>
 </ul>
-<div id="refs" class="references csl-bib-body hanging-indent">
-<div id="ref-boyce_forecasting_2015" class="csl-entry">
-<p>Boyce, David E., and Huw C. W. L. Williams. 2015. <em>Forecasting Urban Travel: Past, Present and Future</em>. Edward Elgar Publishing.</p>
-</div>
-<div id="ref-simini_universal_2012" class="csl-entry">
-<p>Simini, Filippo, Marta C González, Amos Maritan, and Albert-László Barabási. 2012. “A Universal Model for Mobility and Migration Patterns.” <em>Nature</em>, February, 812. <a href="https://doi.org/10.1038/nature10856" class="external-link uri">https://doi.org/10.1038/nature10856</a>.</p>
-</div>
-<div id="ref-wilson_family_1971" class="csl-entry">
-<p>Wilson, AG. 1971. “A Family of Spatial Interaction Models, and Associated Developments.” <em>Environment and Planning</em> 3 (January): 132. <a href="http://www.environment-and-planning.com/epa/fulltext/a03/a030001.pdf" class="external-link uri">http://www.environment-and-planning.com/epa/fulltext/a03/a030001.pdf</a>.</p>
-</div>
-</div>
 </div>
 
   </main><aside class="col-md-3"><div class="links">
