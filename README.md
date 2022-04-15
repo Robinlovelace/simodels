@@ -1,4 +1,6 @@
 <!-- badges: start -->
+
+[![R-CMD-check](https://github.com/robinlovelace/si/workflows/R-CMD-check/badge.svg)](https://github.com/robinlovelace/si/actions)
 <!-- badges: end -->
 
 The goal of this ‘si’ repo is to demonstrate Spatial Interaction models
