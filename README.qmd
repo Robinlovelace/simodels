@@ -194,10 +194,11 @@ cor(od_dfjc$all, od_dfjc$flow_constrained)^2
 
 # Implementation in Python
 
-TBC.
 
 # Resources
 
--   Reproducible code implementing SIMs in R (based on the outdated `sp` class system): https://rpubs.com/adam_dennett/257231
+- Reproducible [code](https://rpubs.com/adam_dennett/257231) implementing SIMs in R by Adam Dennet, based on the outdated `sp` class system, and based on [`sf` classes](https://github.com/adamdennett/LondonSchoolsSIM/blob/main/Schools.Rmd)
 
--   
+- The [`spflow` R package](https://github.com/LukeCe/spflow) on CRAN
+
+- The [`spint` Python package](https://spint.readthedocs.io/en/latest/)
