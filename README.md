@@ -98,7 +98,7 @@ centroids = centroids %>%
 tm_shape(zones) + tm_polygons("all", palette = "viridis")
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-4-1.png)
+![](README_files/figure-gfm/inputs-1.png)
 
 ``` r
 od_df = od::points_to_od(centroids)
@@ -157,7 +157,7 @@ od_df %>%
   geom_point(aes(length, fc))
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-7-1.png)
+![](README_files/figure-gfm/distance_decay-1.png)
 
 We can make this production constrained as follows:
 

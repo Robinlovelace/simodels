@@ -93,6 +93,7 @@ library(tidyverse)
 
 
 ```{r}
+#| label: inputs
 zones = get_pct_zones(region = "west-yorkshire", geography = "msoa")
 centroids = get_pct_centroids(region = "west-yorkshire", geography = "msoa")
 zones = zones %>% 
@@ -144,12 +145,12 @@ tm_shape(zones) +
 We can plot the 'distance decay' curve associated with this SIM is as follows:
 
 ```{r}
+#| label: distance_decay
 summary(od_df$fc)
 od_df %>% 
   ggplot() +
   geom_point(aes(length, fc))
 ```
-
 
 We can make this production constrained as follows:
 
