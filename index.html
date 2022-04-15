@@ -94,14 +94,24 @@
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span> <span class="co"># if not already installed</span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"robinlovelace/si"</span><span class="op">)</span></code></pre></div>
-<div class="sourceCode" id="cb3"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>Skipping install of <span class="st">'si'</span> from a github remote, the <span class="kw">SHA1</span> (ee3925f5) has not changed since last install.</span>
-<span id="cb3-2"><a href="#cb3-2"></a>  Use <span class="st">`</span><span class="dt">force = TRUE</span><span class="st">`</span> to force installation</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>Downloading GitHub repo robinlovelace<span class="op">/</span>si<span class="op">@</span>HEAD</span>
+<span id="cb3-2"><a href="#cb3-2"></a></span>
+<span id="cb3-3"><a href="#cb3-3"></a></span>
+<span id="cb3-4"><a href="#cb3-4"></a><span class="op">*</span><span class="st"> </span>checking <span class="cf">for</span> file ‘<span class="op">/</span>tmp<span class="op">/</span>RtmpyAfjMO<span class="op">/</span>remotes4108f5a13f16b<span class="op">/</span>Robinlovelace<span class="op">-</span>si<span class="op">-</span>b95d682<span class="op">/</span>DESCRIPTION’ ... OK</span>
+<span id="cb3-5"><a href="#cb3-5"></a><span class="op">*</span><span class="st"> </span>preparing ‘si’<span class="op">:</span></span>
+<span id="cb3-6"><a href="#cb3-6"></a><span class="er">*</span><span class="st"> </span>checking DESCRIPTION meta<span class="op">-</span>information ... OK</span>
+<span id="cb3-7"><a href="#cb3-7"></a><span class="op">*</span><span class="st"> </span>checking <span class="cf">for</span> LF line<span class="op">-</span>endings <span class="cf">in</span> source and make files and shell scripts</span>
+<span id="cb3-8"><a href="#cb3-8"></a><span class="op">*</span><span class="st"> </span>checking <span class="cf">for</span> empty or unneeded directories</span>
+<span id="cb3-9"><a href="#cb3-9"></a><span class="op">*</span><span class="st"> </span>building ‘si_<span class="dv">0</span>.<span class="dv">0</span>.<span class="fl">1.</span>tar.gz’</span>
+<span id="cb3-10"><a href="#cb3-10"></a></span>
+<span id="cb3-11"><a href="#cb3-11"></a>Installing package into <span class="st">'/home/robin/R/x86_64-pc-linux-gnu-library/4.1'</span></span>
+<span id="cb3-12"><a href="#cb3-12"></a>(as <span class="st">'lib'</span> is unspecified)</span></code></pre></div>
 <p>Run a basic SIM as follows:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/robinlovelace/si" class="external-link">si</a></span><span class="op">)</span>
 <span class="va">od</span> <span class="op">=</span> <span class="fu"><a href="reference/si_to_od.html">si_to_od</a></span><span class="op">(</span>origins <span class="op">=</span> <span class="va">zones</span>, destinations <span class="op">=</span> <span class="va">zones</span>, max_euclidean_distance <span class="op">=</span> <span class="fl">5000</span><span class="op">)</span></code></pre></div>
 <div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="dv">2505</span> OD pairs remaining after removing those with a distance greater than <span class="dv">5000</span> meters<span class="op">:</span></span>
-<span id="cb5-2"><a href="#cb5-2"></a><span class="dv">22</span> of all possible OD pairs</span></code></pre></div>
+<span id="cb5-2"><a href="#cb5-2"></a><span class="dv">22</span>% of all possible OD pairs</span></code></pre></div>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">gravity_model</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">od</span>, <span class="va">beta</span><span class="op">)</span> <span class="op">{</span>
   <span class="va">od</span><span class="op">[[</span><span class="st">"origin_all"</span><span class="op">]</span><span class="op">]</span> <span class="op">*</span> <span class="va">od</span><span class="op">[[</span><span class="st">"destination_all"</span><span class="op">]</span><span class="op">]</span> <span class="op">*</span>
@@ -109,7 +119,7 @@
 <span class="op">}</span> 
 <span class="va">od_res</span> <span class="op">=</span> <span class="fu"><a href="reference/si_model.html">si_model</a></span><span class="op">(</span><span class="va">od</span>, fun <span class="op">=</span> <span class="va">gravity_model</span>, beta <span class="op">=</span> <span class="fl">0.3</span>, var_p <span class="op">=</span> <span class="va">origin_all</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">od_res</span><span class="op">$</span><span class="va">distance_euclidean</span>, <span class="va">od_res</span><span class="op">$</span><span class="va">res</span><span class="op">)</span></code></pre></div>
-<p><img src="reference/figures/README-distance%20plot-1.png"></p>
+<p><img src="reference/figures/README-distance-1.png"></p>
 <p>What just happened? As the example above shows, the package allows/encourages you to define and use your own functions to estimate the amount of interaction/movement between places. The resulting estimates of interaction, returned in the column <code>res</code> and plotted with distance in the graphic above, resulted from our choice of spatial interaction model inputs, allowing a wide range of alternative approaches to be implemented. This flexibility is a key aspect of the package, enabling small and easily modified functions to be implemented and tested.</p>
 <p>The output <code><a href="reference/si_model.html">si_model()</a></code> is a geographic object which can be plotted as a map:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
