@@ -20,5 +20,6 @@ Imports:
     od,
     sf,
     rlang
-URL: https://github.com/robinlovelace/si
+URL: https://github.com/robinlovelace/si,
+    https://robinlovelace.github.io/si/
 BugReports: https://github.com/robinlovelace/si/issues
