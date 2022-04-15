@@ -2,7 +2,11 @@
 ^\.Rproj\.user$
 ^README\.Rmd$
 ^data-raw$
+<<<<<<< HEAD
 ^\.github$
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
+=======
+^LICENSE\.md$
+>>>>>>> 5e53e47 (updates rbuildignore)
