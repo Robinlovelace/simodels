@@ -4,9 +4,9 @@
 \name{si-package}
 \alias{si}
 \alias{si-package}
-\title{si: What the Package Does (One Line, Title Case)}
+\title{si: Flexible Framework for Developing Spatial Interaction Models}
 \description{
-What the package does (one paragraph).
+Develop spatial interaction models (SIMs). SIMs predict the amount of interactions, for example number of trips per day, between geographic entities representing trip origins and destinations. SIMs can be unconstrained, production-constrained, attraction-constrained and doubly-constrained (Wilson 1979) <doi:10.1068/a030001>. The package contains functions for unconstrained and doubly-constrained SIMs.
 }
 \seealso{
 Useful links:
