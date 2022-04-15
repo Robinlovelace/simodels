@@ -16,7 +16,7 @@ knitr::opts_chunk$set(cache = TRUE,
 
 
 <!-- badges: start -->
-
+[![R-CMD-check](https://github.com/robinlovelace/si/workflows/R-CMD-check/badge.svg)](https://github.com/robinlovelace/si/actions)
 <!-- badges: end -->
 
 The goal of this 'si' repo is to demonstrate Spatial Interaction models from first principles. At present it just contains prose and reproducible code demonstrating how they work. In future it may be turned into software, e.g. an R package, for others wanting to develop spatial interaction models.
