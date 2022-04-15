@@ -3,13 +3,14 @@
 format: gfm
 number-sections: true
 title: "si: code and prose exploring Spatial Interaction models"
-bibliography: references.bib
+bibliography: data-raw/references.bib
 execute:
   cache: true
 ---
 
 ```{r, include=FALSE}
-knitr::opts_chunk$set(cache = TRUE)
+knitr::opts_chunk$set(cache = TRUE,
+  fig.path = "man/figures/README-")
 ```
 
 
