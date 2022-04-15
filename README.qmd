@@ -6,6 +6,7 @@ title: "si: code and prose exploring Spatial Interaction models"
 bibliography: data-raw/references.bib
 execute:
   cache: true
+  fig.path: "man/figures/README-"
 ---
 
 ```{r, include=FALSE}
