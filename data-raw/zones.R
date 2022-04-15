@@ -4,9 +4,11 @@ library(tidyverse)
 zones = get_pct_zones(region = "west-yorkshire", geography = "msoa")
 centroids = get_pct_centroids(region = "west-yorkshire", geography = "msoa")
 zones = zones %>% 
-  filter(lad_name == "Leeds")
+  filter(lad_name == "Leeds") %>%
+  select(1:13)
 centroids = centroids %>% 
-  filter(lad_name == "Leeds")
+  filter(lad_name == "Leeds") %>%
+  select(1:13)
 usethis::use_data(zones, overwrite = TRUE)
 usethis::use_data(centroids, overwrite = TRUE)
 
