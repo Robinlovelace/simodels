@@ -34,7 +34,7 @@ si_to_od = function(origins, destinations, max_euclidean_distance = 10000) {
           nrow_after,
           " OD pairs remaining after removing those with a distance greater than ", # nolint
           max_euclidean_distance, " meters", ":\n",
-          pct_kept, " of all possible OD pairs"
+          pct_kept, "% of all possible OD pairs"
           )
   }
   # join origin attributes
