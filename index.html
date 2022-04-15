@@ -76,25 +76,76 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9">
-<p>The goal of {si} is to demonstrate Spatial Interaction models from first principles (see the <code>sims</code> vignette for a more detailed description of SIMs and implementation in R without using this package for reference). The package also contains reproducible code and documentation demonstrating how they work.</p>
+<p>The goal of {si} is to demonstrate Spatial Interaction models from first principles (see the <a href="https://robinlovelace.github.io/si/articles/sims.html"><code>sims</code> vignette</a> for a more detailed description of SIMs and implementation in R without using this package for reference). The package also contains reproducible code and documentation demonstrating how they work.</p>
 <p>Spatial Interaction Models (SIMs) estimate movement between spatial entities. They have been central to transport modelling since the 1960s, with many refinements over the <a href="https://www.researchgate.net/publication/284345182_Forecasting_urban_travel_Past_present_and_future" class="external-link">decades</a>. There are four main <a href="https://doi.org/10.1016/j.jtrangeo.2015.12.008" class="external-link">types</a> of traditional SIM:</p>
 <ul>
-<li><p>Unconstrained</p></li>
-<li><p>Production-constrained</p></li>
-<li><p>Attraction-constrained</p></li>
-<li><p>Doubly-constrained</p></li>
+<li>Unconstrained</li>
+<li>Production-constrained</li>
+<li>Attraction-constrained</li>
+<li>Doubly-constrained</li>
 </ul>
 <p>The focus of this package is currently on unconstrained and production-constrained SIMs.</p>
-<div class="section level1">
-<div class="page-header"><h1 id="1-implementations-in-other-languages">
-<span class="header-section-number">1</span> Implementations in other languages<a class="anchor" aria-label="anchor" href="#1-implementations-in-other-languages"></a>
-</h1></div>
+<!-- # Implementations in other languages -->
+<div class="section level2">
+<h2 id="si-basics">si basics<a class="anchor" aria-label="anchor" href="#si-basics"></a>
+</h2>
+<p>Install the package as follows:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span> <span class="co"># if not already installed</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"robinlovelace/si"</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>Skipping install of <span class="st">'si'</span> from a github remote, the <span class="kw">SHA1</span> (ee3925f5) has not changed since last install.</span>
+<span id="cb3-2"><a href="#cb3-2"></a>  Use <span class="st">`</span><span class="dt">force = TRUE</span><span class="st">`</span> to force installation</span></code></pre></div>
+<p>Run a basic SIM as follows:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/robinlovelace/si" class="external-link">si</a></span><span class="op">)</span>
+<span class="va">od</span> <span class="op">=</span> <span class="fu"><a href="reference/si_to_od.html">si_to_od</a></span><span class="op">(</span>origins <span class="op">=</span> <span class="va">zones</span>, destinations <span class="op">=</span> <span class="va">zones</span>, max_euclidean_distance <span class="op">=</span> <span class="fl">5000</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="dv">2505</span> OD pairs remaining after removing those with a distance greater than <span class="dv">5000</span> meters<span class="op">:</span></span>
+<span id="cb5-2"><a href="#cb5-2"></a><span class="dv">22</span> of all possible OD pairs</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">gravity_model</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">od</span>, <span class="va">beta</span><span class="op">)</span> <span class="op">{</span>
+  <span class="va">od</span><span class="op">[[</span><span class="st">"origin_all"</span><span class="op">]</span><span class="op">]</span> <span class="op">*</span> <span class="va">od</span><span class="op">[[</span><span class="st">"destination_all"</span><span class="op">]</span><span class="op">]</span> <span class="op">*</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="op">-</span><span class="va">beta</span> <span class="op">*</span> <span class="va">od</span><span class="op">[[</span><span class="st">"distance_euclidean"</span><span class="op">]</span><span class="op">]</span> <span class="op">/</span> <span class="fl">1000</span><span class="op">)</span>
+<span class="op">}</span> 
+<span class="va">od_res</span> <span class="op">=</span> <span class="fu"><a href="reference/si_model.html">si_model</a></span><span class="op">(</span><span class="va">od</span>, fun <span class="op">=</span> <span class="va">gravity_model</span>, beta <span class="op">=</span> <span class="fl">0.3</span>, var_p <span class="op">=</span> <span class="va">origin_all</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">od_res</span><span class="op">$</span><span class="va">distance_euclidean</span>, <span class="va">od_res</span><span class="op">$</span><span class="va">res</span><span class="op">)</span></code></pre></div>
+<p><img src="reference/figures/README-distance%20plot-1.png"></p>
+<p>What just happened? As the example above shows, the package allows/encourages you to define and use your own functions to estimate the amount of interaction/movement between places. The resulting estimates of interaction, returned in the column <code>res</code> and plotted with distance in the graphic above, resulted from our choice of spatial interaction model inputs, allowing a wide range of alternative approaches to be implemented. This flexibility is a key aspect of the package, enabling small and easily modified functions to be implemented and tested.</p>
+<p>The output <code><a href="reference/si_model.html">si_model()</a></code> is a geographic object which can be plotted as a map:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">od_res</span><span class="op">[</span><span class="st">"res"</span><span class="op">]</span>, logz <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<p><img src="reference/figures/README-map-1.png"></p>
+<p>Perhaps the most important function in the package is therefore <code><a href="reference/si_to_od.html">si_to_od()</a></code>, which transforms geographic entities (typically zones but points and other geographic features could be used) into a data frame representing the full combination of origin-destination pairs that are less than <code>max_euclidean_distance</code> meters apart. A common saying in data science is that 80% of the effort goes into the pre-processing stage. This is equally true for spatial interaction modelling as it is for other types of data intensive analysis/modelling work. So what does this function return?</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">od</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a> [<span class="dv">1</span>] <span class="st">"O"</span>                         <span class="st">"D"</span>                        </span>
+<span id="cb9-2"><a href="#cb9-2"></a> [<span class="dv">3</span>] <span class="st">"ox"</span>                        <span class="st">"oy"</span>                       </span>
+<span id="cb9-3"><a href="#cb9-3"></a> [<span class="dv">5</span>] <span class="st">"dx"</span>                        <span class="st">"dy"</span>                       </span>
+<span id="cb9-4"><a href="#cb9-4"></a> [<span class="dv">7</span>] <span class="st">"distance_euclidean"</span>        <span class="st">"origin_geo_name"</span>          </span>
+<span id="cb9-5"><a href="#cb9-5"></a> [<span class="dv">9</span>] <span class="st">"origin_lad11cd"</span>            <span class="st">"origin_lad_name"</span>          </span>
+<span id="cb9-6"><a href="#cb9-6"></a>[<span class="dv">11</span>] <span class="st">"origin_all"</span>                <span class="st">"origin_bicycle"</span>           </span>
+<span id="cb9-7"><a href="#cb9-7"></a>[<span class="dv">13</span>] <span class="st">"origin_foot"</span>               <span class="st">"origin_car_driver"</span>        </span>
+<span id="cb9-8"><a href="#cb9-8"></a>[<span class="dv">15</span>] <span class="st">"origin_car_passenger"</span>      <span class="st">"origin_motorbike"</span>         </span>
+<span id="cb9-9"><a href="#cb9-9"></a>[<span class="dv">17</span>] <span class="st">"origin_train_tube"</span>         <span class="st">"origin_bus"</span>               </span>
+<span id="cb9-10"><a href="#cb9-10"></a>[<span class="dv">19</span>] <span class="st">"origin_taxi_other"</span>         <span class="st">"destination_geo_name"</span>     </span>
+<span id="cb9-11"><a href="#cb9-11"></a>[<span class="dv">21</span>] <span class="st">"destination_lad11cd"</span>       <span class="st">"destination_lad_name"</span>     </span>
+<span id="cb9-12"><a href="#cb9-12"></a>[<span class="dv">23</span>] <span class="st">"destination_all"</span>           <span class="st">"destination_bicycle"</span>      </span>
+<span id="cb9-13"><a href="#cb9-13"></a>[<span class="dv">25</span>] <span class="st">"destination_foot"</span>          <span class="st">"destination_car_driver"</span>   </span>
+<span id="cb9-14"><a href="#cb9-14"></a>[<span class="dv">27</span>] <span class="st">"destination_car_passenger"</span> <span class="st">"destination_motorbike"</span>    </span>
+<span id="cb9-15"><a href="#cb9-15"></a>[<span class="dv">29</span>] <span class="st">"destination_train_tube"</span>    <span class="st">"destination_bus"</span>          </span>
+<span id="cb9-16"><a href="#cb9-16"></a>[<span class="dv">31</span>] <span class="st">"destination_taxi_other"</span>    <span class="st">"geometry"</span>                 </span></code></pre></div>
+<p>As shown in the output above, the function allows you to use any variable in the origin or destination data in the function, with column names appended with <code>origin</code> and <code>destination</code>.</p>
+<p>Note: support for OD datasets in which the origins and destinations are different objects is work in progress (see <a href="https://github.com/Robinlovelace/si/issues/3" class="external-link">#3</a>).</p>
+</div>
+<div class="section level2">
+<h2 id="feedback">Feedback<a class="anchor" aria-label="anchor" href="#feedback"></a>
+</h2>
 <p>We would be interested to hear how the approach presented in this package compared with other implementations such as those presented in the links below. If anyone would like to try the approach or implement it in another language feel free to get in touch via the issue tracker.</p>
 </div>
-<div class="section level1">
-<h1 id="2-resources">
-<span class="header-section-number">2</span> Resources<a class="anchor" aria-label="anchor" href="#2-resources"></a>
-</h1>
+<div class="section level2">
+<h2 id="alternative-approaches">Alternative approaches<a class="anchor" aria-label="anchor" href="#alternative-approaches"></a>
+</h2>
+<p>The {si} package is nascent. Anyone looking for more mature approaches could check the following:</p>
 <ul>
 <li><p>Reproducible <a href="https://rpubs.com/adam_dennett/257231" class="external-link">code</a> implementing SIMs in R by Adam Dennet, based on the outdated <code>sp</code> class system, and based on <a href="https://github.com/adamdennett/LondonSchoolsSIM/blob/main/Schools.Rmd" class="external-link"><code>sf</code> classes</a></p></li>
 <li><p>The <a href="https://github.com/LukeCe/spflow" class="external-link"><code>spflow</code> R package</a> on CRAN</p></li>
