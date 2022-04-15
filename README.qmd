@@ -3,7 +3,7 @@
 format: gfm
 number-sections: true
 title: "si: code and prose exploring Spatial Interaction models"
-bibliography: data-raw/references.bib
+bibliography: vignettes/references.bib
 execute:
   cache: false
   fig.path: "man/figures/README-"
@@ -19,12 +19,12 @@ knitr::opts_chunk$set(cache = TRUE,
 [![R-CMD-check](https://github.com/robinlovelace/si/workflows/R-CMD-check/badge.svg)](https://github.com/robinlovelace/si/actions)
 <!-- badges: end -->
 
-The goal of this 'si' repo is to demonstrate Spatial Interaction models from first principles. At present it just contains prose and reproducible code demonstrating how they work. In future it may be turned into software, e.g. an R package, for others wanting to develop spatial interaction models.
+The goal of {si} is to demonstrate Spatial Interaction models from first principles (see the `sims` vignette for a more detailed description of SIMs and implementation in R without using this package for reference).
+The package also contains reproducible code and documentation demonstrating how they work.
 
-# What are SIMs?
-
-Spatial Interaction Models (SIMs) are mathematical models for estimating movement between spatial entities developed by Alan Wilson in the late 1960s and early 1970, with considerable uptake and refinement for transport modelling since then @boyce_forecasting_2015.
-There are four main types of traditional SIMs [@wilson_family_1971]:
+Spatial Interaction Models (SIMs) estimate movement between spatial entities.
+They have been central to transport modelling since the 1960s, with many refinements over the [decades](https://www.researchgate.net/publication/284345182_Forecasting_urban_travel_Past_present_and_future).
+There are four main [types](https://doi.org/10.1016/j.jtrangeo.2015.12.008) of traditional SIM:
 
 -   Unconstrained
 
@@ -34,166 +34,12 @@ There are four main types of traditional SIMs [@wilson_family_1971]:
 
 -   Doubly-constrained
 
+The focus of this package is currently on unconstrained and production-constrained SIMs.
 
-Traditional 'gravity model' based SIMs can be defined as follows, based on the original definition [@wilson_family_1971]:
+# Implementations in other languages
 
-$$
-T_{i j}=K \frac{W_{i}^{(1)} W_{j}^{(2)}}{c_{i j}^{n}}
-$$
-
-"where $T_{i j}$ is a measure of the interaction between zones $i$ and $W_{i}^{(1)}$ is a measure of the 'mass term' associated with zone $z_i$, $W_{j}^{(2)}$ is a measure of the 'mass term' associated with zone $z_j$, and $c_{ij}$ is a measure of the distance, or generalised cost of travel, between zone $i$ and zone $j$".
-$K$ is a 'constant of proportionality' and $n$ is a parameter to be estimated.
-
-Redefining the $W$ terms as $m$ and $n$ for origins and destinations respectively [@simini_universal_2012], this classic definition of the 'gravity model' can be written as follows:
-
-$$
-T_{i j}=K \frac{m_{i} n_{j}}{c_{i j}^{n}}
-$$
-
-For the purposes of this project, we will focus on production-constrained SIMs.
-These can be defined as follows [@wilson_family_1971]:
-
-$$
-T_{ij} = A_iO_in_jf(c_{ij})
-$$
-
-where $A$ is a balancing factor defined as:
-
-$$
-A_{i}=\frac{1}{\sum_{j} m_{j} \mathrm{f}\left(c_{i j}\right)}
-$$
-
-$O_i$ is analogous to the travel demand in zone $i$, which can be roughly approximated by its population.
-
-<!-- $$ -->
-<!-- T_{ij} = \frac{m_{i}^{\alpha} n_{j} ^{\beta}} {f(r_{ij})} -->
-<!-- $$ -->
-
-
-
-<!-- ## Radiation models -->
-
-<!-- A more recent type of SIM is the radiation model @simini_universal_2012: -->
-
-<!-- $$ -->
-<!-- \langle T_{ij} \rangle = T_i \frac{m_{i} n_{j}} {(m_i + s_{ij})(m_i + n_j + s_{ij}) } -->
-<!-- $$ -->
-<!-- where $s_{ij}$ is defined as the total population living within a circle, the centre of which lies in the centroid of zone $i$ and the radius of which is the distance between zones $i$ and $j$. Thus, the greater the population living within the commute distance, the lower the estimated flow rate. -->
-
-```{r}
-
-```
-
-# Implementation in R
-
-```{r, message=FALSE}
-library(tmap)
-library(pct)
-library(tidyverse)
-```
-
-
-```{r}
-#| label: inputs
-zones = get_pct_zones(region = "west-yorkshire", geography = "msoa")
-centroids = get_pct_centroids(region = "west-yorkshire", geography = "msoa")
-zones = zones %>% 
-  filter(lad_name == "Leeds")
-centroids = centroids %>% 
-  filter(lad_name == "Leeds")
-tm_shape(zones) + tm_polygons("all", palette = "viridis")
-```
-
-
-```{r}
-od_df = od::points_to_od(centroids)
-od_sfc = od::odc_to_sfc(od_df[3:6])
-sf::st_crs(od_sfc) = 4326
-od_df$length = sf::st_length(od_sfc)
-od_df = od_df %>% transmute(
-  O, D, length = as.numeric(length) / 1000,
-  flow = NA, fc = NA
-  )
-od_df = sf::st_sf(od_df, geometry = od_sfc, crs = 4326)
-```
-
-An unconstrained spatial interaction model can be written as follows, with a more-or-less arbitrary value for `beta` which can be optimised later:
-
-```{r}
-#| label: unconstrained
-beta = 0.3
-i = 1
-j = 2
-for(i in seq(nrow(zones))) {
-  for(j in seq(nrow(zones))) {
-    O = zones$all[i]
-    n = zones$all[j]
-    ij = which(od_df$O == zones$geo_code[i] & od_df$D == zones$geo_code[j])
-    od_df$fc[ij] = exp(-beta * od_df$length[ij])
-    od_df$flow[ij] = O * n * od_df$fc[ij]
-  }
-}
-od_top = od_df %>% 
-  filter(O != D) %>% 
-  top_n(n = 2000, wt = flow)
-
-tm_shape(zones) +
-  tm_borders() +
-  tm_shape(od_top) +
-  tm_lines("flow")
-```
-
-We can plot the 'distance decay' curve associated with this SIM is as follows:
-
-```{r}
-#| label: distance_decay
-summary(od_df$fc)
-od_df %>% 
-  ggplot() +
-  geom_point(aes(length, fc))
-```
-
-We can make this production constrained as follows:
-
-```{r}
-#| label: constrained
-od_dfj = left_join(
-  od_df,
-  zones %>% select(O = geo_code, all) %>% sf::st_drop_geometry()
-)
-od_dfj = od_dfj %>% 
-  group_by(O) %>% 
-  mutate(flow_constrained = flow / sum(flow) * first(all)) %>%
-  ungroup()
-sum(od_dfj$flow_constrained) == sum(zones$all)
-od_top = od_dfj %>% 
-  filter(O != D) %>% 
-  top_n(n = 2000, wt = flow_constrained)
-
-tm_shape(zones) +
-  tm_borders() +
-  tm_shape(od_top) +
-  tm_lines("flow_constrained")
-```
-
-# Validation
-
-```{r validation}
-od_census = get_od()
-od_census_min = od_census %>% 
-  rename(O = geo_code1, D = geo_code2) %>% 
-  filter(O %in% zones$geo_code & D %in% zones$geo_code)
-od_dfjc = inner_join(od_dfj %>% select(-all), od_census_min)
-od_dfjc %>% 
-  ggplot() +
-  geom_point(aes(all, flow_constrained))
-cor(od_dfjc$all, od_dfjc$flow_constrained)^2
-```
-
-
-
-# Implementation in Python
-
+We would be interested to hear how the approach presented in this package compared with other implementations such as those presented in the links below.
+If anyone would like to try the approach or implement it in another language feel free to get in touch via the issue tracker.
 
 # Resources
 
