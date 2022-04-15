@@ -40,8 +40,18 @@ install.packages("remotes") # if not already installed
 remotes::install_github("robinlovelace/si")
 ```
 
-    Skipping install of 'si' from a github remote, the SHA1 (ee3925f5) has not changed since last install.
-      Use `force = TRUE` to force installation
+    Downloading GitHub repo robinlovelace/si@HEAD
+
+
+    * checking for file ‘/tmp/RtmpyAfjMO/remotes4108f5a13f16b/Robinlovelace-si-b95d682/DESCRIPTION’ ... OK
+    * preparing ‘si’:
+    * checking DESCRIPTION meta-information ... OK
+    * checking for LF line-endings in source and make files and shell scripts
+    * checking for empty or unneeded directories
+    * building ‘si_0.0.1.tar.gz’
+
+    Installing package into '/home/robin/R/x86_64-pc-linux-gnu-library/4.1'
+    (as 'lib' is unspecified)
 
 Run a basic SIM as follows:
 
@@ -51,7 +61,7 @@ od = si_to_od(origins = zones, destinations = zones, max_euclidean_distance = 50
 ```
 
     2505 OD pairs remaining after removing those with a distance greater than 5000 meters:
-    22 of all possible OD pairs
+    22% of all possible OD pairs
 
 ``` r
 gravity_model = function(od, beta) {
@@ -62,7 +72,7 @@ od_res = si_model(od, fun = gravity_model, beta = 0.3, var_p = origin_all)
 plot(od_res$distance_euclidean, od_res$res)
 ```
 
-![](man/figures/README-distance%20plot-1.png)
+![](man/figures/README-distance-1.png)
 
 What just happened? As the example above shows, the package
 allows/encourages you to define and use your own functions to estimate

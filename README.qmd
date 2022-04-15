@@ -47,7 +47,7 @@ remotes::install_github("robinlovelace/si")
 
 Run a basic SIM as follows:
 
-```{r distance plot}
+```{r distance}
 library(si)
 od = si_to_od(origins = zones, destinations = zones, max_euclidean_distance = 5000)
 gravity_model = function(od, beta) {
