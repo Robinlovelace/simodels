@@ -36,6 +36,9 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="nav-item">
+  <a class="nav-link" href="../articles/si.html">Get started</a>
+</li>
+<li class="nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
 <li class="active nav-item dropdown">
@@ -115,7 +118,7 @@ A_{i}=\frac{1}{\sum_{j} m_{j} \mathrm{f}\left(c_{i j}\right)}
 <div class="section level2">
 <h2 id="implementation-in-r">Implementation in R<a class="anchor" aria-label="anchor" href="#implementation-in-r"></a>
 </h2>
-<p>Before using the functions in this or other packages, it may be worth implementing SIMs from first principles, to gain an understanding of how they work. The code presented below was written before the functions in the <code>si</code> package were developed and demonstrate a common way of running SIMs, in a for loop, rather than using vectorised operations (used in the <code>si</code> package) which can be faster.</p>
+<p>Before using the functions in this or other packages, it may be worth implementing SIMs from first principles, to gain an understanding of how they work. The code presented below was written before the functions in the <code>si</code> package were developed, building on <span class="citation">Dennett (2012)</span>. The aim is to demonstrate a common way of running SIMs, in a for loop, rather than using vectorised operations (used in the <code>si</code> package) which can be faster.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/r-tmap/tmap" class="external-link">tmap</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
@@ -211,6 +214,9 @@ A_{i}=\frac{1}{\sum_{j} m_{j} \mathrm{f}\left(c_{i j}\right)}
 <div id="refs" class="references">
 <div id="ref-boyce_forecasting_2015">
 <p>Boyce, David E., and Huw C. W. L. Williams. 2015. <em>Forecasting Urban Travel: Past, Present and Future</em>. Edward Elgar Publishing.</p>
+</div>
+<div id="ref-dennett_estimating_2012">
+<p>Dennett, Adam. 2012. “Estimating Flows Between Geographical Locations:’Get Me Started in’spatial Interaction Modelling.” <em>UCL Working Papers Series</em> 44 (0): 024. <a href="http://www.bartlett.ucl.ac.uk/casa/publications/working-paper-181" class="external-link">http://www.bartlett.ucl.ac.uk/casa/publications/working-paper-181</a>.</p>
 </div>
 <div id="ref-lenormand_systematic_2016">
 <p>Lenormand, Maxime, Aleix Bassolas, and José J. Ramasco. 2016. “Systematic Comparison of Trip Distribution Laws and Models.” <em>Journal of Transport Geography</em> 51 (February): 158–69. <a href="https://doi.org/10.1016/j.jtrangeo.2015.12.008" class="external-link">https://doi.org/10.1016/j.jtrangeo.2015.12.008</a>.</p>
