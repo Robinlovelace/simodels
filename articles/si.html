@@ -88,12 +88,75 @@
 <span class="va">aus</span> <span class="op">=</span> <span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_read.html" class="external-link">read_sf</a></span><span class="op">(</span><span class="va">u1</span><span class="op">)</span>
 <span class="va">u2</span> <span class="op">=</span> <span class="st">"https://www.dropbox.com/s/wi3zxlq5pff1yda/AusMig2011.csv?raw=1"</span>
 <span class="va">od_migration_original</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="va">u2</span><span class="op">)</span></code></pre></div>
+<p>Let’s take a quick look at these input datasets before modelling them with SIMs:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">aus</span>
+<span class="co">#&gt; Simple feature collection with 15 features and 6 fields</span>
+<span class="co">#&gt; Geometry type: MULTIPOLYGON</span>
+<span class="co">#&gt; Dimension:     XY</span>
+<span class="co">#&gt; Bounding box:  xmin: 112.9211 ymin: -43.74051 xmax: 159.1092 ymax: -9.142176</span>
+<span class="co">#&gt; Geodetic CRS:  GDA94</span>
+<span class="co">#&gt; <span style="color: #949494;"># A tibble: 15 × 7</span></span>
+<span class="co">#&gt;    GCCSA_CODE GCC_CODE16 GCCSA_NAME              STATE_CODE STATE_NAME AREA_SQKM</span>
+<span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 1RNSW      1RNSW      Rest of NSW             1          New South…   <span style="text-decoration: underline;">788</span>443.</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 1GSYD      1GSYD      Greater Sydney          1          New South…    <span style="text-decoration: underline;">12</span>368.</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 2GMEL      2GMEL      Greater Melbourne       2          Victoria       <span style="text-decoration: underline;">9</span>993.</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> 2RVIC      2RVIC      Rest of Vic.            2          Victoria     <span style="text-decoration: underline;">217</span>503.</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> 3RQLD      3RQLD      Rest of Qld             3          Queensland  1<span style="text-decoration: underline;">714</span>330.</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> 3GBRI      3GBRI      Greater Brisbane        3          Queensland    <span style="text-decoration: underline;">15</span>842.</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> 4RSAU      4RSAU      Rest of SA              4          South Aus…   <span style="text-decoration: underline;">981</span>015.</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 4GADE      4GADE      Greater Adelaide        4          South Aus…     <span style="text-decoration: underline;">3</span>260.</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 5GPER      5GPER      Greater Perth           5          Western A…     <span style="text-decoration: underline;">6</span>416.</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 5RWAU      5RWAU      Rest of WA              5          Western A…  2<span style="text-decoration: underline;">520</span>230.</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">11</span> 6GHOB      6GHOB      Greater Hobart          6          Tasmania       <span style="text-decoration: underline;">1</span>695.</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">12</span> 6RTAS      6RTAS      Rest of Tas.            6          Tasmania      <span style="text-decoration: underline;">66</span>323.</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">13</span> 7RNTE      7RNTE      Rest of NT              7          Northern …  1<span style="text-decoration: underline;">344</span>930.</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">14</span> 7GDAR      7GDAR      Greater Darwin          7          Northern …     <span style="text-decoration: underline;">3</span>164.</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">15</span> 8ACTE      8ACTE      Australian Capital Ter… 8          Australia…     <span style="text-decoration: underline;">2</span>358.</span>
+<span class="co">#&gt; <span style="color: #949494;"># … with 1 more variable: geometry &lt;MULTIPOLYGON [°]&gt;</span></span>
+<span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">od_migration_original</span><span class="op">)</span>
+<span class="co">#&gt; [1] 225  13</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">od_migration_original</span><span class="op">)</span>
+<span class="co">#&gt;           Origin Orig_code       Destination Dest_code    Flow vi1_origpop</span>
+<span class="co">#&gt; 1 Greater Sydney     1GSYD    Greater Sydney     1GSYD 3395015     4391673</span>
+<span class="co">#&gt; 2 Greater Sydney     1GSYD       Rest of NSW     1RNSW   91031     4391673</span>
+<span class="co">#&gt; 3 Greater Sydney     1GSYD Greater Melbourne     2GMEL   22601     4391673</span>
+<span class="co">#&gt; 4 Greater Sydney     1GSYD       Rest of Vic     2RVIC    4416     4391673</span>
+<span class="co">#&gt; 5 Greater Sydney     1GSYD  Greater Brisbane     3GBRI   22888     4391673</span>
+<span class="co">#&gt; 6 Greater Sydney     1GSYD       Rest of Qld     3RQLD   27445     4391673</span>
+<span class="co">#&gt;   wj1_destpop vi2_origunemp wj2_destunemp vi3_origmedinc wj3_destmedinc</span>
+<span class="co">#&gt; 1     4391673          5.74          5.74         780.64         780.64</span>
+<span class="co">#&gt; 2     2512952          5.74          6.12         780.64         509.97</span>
+<span class="co">#&gt; 3     3999981          5.74          5.47         780.64         407.95</span>
+<span class="co">#&gt; 4     1345717          5.74          5.17         780.64         506.58</span>
+<span class="co">#&gt; 5     2065998          5.74          5.86         780.64         767.08</span>
+<span class="co">#&gt; 6     2253723          5.74          6.22         780.64         446.48</span>
+<span class="co">#&gt;   vi4_origpctrent wj4_destpctrent</span>
+<span class="co">#&gt; 1           31.77           31.77</span>
+<span class="co">#&gt; 2           31.77           27.20</span>
+<span class="co">#&gt; 3           31.77           27.34</span>
+<span class="co">#&gt; 4           31.77           24.08</span>
+<span class="co">#&gt; 5           31.77           33.19</span>
+<span class="co">#&gt; 6           31.77           32.57</span></code></pre></div>
+<p>The results printed above show that:</p>
+<ul>
+<li><p><code>aus</code> represents the 15 regions of Australia, with columns containing zone identifiers (IDs), primarily <code>GCCSA_CODE</code>, and the area of each zone (<code>AREA_SQKM</code>).</p></li>
+<li><p><code>od_migration_original</code> contains 225 rows of data representing the movement of people between the zones in <code>aus</code>. Note that 255 is 15 squared, meaning that this OD dataset contains the complete combination of migration flows, starting with zone <code>1GSYD</code> to <code>1GSYD</code>. These codes are present in the <code>GCCSA_CODE</code> column in the <code>aus</code> object. The first row of the OD dataset represents ‘intra-zonal’ migrations in Greater Sydney, presumably counting the number of people who move house from somewhere in the region to another home in the region. There are 13 columns in this dataset, the most important of which are <code>Orig_code</code>, <code>Dest_code</code>, and <code>Flow</code>.</p></li>
+</ul>
+<p>A useful convention with ‘long form’ OD datasets is for the first two columns to contain zone IDs that correspond to values in the first column of the zone dataset. The following code cleans the raw input datasets to get the data in this ideal form, and removes all variables that we do not currently need:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># todo</span></code></pre></div>
+<div class="section level2">
+<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h2>
 <div id="refs" class="references">
 <div id="ref-dennett_estimating_2012">
 <p>Dennett, Adam. 2012. “Estimating Flows Between Geographical Locations:’Get Me Started in’spatial Interaction Modelling.” <em>UCL Working Papers Series</em> 44 (0): 024. <a href="http://www.bartlett.ucl.ac.uk/casa/publications/working-paper-181" class="external-link">http://www.bartlett.ucl.ac.uk/casa/publications/working-paper-181</a>.</p>
 </div>
 <div id="ref-dennett_modelling_2018">
 <p>———. 2018. “Modelling Population Flows Using Spatial Interaction Models.” <em>Australian Population Studies</em> 2 (2): 33–58. <a href="https://doi.org/10.37970/aps.v2i2.38" class="external-link">https://doi.org/10.37970/aps.v2i2.38</a>.</p>
+</div>
 </div>
 </div>
   </main>
