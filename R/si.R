@@ -15,7 +15,7 @@
 #' odsf = si_to_od(origins, destinations)
 #' plot(odsf)
 #' 
-si_to_od = function(origins, destinations, max_euclidean_distance = 10000) {
+si_to_od = function(origins, destinations, max_euclidean_distance = Inf) {
   if(!identical(origins, destinations)) {
         stop("Origins and destinations are different, not implemented yet")
     }

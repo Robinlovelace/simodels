@@ -13,12 +13,13 @@ bibliography: references.bib
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>",
-  cache = TRUE
+  comment = "#>"
 )
 ```
 
-Pre-requisites: you should have [installed R](https://cran.r-project.org/) and a suitable editor such as [RStudio](https://www.rstudio.com/products/rstudio/download/preview/) or [VSCode with R plugin](https://github.com/REditorSupport/vscode-R).
+# Prerequisites
+
+You need to have [installed R](https://cran.r-project.org/) and a suitable editor such as [RStudio](https://www.rstudio.com/products/rstudio/download/preview/) or [VSCode with R plugin](https://github.com/REditorSupport/vscode-R).
 See the package's [README](https://robinlovelace.github.io/si/) for instructions on installing the {si} package.
 
 <!--#  Test the necessary packages are installed by loading them (we will also use {dplyr}):-->
@@ -27,45 +28,58 @@ See the package's [README](https://robinlovelace.github.io/si/) for instructions
 library(si)
 ```
 
+# Input data
+
 This tutorial builds on a [reproducible](https://github.com/adamdennett/SIModelling/blob/SIModelling-Edits/SimAus2.Rmd) guide to SIMs in R [@dennett_modelling_2018].^[
 See @dennett_estimating_2012 or an earlier guide on SIMs in R.
 ]
 We start by importing open access data representing movement between zones in Australia (thanks to Adam Dennett for making the files accessible):
 
-```{r}
-u1 = "https://www.dropbox.com/s/0fg80nzcxcsybii/GCCSA_2016_AUST_New.geojson?raw=1"
-zones_original = sf::read_sf(u1)
+```{r import}
+u1 = "https://github.com/Robinlovelace/si/releases/download/0.0.1/zones_aus.geojson"
+zones_aus = sf::read_sf(u1)
 u2 = "https://www.dropbox.com/s/wi3zxlq5pff1yda/AusMig2011.csv?raw=1"
-od_migration_original = read.csv(u2)
+od_aus = read.csv(u2)
 ```
 
 ```{r, echo=FALSE, eval=FALSE}
+u1 = "https://www.dropbox.com/s/0fg80nzcxcsybii/GCCSA_2016_AUST_New.geojson?raw=1" # original
+zones_original = sf::read_sf(u1)
 sf::write_sf(zones_original, "GCCSA_2016_AUST_New.geojson")
+lobstr::obj_size(zones_original$geometry) / lobstr::obj_size(zones_original)
+# 99% of size taken up with geometry, no need for spatial resolution -> simplify
 piggyback::pb_upload("GCCSA_2016_AUST_New.geojson")
-readr::write_csv(od_migration_original, "od_migration_original.csv")
+readr::write_csv(od_aus, "od_migration_original.csv")
 piggyback::pb_upload("od_migration_original.csv")
+library(sf)
+zones_aus_simplified = rmapshaper::ms_simplify(zones_original, keep = 0.001)
+lobstr::obj_size(zones_aus_simplified) / lobstr::obj_size(zones_original)
+# 0.2% of the size
+plot(zones_aus_simplified$geometry[1]) # still too detailed?
+sf::write_sf(zones_aus_simplified, "zones_aus.geojson")
+piggyback::pb_upload("zones_aus.geojson")
 ```
 
 Let's take a quick look at and 'minimize' these input datasets before modelling them with SIMs:
 
-```{r}
-dim(zones_original)
-names(zones_original)
+```{r clean}
+dim(zones_aus)
+names(zones_aus)
 key_zone_names = c("GCCSA_CODE", "GCCSA_NAME", "AREA_SQKM")
-zones = zones_original[key_zone_names]
+zones = zones_aus[key_zone_names]
 head(zones, 2)
-dim(od_migration_original)
-names(od_migration_original)
+dim(od_aus)
+names(od_aus)
 key_od_names = c("Orig_code", "Dest_code", "Flow")
-od = od_migration_original[key_od_names]
+od = od_aus[key_od_names]
 head(od, 2)
 ```
 
 The results printed above show that:
 
--   `zones_original` represents the 15 regions of Australia, with columns containing zone identifiers (IDs), primarily `GCCSA_CODE`, and the area of each zone (`AREA_SQKM`). The minimal `zones` object contains only the region code, name, and area.
+-   `zones_aus` represents the 15 regions of Australia, with columns containing zone identifiers (IDs), primarily `GCCSA_CODE`, and the area of each zone (`AREA_SQKM`). The minimal `zones` object contains only the region code, name, and area.
 
--   `od_migration_original` contains 225 rows of data representing the movement of people between the zones in `aus`.
+-   `od_aus` contains 225 rows of data representing the movement of people between the zones in `aus`.
     Note that 255 is 15 squared, meaning that this OD dataset contains the complete combination of migration flows, starting with zone `1GSYD` to `1GSYD`.
     These codes are present in the `GCCSA_CODE` column in the `aus` object.
     The first row of the OD dataset represents 'intra-zonal' migrations in Greater Sydney, presumably counting the number of people who move house from somewhere in the region to another home in the region.
@@ -83,6 +97,17 @@ summary(od[[2]] %in% zones[[1]])
 
 It is clear from the above that we have 'clean' input datasets, let's begin with the modelling!
 
-# Modelling SIMs from first principles
+# Preparing a SIM
+
+Key to the workings of the {si} package is the conversion of geographic objects representing origins and destinations into an OD dataset.
+In this case, we already have an OD dataset, so this step is less relevant.
+However, we will take this step in any case because many SIMs start without such a comprehensive OD dataset as we have in this case.
+
+Prepare the OD dataset as follows:
+
+```{r}
+od_sim = si_to_od(origins = zones, destinations = zones)
+```
+
 
 # References
