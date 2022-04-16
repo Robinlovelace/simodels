@@ -35,4 +35,32 @@ od_migration_original = read.csv(u2)
 ```{r, echo=FALSE, eval=FALSE}
 sf::write_sf(aus, "GCCSA_2016_AUST_New.geojson")
 piggyback::pb_upload("GCCSA_2016_AUST_New.geojson")
+
 ```
+
+Let's take a quick look at these input datasets before modelling them with SIMs:
+
+```{r}
+aus
+dim(od_migration_original)
+head(od_migration_original)
+```
+
+The results printed above show that:
+
+-   `aus` represents the 15 regions of Australia, with columns containing zone identifiers (IDs), primarily `GCCSA_CODE`, and the area of each zone (`AREA_SQKM`).
+
+-   `od_migration_original` contains 225 rows of data representing the movement of people between the zones in `aus`.
+    Note that 255 is 15 squared, meaning that this OD dataset contains the complete combination of migration flows, starting with zone `1GSYD` to `1GSYD`.
+    These codes are present in the `GCCSA_CODE` column in the `aus` object.
+    The first row of the OD dataset represents 'intra-zonal' migrations in Greater Sydney, presumably counting the number of people who move house from somewhere in the region to another home in the region.
+    There are 13 columns in this dataset, the most important of which are `Orig_code`, `Dest_code`, and `Flow`.
+
+A useful convention with 'long form' OD datasets is for the first two columns to contain zone IDs that correspond to values in the first column of the zone dataset.
+The following code cleans the raw input datasets to get the data in this ideal form, and removes all variables that we do not currently need:
+
+```{r}
+# todo
+```
+
+# References
