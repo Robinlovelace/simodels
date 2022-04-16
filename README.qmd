@@ -41,7 +41,7 @@ Install the package as follows:
 install.packages("remotes") # if not already installed
 ```
 
-```{r installation}
+```r
 remotes::install_github("robinlovelace/si")
 ```
 
@@ -49,7 +49,11 @@ Run a basic SIM as follows:
 
 ```{r distance}
 library(si)
-od = si_to_od(origins = zones, destinations = zones, max_dist = 5000)
+od = si_to_od(
+  origins = si_zones,
+  destinations = si_zones,
+  max_dist = 5000
+  )
 gravity_model = function(od, beta) {
   od[["origin_all"]] * od[["destination_all"]] *
     exp(-beta * od[["distance_euclidean"]] / 1000)

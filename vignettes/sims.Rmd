@@ -89,9 +89,9 @@ library(ggplot2)
 ```
 
 ```{r inputs}
-zones = si::zones
-centroids = si::centroids
-od_census_min = si::od_census_min
+zones = si::si_zones
+centroids = si::si_centroids
+od = si::si_od_census
 tm_shape(zones) + tm_polygons("all", palette = "viridis")
 ```
 
@@ -166,7 +166,7 @@ tm_shape(zones) +
 # Validation
 
 ```{r validation}
-od_dfjc = inner_join(od_dfj %>% select(-all), od_census_min)
+od_dfjc = inner_join(od_dfj %>% select(-all), od)
 od_dfjc %>% 
   ggplot() +
   geom_point(aes(all, flow_constrained))
