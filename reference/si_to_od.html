@@ -63,7 +63,7 @@ with a spatial interaction model</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">si_to_od</span><span class="op">(</span><span class="va">origins</span>, <span class="va">destinations</span>, max_euclidean_distance <span class="op">=</span> <span class="fl">10000</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">si_to_od</span><span class="op">(</span><span class="va">origins</span>, <span class="va">destinations</span>, max_euclidean_distance <span class="op">=</span> <span class="cn">Inf</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -82,8 +82,6 @@ Only OD pairs that are this distance apart or less will be returned.</p></dd>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">origins</span> <span class="op">=</span> <span class="va">centroids</span></span>
 <span class="r-in"><span class="va">destinations</span> <span class="op">=</span> <span class="va">centroids</span></span>
 <span class="r-in"><span class="va">odsf</span> <span class="op">=</span> <span class="fu">si_to_od</span><span class="op">(</span><span class="va">origins</span>, <span class="va">destinations</span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 7035 OD pairs remaining after removing those with a distance greater than 10000 meters:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 61% of all possible OD pairs</span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">odsf</span><span class="op">)</span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>plotting the first 9 out of 31 attributes; use max.plot = 31 to plot all</span>
 <span class="r-plt img"><img src="si_to_od-1.png" alt="" width="700" height="433"></span>

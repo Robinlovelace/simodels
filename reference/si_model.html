@@ -83,8 +83,6 @@ such that the total for each zone of origin cannot go above this value.</p></dd>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">od</span> <span class="op">=</span> <span class="fu"><a href="si_to_od.html">si_to_od</a></span><span class="op">(</span><span class="va">zones</span>, <span class="va">zones</span><span class="op">)</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 6895 OD pairs remaining after removing those with a distance greater than 10000 meters:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 60% of all possible OD pairs</span>
 <span class="r-in"><span class="va">fun_dd</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">od</span>, <span class="va">d</span> <span class="op">=</span> <span class="st">"distance_euclidean"</span>, <span class="va">beta</span> <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="op">-</span><span class="va">beta</span> <span class="op">*</span> <span class="va">od</span><span class="op">[[</span><span class="va">d</span><span class="op">]</span><span class="op">]</span> <span class="op">/</span> <span class="fl">1000</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">od_dd</span> <span class="op">=</span> <span class="fu">si_model</span><span class="op">(</span><span class="va">od</span>, fun <span class="op">=</span> <span class="va">fun_dd</span><span class="op">)</span></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">od</span><span class="op">$</span><span class="va">distance_euclidean</span>, <span class="va">od_dd</span><span class="op">$</span><span class="va">res</span><span class="op">)</span></span>
@@ -96,64 +94,64 @@ such that the total for each zone of origin cannot go above this value.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Simple feature collection with 6 features and 32 fields</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Geometry type: LINESTRING</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Dimension:     XY</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Bounding box:  xmin: -1.470966 ymin: 53.84482 xmax: -1.346497 ymax: 53.92906</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Bounding box:  xmin: -1.704658 ymin: 53.88306 xmax: -1.346497 ymax: 53.92906</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Geodetic CRS:  WGS 84</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           O         D        ox       oy        dx       dy distance_euclidean</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 E02002330 E02002330 -1.400108 53.92906 -1.400108 53.92906              0.000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 E02002330 E02002331 -1.400108 53.92906 -1.346497 53.92305           3579.804</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 E02002330 E02002334 -1.400108 53.92906 -1.357667 53.88306           5821.556</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 E02002330 E02002335 -1.400108 53.92906 -1.470966 53.89184           6222.126</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 E02002330 E02002351 -1.400108 53.92906 -1.441342 53.84482           9744.912</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 E02002331 E02002330 -1.346497 53.92305 -1.400108 53.92906           3579.804</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 E02002330 E02002332 -1.400108 53.92906 -1.704658 53.91073          20082.413</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 E02002330 E02002333 -1.400108 53.92906 -1.687600 53.90066          19121.983</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 E02002330 E02002334 -1.400108 53.92906 -1.357667 53.88306           5821.556</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 E02002330 E02002335 -1.400108 53.92906 -1.470966 53.89184           6222.126</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   origin_geo_name origin_lad11cd origin_lad_name origin_all origin_bicycle</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1       Leeds 001      E08000035           Leeds       2809             52</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2       Leeds 001      E08000035           Leeds       2809             52</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3       Leeds 001      E08000035           Leeds       2809             52</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4       Leeds 001      E08000035           Leeds       2809             52</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5       Leeds 001      E08000035           Leeds       2809             52</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6       Leeds 002      E08000035           Leeds       2387             53</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6       Leeds 001      E08000035           Leeds       2809             52</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   origin_foot origin_car_driver origin_car_passenger origin_motorbike</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1         300              2170                  138               10</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2         300              2170                  138               10</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3         300              2170                  138               10</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4         300              2170                  138               10</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5         300              2170                  138               10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6         469              1573                  132               16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6         300              2170                  138               10</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   origin_train_tube origin_bus origin_taxi_other destination_geo_name</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                36         89                14            Leeds 001</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2                36         89                14            Leeds 002</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                36         89                14            Leeds 005</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4                36         89                14            Leeds 006</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5                36         89                14            Leeds 022</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6                10        126                 8            Leeds 001</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                36         89                14            Leeds 003</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4                36         89                14            Leeds 004</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5                36         89                14            Leeds 005</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6                36         89                14            Leeds 006</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   destination_lad11cd destination_lad_name destination_all destination_bicycle</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1           E08000035                Leeds            2809                  52</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2           E08000035                Leeds            2387                  53</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3           E08000035                Leeds            2995                  53</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4           E08000035                Leeds            3056                  33</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5           E08000035                Leeds            2293                  18</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6           E08000035                Leeds            2809                  52</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3           E08000035                Leeds            2471                  39</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4           E08000035                Leeds            3743                  80</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5           E08000035                Leeds            2995                  53</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6           E08000035                Leeds            3056                  33</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   destination_foot destination_car_driver destination_car_passenger</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1              300                   2170                       138</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2              469                   1573                       132</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3              170                   2421                       140</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4              106                   2549                       159</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5               91                   1819                       133</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6              300                   2170                       138</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3              341                   1666                       147</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4              529                   2340                       193</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5              170                   2421                       140</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6              106                   2549                       159</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   destination_motorbike destination_train_tube destination_bus</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1                    10                     36              89</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2                    16                     10             126</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                    10                     43             142</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4                    12                     26             156</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5                     9                     35             167</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6                    10                     36              89</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   destination_taxi_other                       geometry       res</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                     14 LINESTRING (-1.400108 53.92... 7890481.0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2                      8 LINESTRING (-1.400108 53.92... 2290854.2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                     16 LINESTRING (-1.400108 53.92... 1467126.9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4                     15 LINESTRING (-1.400108 53.92... 1327500.1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5                     21 LINESTRING (-1.400108 53.92...  346184.3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6                     14 LINESTRING (-1.346497 53.92... 2290854.2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                    19                     75             166</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4                    26                    221             335</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5                    10                     43             142</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6                    12                     26             156</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   destination_taxi_other                       geometry        res</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                     14 LINESTRING (-1.400108 53.92... 7890481.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                      8 LINESTRING (-1.400108 53.92... 2290854.16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                     18 LINESTRING (-1.400108 53.92...   16784.95</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4                     19 LINESTRING (-1.400108 53.92...   33915.65</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5                     16 LINESTRING (-1.400108 53.92... 1467126.90</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6                     15 LINESTRING (-1.400108 53.92... 1327500.07</span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">od</span><span class="op">$</span><span class="va">distance_euclidean</span>, <span class="va">od_output</span><span class="op">$</span><span class="va">res</span><span class="op">)</span></span>
 <span class="r-plt img"><img src="si_model-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span class="va">od_pconst</span> <span class="op">=</span> <span class="fu">si_model</span><span class="op">(</span><span class="va">od</span>, fun <span class="op">=</span> <span class="va">fun</span>, beta <span class="op">=</span> <span class="fl">0.3</span>, O <span class="op">=</span> <span class="st">"origin_all"</span>, n <span class="op">=</span> <span class="st">"destination_all"</span>,</span>
