@@ -42,6 +42,9 @@ si_to_od = function(origins, destinations, max_dist = Inf) {
   origins_to_join = sf::st_drop_geometry(origins)
   names(origins_to_join) = paste0("origin_", names(origins_to_join))
   names(origins_to_join)[1] = names(od_df)[1]
+  od_sfc = od::odc_to_sfc(od_df[3:6])
+  sf::st_crs(od_sfc) = 4326 # todo: add CRS argument?
+  od_df = od_df[-c(3:6)]
   od_dfj = dplyr::inner_join(od_df, origins_to_join, by = "O")
   # join destination attributes
   destinations_to_join = sf::st_drop_geometry(destinations)
@@ -49,11 +52,6 @@ si_to_od = function(origins, destinations, max_dist = Inf) {
   names(destinations_to_join)[1] = names(od_df)[2]
   od_dfj = dplyr::inner_join(od_dfj, destinations_to_join, by = "D")
   names(od_dfj)
-
-  # convert to sfc:
-
-  od_sfc = od::odc_to_sfc(od_df[3:6])
-  sf::st_crs(od_sfc) = 4326 # todo: add CRS argument?
   # create and return sf object
   sf::st_sf(od_dfj, geometry = od_sfc)
 }
