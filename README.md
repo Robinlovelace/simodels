@@ -40,24 +40,15 @@ install.packages("remotes") # if not already installed
 remotes::install_github("robinlovelace/si")
 ```
 
-    Downloading GitHub repo robinlovelace/si@HEAD
-
-
-    * checking for file ‘/tmp/RtmpyAfjMO/remotes4108f5a13f16b/Robinlovelace-si-b95d682/DESCRIPTION’ ... OK
-    * preparing ‘si’:
-    * checking DESCRIPTION meta-information ... OK
-    * checking for LF line-endings in source and make files and shell scripts
-    * checking for empty or unneeded directories
-    * building ‘si_0.0.1.tar.gz’
-
-    Installing package into '/home/robin/R/x86_64-pc-linux-gnu-library/4.1'
-    (as 'lib' is unspecified)
-
 Run a basic SIM as follows:
 
 ``` r
 library(si)
-od = si_to_od(origins = zones, destinations = zones, max_dist = 5000)
+od = si_to_od(
+  origins = si_zones,
+  destinations = si_zones,
+  max_dist = 5000
+  )
 ```
 
     2505 OD pairs remaining after removing those with a distance greater than 5000 meters:
@@ -97,32 +88,30 @@ Perhaps the most important function in the package is therefore
 `si_to_od()`, which transforms geographic entities (typically zones but
 points and other geographic features could be used) into a data frame
 representing the full combination of origin-destination pairs that are
-less than `max_dist` meters apart. A common saying in data
-science is that 80% of the effort goes into the pre-processing stage.
-This is equally true for spatial interaction modelling as it is for
-other types of data intensive analysis/modelling work. So what does this
-function return?
+less than `max_dist` meters apart. A common saying in data science is
+that 80% of the effort goes into the pre-processing stage. This is
+equally true for spatial interaction modelling as it is for other types
+of data intensive analysis/modelling work. So what does this function
+return?
 
 ``` r
 names(od)
 ```
 
      [1] "O"                         "D"                        
-     [3] "ox"                        "oy"                       
-     [5] "dx"                        "dy"                       
-     [7] "distance_euclidean"        "origin_geo_name"          
-     [9] "origin_lad11cd"            "origin_lad_name"          
-    [11] "origin_all"                "origin_bicycle"           
-    [13] "origin_foot"               "origin_car_driver"        
-    [15] "origin_car_passenger"      "origin_motorbike"         
-    [17] "origin_train_tube"         "origin_bus"               
-    [19] "origin_taxi_other"         "destination_geo_name"     
-    [21] "destination_lad11cd"       "destination_lad_name"     
-    [23] "destination_all"           "destination_bicycle"      
-    [25] "destination_foot"          "destination_car_driver"   
-    [27] "destination_car_passenger" "destination_motorbike"    
-    [29] "destination_train_tube"    "destination_bus"          
-    [31] "destination_taxi_other"    "geometry"                 
+     [3] "distance_euclidean"        "origin_geo_name"          
+     [5] "origin_lad11cd"            "origin_lad_name"          
+     [7] "origin_all"                "origin_bicycle"           
+     [9] "origin_foot"               "origin_car_driver"        
+    [11] "origin_car_passenger"      "origin_motorbike"         
+    [13] "origin_train_tube"         "origin_bus"               
+    [15] "origin_taxi_other"         "destination_geo_name"     
+    [17] "destination_lad11cd"       "destination_lad_name"     
+    [19] "destination_all"           "destination_bicycle"      
+    [21] "destination_foot"          "destination_car_driver"   
+    [23] "destination_car_passenger" "destination_motorbike"    
+    [25] "destination_train_tube"    "destination_bus"          
+    [27] "destination_taxi_other"    "geometry"                 
 
 As shown in the output above, the function allows you to use any
 variable in the origin or destination data in the function, with column

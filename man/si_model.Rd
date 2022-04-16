@@ -25,7 +25,7 @@ Executes a spatial iteraction model based on an OD data frame
 and user-specified function
 }
 \examples{
-od = si_to_od(zones, zones)
+od = si_to_od(si_zones, si_zones, max_dist = 4000)
 fun_dd = function(od, d = "distance_euclidean", beta = 0.3) exp(-beta * od[[d]] / 1000)
 od_dd = si_model(od, fun = fun_dd)
 plot(od$distance_euclidean, od_dd$res)

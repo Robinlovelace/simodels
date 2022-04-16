@@ -21,9 +21,8 @@ estimate movement between origins and destinations
 with a spatial interaction model
 }
 \examples{
-origins = centroids
-destinations = centroids
-odsf = si_to_od(origins, destinations)
+origins = si_centroids
+destinations = si_centroids
+odsf = si_to_od(origins, destinations, max_dist = 2000)
 plot(odsf)
-
 }
