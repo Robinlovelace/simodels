@@ -5,6 +5,7 @@ vignette: >
   %\VignetteIndexEntry{Tutorial: spatial interaction models with R}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+bibliography: references.bib
 ---
 
 ```{r, include = FALSE}
@@ -21,4 +22,17 @@ See the package's [README](https://robinlovelace.github.io/si/) for instructions
 library(si)
 ```
 
-This tutorial builds on @dennett_estimating_2012's pioneering tutorial.
+This tutorial builds on @dennett_modelling_2018 (which in turn builds on @dennett_estimating_2012's pioneering [reproducible](https://github.com/adamdennett/SIModelling/blob/SIModelling-Edits/SimAus2.Rmd) tutorial on SIMs with R).
+We start by importing open access data representing movement between zones in Australia (thanks to Adam Dennett for making the files accessible):
+
+```{r}
+u1 = "https://www.dropbox.com/s/0fg80nzcxcsybii/GCCSA_2016_AUST_New.geojson?raw=1"
+aus = sf::read_sf(u1)
+u2 = "https://www.dropbox.com/s/wi3zxlq5pff1yda/AusMig2011.csv?raw=1"
+od_migration_original = read.csv(u2)
+```
+
+```{r, echo=FALSE, eval=FALSE}
+sf::write_sf(aus, "GCCSA_2016_AUST_New.geojson")
+piggyback::pb_upload("GCCSA_2016_AUST_New.geojson")
+```
