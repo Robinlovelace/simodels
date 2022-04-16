@@ -18,19 +18,7 @@ knitr::opts_chunk$set(cache = TRUE,
 [![R-CMD-check](https://github.com/robinlovelace/si/workflows/R-CMD-check/badge.svg)](https://github.com/robinlovelace/si/actions)
 <!-- badges: end -->
 
-The goal of {si} is to demonstrate Spatial Interaction models from first principles (see the [`sims` vignette](https://robinlovelace.github.io/si/articles/sims.html) for a more detailed description of SIMs and implementation in R without using this package for reference).
-The package also contains reproducible code and documentation demonstrating how they work.
-
-Spatial Interaction Models (SIMs) estimate movement between spatial entities.
-They have been central to transport modelling since the 1960s, with many refinements over the [decades](https://www.researchgate.net/publication/284345182_Forecasting_urban_travel_Past_present_and_future).
-There are four main [types](https://doi.org/10.1016/j.jtrangeo.2015.12.008) of traditional SIM:
-
--   Unconstrained
--   Production-constrained
--   Attraction-constrained
--   Doubly-constrained
-
-The focus of this package is currently on unconstrained and production-constrained SIMs.
+The goal of {si} is to provide a simple and flexible framework for developing spatial interaction models (SIMs), which estimate the amount of movement between spatial entities.
 
 <!-- # Implementations in other languages -->
 ## si basics
@@ -73,7 +61,7 @@ The output `si_model()` is a geographic object which can be plotted as a map:
 plot(od_res["res"], logz = TRUE)
 ```
 
-Perhaps the most important function in the package is therefore `si_to_od()`, which transforms geographic entities (typically zones but points and other geographic features could be used) into a data frame representing the full combination of origin-destination pairs that are less than `max_dist` meters apart.
+The `si_to_od()` function transforms geographic entities (typically polygons and points) into a data frame representing the full combination of origin-destination pairs that are less than `max_dist` meters apart.
 A common saying in data science is that 80% of the effort goes into the pre-processing stage.
 This is equally true for spatial interaction modelling as it is for other types of data intensive analysis/modelling work.
 So what does this function return?
@@ -91,12 +79,15 @@ Note: support for OD datasets in which the origins and destinations are differen
 We would be interested to hear how the approach presented in this package compared with other implementations such as those presented in the links below.
 If anyone would like to try the approach or implement it in another language feel free to get in touch via the issue tracker.
 
-## Alternative approaches
+## Further reading
 
-The {si} package is nascent. Anyone looking for more mature approaches could check the following:
+For details on what SIMs are and how they have been defined mathematically and in code from first principles, see the [`sims` vignette](https://robinlovelace.github.io/si/articles/sims-first-principles.html).
 
-- Reproducible [code](https://rpubs.com/adam_dennett/257231) implementing SIMs in R by Adam Dennet, based on the outdated `sp` class system, and based on [`sf` classes](https://github.com/adamdennett/LondonSchoolsSIM/blob/main/Schools.Rmd)
+To dive straight into using {si} to develop SIMs, see the [`si` Get started vignette](https://robinlovelace.github.io/si/articles/si.html).
+
+For a detailed introduction to SIMs, support by reproducible R code, see Adam Dennett's [2018 paper](https://doi.org/10.37970/aps.v2i2.38).
+
+## Other SIM packages
 
 - The [`spflow` R package](https://github.com/LukeCe/spflow) on CRAN
-
 - The [`spint` Python package](https://spint.readthedocs.io/en/latest/)
