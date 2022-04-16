@@ -4,7 +4,7 @@
 \alias{si_to_od}
 \title{Prepare OD}
 \usage{
-si_to_od(origins, destinations, max_euclidean_distance = 10000)
+si_to_od(origins, destinations, max_euclidean_distance = Inf)
 }
 \arguments{
 \item{origins}{\code{sf} object representing origin locations/zones}
