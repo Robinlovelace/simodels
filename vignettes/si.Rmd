@@ -1,8 +1,10 @@
 ---
-title: "Tutorial: spatial interaction models with R"
-output: rmarkdown::html_vignette
+title: "Spatial interaction models with R"
+output:
+  rmarkdown::html_vignette:
+    number_sections: true
 vignette: >
-  %\VignetteIndexEntry{Tutorial: spatial interaction models with R}
+  %\VignetteIndexEntry{Spatial interaction models with R}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 bibliography: references.bib
@@ -11,56 +13,76 @@ bibliography: references.bib
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  cache = TRUE
 )
 ```
 
 Pre-requisites: you should have [installed R](https://cran.r-project.org/) and a suitable editor such as [RStudio](https://www.rstudio.com/products/rstudio/download/preview/) or [VSCode with R plugin](https://github.com/REditorSupport/vscode-R).
 See the package's [README](https://robinlovelace.github.io/si/) for instructions on installing the {si} package.
 
+<!--#  Test the necessary packages are installed by loading them (we will also use {dplyr}):-->
+
 ```{r setup}
 library(si)
 ```
 
-This tutorial builds on @dennett_modelling_2018 (which in turn builds on @dennett_estimating_2012's pioneering [reproducible](https://github.com/adamdennett/SIModelling/blob/SIModelling-Edits/SimAus2.Rmd) tutorial on SIMs with R).
+This tutorial builds on a [reproducible](https://github.com/adamdennett/SIModelling/blob/SIModelling-Edits/SimAus2.Rmd) guide to SIMs in R [@dennett_modelling_2018].^[
+See @dennett_estimating_2012 or an earlier guide on SIMs in R.
+]
 We start by importing open access data representing movement between zones in Australia (thanks to Adam Dennett for making the files accessible):
 
 ```{r}
 u1 = "https://www.dropbox.com/s/0fg80nzcxcsybii/GCCSA_2016_AUST_New.geojson?raw=1"
-aus = sf::read_sf(u1)
+zones_original = sf::read_sf(u1)
 u2 = "https://www.dropbox.com/s/wi3zxlq5pff1yda/AusMig2011.csv?raw=1"
 od_migration_original = read.csv(u2)
 ```
 
 ```{r, echo=FALSE, eval=FALSE}
-sf::write_sf(aus, "GCCSA_2016_AUST_New.geojson")
+sf::write_sf(zones_original, "GCCSA_2016_AUST_New.geojson")
 piggyback::pb_upload("GCCSA_2016_AUST_New.geojson")
-
+readr::write_csv(od_migration_original, "od_migration_original.csv")
+piggyback::pb_upload("od_migration_original.csv")
 ```
 
-Let's take a quick look at these input datasets before modelling them with SIMs:
+Let's take a quick look at and 'minimize' these input datasets before modelling them with SIMs:
 
 ```{r}
-aus
+dim(zones_original)
+names(zones_original)
+key_zone_names = c("GCCSA_CODE", "GCCSA_NAME", "AREA_SQKM")
+zones = zones_original[key_zone_names]
+head(zones, 2)
 dim(od_migration_original)
-head(od_migration_original)
+names(od_migration_original)
+key_od_names = c("Orig_code", "Dest_code", "Flow")
+od = od_migration_original[key_od_names]
+head(od, 2)
 ```
 
 The results printed above show that:
 
--   `aus` represents the 15 regions of Australia, with columns containing zone identifiers (IDs), primarily `GCCSA_CODE`, and the area of each zone (`AREA_SQKM`).
+-   `zones_original` represents the 15 regions of Australia, with columns containing zone identifiers (IDs), primarily `GCCSA_CODE`, and the area of each zone (`AREA_SQKM`). The minimal `zones` object contains only the region code, name, and area.
 
 -   `od_migration_original` contains 225 rows of data representing the movement of people between the zones in `aus`.
     Note that 255 is 15 squared, meaning that this OD dataset contains the complete combination of migration flows, starting with zone `1GSYD` to `1GSYD`.
     These codes are present in the `GCCSA_CODE` column in the `aus` object.
     The first row of the OD dataset represents 'intra-zonal' migrations in Greater Sydney, presumably counting the number of people who move house from somewhere in the region to another home in the region.
-    There are 13 columns in this dataset, the most important of which are `Orig_code`, `Dest_code`, and `Flow`.
+    There are 13 columns in this dataset, the most important of which are `Orig_code`, `Dest_code`, and `Flow`, which we have captured in the minimal `od` dataset.
 
-A useful convention with 'long form' OD datasets is for the first two columns to contain zone IDs that correspond to values in the first column of the zone dataset.
-The following code cleans the raw input datasets to get the data in this ideal form, and removes all variables that we do not currently need:
+Note: a useful convention with 'long form' OD datasets is for the first two columns to contain zone IDs that correspond to values in the first column of the zone dataset.
+The R package [{od}](https://itsleeds.github.io/od/), on which {si} builds, assumes that inputs to its functions are in this form.
+
+It is a good idea to verify that the origin and destination codes in the `od` dataset match the zone codes in `zones`:
 
 ```{r}
-# todo
+summary(od[[1]] %in% zones[[1]])
+summary(od[[2]] %in% zones[[1]])
 ```
+
+It is clear from the above that we have 'clean' input datasets, let's begin with the modelling!
+
+# Modelling SIMs from first principles
 
 # References
