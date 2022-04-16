@@ -169,6 +169,23 @@
 <p>Note that the output has duplicate columns: <code><a href="../reference/si_to_od.html">si_to_od()</a></code> joins data from the origin and destination objects into the resulting OD object.</p>
 </div>
 <div class="section level2">
+<h2 id="running-an-unconstrained-sim">Running an unconstrained SIM<a class="anchor" aria-label="anchor" href="#running-an-unconstrained-sim"></a>
+</h2>
+<p>A simplistic SIM can be created just based on the distance between points:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">si_power</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">od</span>, <span class="va">beta</span><span class="op">)</span> <span class="op">{</span>
+  <span class="op">(</span><span class="va">od</span><span class="op">[[</span><span class="st">"distance_euclidean"</span><span class="op">]</span><span class="op">]</span> <span class="op">/</span> <span class="fl">1000</span><span class="op">)</span><span class="op">^</span><span class="va">beta</span>
+<span class="op">}</span> 
+<span class="va">od_model</span> <span class="op">=</span> <span class="fu"><a href="../reference/si_model.html">si_model</a></span><span class="op">(</span><span class="va">od_sim</span>, fun <span class="op">=</span> <span class="va">si_power</span>, beta <span class="op">=</span> <span class="op">-</span><span class="fl">0.8</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">od_model</span><span class="op">[</span><span class="st">"res"</span><span class="op">]</span>, logz <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="co">#&gt; Warning in classInt::classIntervals(v0, min(nbreaks, n.unq), breaks, warnSmallN</span>
+<span class="co">#&gt; = FALSE): var has infinite values, omitted in finding classes</span></code></pre></div>
+<p><img src="si_files/figure-html/unconstrained1-1.png" width="700"></p>
+<p>This approach, ignoring all variables at the level of trip origins and destinations, results in flow estimates with no units. Before learning how to run constrained SIMs in the next section, let’s add estimates of each zone’s population to the model:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># Todo</span></code></pre></div>
+</div>
+<div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
 <div id="refs" class="references">
