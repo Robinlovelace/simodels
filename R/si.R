@@ -6,8 +6,9 @@
 #'
 #' @param origins `sf` object representing origin locations/zones
 #' @param destinations `sf` object representing destination locations/zones
-#' @param max_euclidean_distance Maximum distance in meters between OD pairs.
-#'   Only OD pairs that are this distance apart or less will be returned.
+#' @param max_dist Euclidean distance in meters (numeric).
+#'   Only OD pairs that are this distance apart or less will be returned
+#'   and therefore included in the SIM.
 #' @export
 #' @examples
 #' origins = centroids
@@ -15,7 +16,7 @@
 #' odsf = si_to_od(origins, destinations)
 #' plot(odsf)
 #' 
-si_to_od = function(origins, destinations, max_euclidean_distance = Inf) {
+si_to_od = function(origins, destinations, max_dist = Inf) {
   if(!identical(origins, destinations)) {
         stop("Origins and destinations are different, not implemented yet")
     }
@@ -25,15 +26,15 @@ si_to_od = function(origins, destinations, max_euclidean_distance = Inf) {
       y = od_df[c("dx", "dy")],
       paired = TRUE
       )
-  if(max(od_df$distance_euclidean) > max_euclidean_distance) {
+  if(max(od_df$distance_euclidean) > max_dist) {
       nrow_before = nrow(od_df)
-      od_df = od_df[od_df$distance_euclidean <= max_euclidean_distance, ]
+      od_df = od_df[od_df$distance_euclidean <= max_dist, ]
       nrow_after = nrow(od_df)
       pct_kept = round(nrow_after / nrow_before * 100)
       message(
           nrow_after,
           " OD pairs remaining after removing those with a distance greater than ", # nolint
-          max_euclidean_distance, " meters", ":\n",
+          max_dist, " meters", ":\n",
           pct_kept, "% of all possible OD pairs"
           )
   }

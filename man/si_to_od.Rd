@@ -4,14 +4,14 @@
 \alias{si_to_od}
 \title{Prepare OD}
 \usage{
-si_to_od(origins, destinations, max_euclidean_distance = Inf)
+si_to_od(origins, destinations, max_dist = Inf)
 }
 \arguments{
 \item{origins}{\code{sf} object representing origin locations/zones}
 
 \item{destinations}{\code{sf} object representing destination locations/zones}
 
-\item{max_euclidean_distance}{Maximum distance in meters between OD pairs.
+\item{max_dist}{Maximum distance in meters between OD pairs.
 Only OD pairs that are this distance apart or less will be returned.}
 }
 \description{
