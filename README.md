@@ -57,7 +57,7 @@ Run a basic SIM as follows:
 
 ``` r
 library(si)
-od = si_to_od(origins = zones, destinations = zones, max_euclidean_distance = 5000)
+od = si_to_od(origins = zones, destinations = zones, max_dist = 5000)
 ```
 
     2505 OD pairs remaining after removing those with a distance greater than 5000 meters:
@@ -97,7 +97,7 @@ Perhaps the most important function in the package is therefore
 `si_to_od()`, which transforms geographic entities (typically zones but
 points and other geographic features could be used) into a data frame
 representing the full combination of origin-destination pairs that are
-less than `max_euclidean_distance` meters apart. A common saying in data
+less than `max_dist` meters apart. A common saying in data
 science is that 80% of the effort goes into the pre-processing stage.
 This is equally true for spatial interaction modelling as it is for
 other types of data intensive analysis/modelling work. So what does this
