@@ -25,18 +25,18 @@
     <loc>https://robinlovelace.github.io/si/reference/index.html</loc>
   </url>
   <url>
-    <loc>https://robinlovelace.github.io/si/reference/od_census_min.html</loc>
-  </url>
-  <url>
     <loc>https://robinlovelace.github.io/si/reference/si-package.html</loc>
   </url>
   <url>
     <loc>https://robinlovelace.github.io/si/reference/si_model.html</loc>
   </url>
   <url>
+    <loc>https://robinlovelace.github.io/si/reference/si_od_census.html</loc>
+  </url>
+  <url>
     <loc>https://robinlovelace.github.io/si/reference/si_to_od.html</loc>
   </url>
   <url>
-    <loc>https://robinlovelace.github.io/si/reference/zones.html</loc>
+    <loc>https://robinlovelace.github.io/si/reference/si_zones.html</loc>
   </url>
 </urlset>
