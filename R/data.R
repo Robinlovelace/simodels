@@ -1,12 +1,16 @@
 #' Example zones and centroids
 #'
-#' `zones` and `centroids` represent administrative zones between which
+#' `si_zones` and `si_centroids` represent administrative zones between which
 #' flows are to be estimated.
 #' @note The schema data can be (re-)generated using code in `data-raw`
 #' @docType data
 #' @keywords datasets
-#' @name zones
-#' @aliases centroids
+#' @name si_zones
+#' @aliases si_centroids
+#' @examples
+#' si_zones
+#' plot(si_zones$geometry)
+#' plot(si_centroids$geometry, add = TRUE)
 NULL
 
 #' Example OD dataset
@@ -16,5 +20,7 @@ NULL
 #'
 #' @docType data
 #' @keywords datasets
-#' @name od_census_min
+#' @name si_od_census
+#' @examples
+#' head(si_od_census)
 NULL
