@@ -107,6 +107,7 @@ Prepare the OD dataset as follows:
 
 ```{r}
 od_sim = si_to_od(origins = zones, destinations = zones)
+head(od_sim, 2)
 ```
 
 

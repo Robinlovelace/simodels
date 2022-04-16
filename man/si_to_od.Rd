@@ -11,8 +11,9 @@ si_to_od(origins, destinations, max_dist = Inf)
 
 \item{destinations}{\code{sf} object representing destination locations/zones}
 
-\item{max_dist}{Maximum distance in meters between OD pairs.
-Only OD pairs that are this distance apart or less will be returned.}
+\item{max_dist}{Euclidean distance in meters (numeric).
+Only OD pairs that are this distance apart or less will be returned
+and therefore included in the SIM.}
 }
 \description{
 Prepares an OD data frame that next could be used to
