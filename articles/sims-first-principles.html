@@ -44,7 +44,7 @@
 <li class="active nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/sims.html">An introduction to spatial interaction models: from first principles</a>
+    <a class="dropdown-item" href="../articles/sims-first-principles.html">An introduction to spatial interaction models: from first principles</a>
   </div>
 </li>
       </ul>
@@ -68,13 +68,13 @@
 
 
 
-<script src="sims_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+<script src="sims-first-principles_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <main id="main"><div class="page-header">
       <img src="" class="logo" alt=""><h1>An introduction to spatial interaction models: from first principles</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/robinlovelace/si/blob/HEAD/vignettes/sims.Rmd" class="external-link"><code>vignettes/sims.Rmd</code></a></small>
-      <div class="d-none name"><code>sims.Rmd</code></div>
+      <small class="dont-index">Source: <a href="https://github.com/robinlovelace/si/blob/HEAD/vignettes/sims-first-principles.Rmd" class="external-link"><code>vignettes/sims-first-principles.Rmd</code></a></small>
+      <div class="d-none name"><code>sims-first-principles.Rmd</code></div>
     </div>
 
     
@@ -128,7 +128,7 @@ A_{i}=\frac{1}{\sum_{j} m_{j} \mathrm{f}\left(c_{i j}\right)}
 <span class="va">centroids</span> <span class="op">=</span> <span class="fu">si</span><span class="fu">::</span><span class="va"><a href="../reference/si_zones.html">si_centroids</a></span>
 <span class="va">od</span> <span class="op">=</span> <span class="fu">si</span><span class="fu">::</span><span class="va"><a href="../reference/si_od_census.html">si_od_census</a></span>
 <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_shape.html" class="external-link">tm_shape</a></span><span class="op">(</span><span class="va">zones</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_polygons.html" class="external-link">tm_polygons</a></span><span class="op">(</span><span class="st">"all"</span>, palette <span class="op">=</span> <span class="st">"viridis"</span><span class="op">)</span></code></pre></div>
-<p><img src="sims_files/figure-html/inputs-1.png" width="700"></p>
+<p><img src="sims-first-principles_files/figure-html/inputs-1.png" width="700"></p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">od_df</span> <span class="op">=</span> <span class="fu">od</span><span class="fu">::</span><span class="fu"><a href="https://itsleeds.github.io/od/reference/points_to_od.html" class="external-link">points_to_od</a></span><span class="op">(</span><span class="va">centroids</span><span class="op">)</span>
 <span class="va">od_sfc</span> <span class="op">=</span> <span class="fu">od</span><span class="fu">::</span><span class="fu"><a href="https://itsleeds.github.io/od/reference/odc_to_sfc.html" class="external-link">odc_to_sfc</a></span><span class="op">(</span><span class="va">od_df</span><span class="op">[</span><span class="fl">3</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span><span class="op">)</span>
@@ -161,7 +161,7 @@ A_{i}=\frac{1}{\sum_{j} m_{j} \mathrm{f}\left(c_{i j}\right)}
   <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_polygons.html" class="external-link">tm_borders</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_shape.html" class="external-link">tm_shape</a></span><span class="op">(</span><span class="va">od_top</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_lines.html" class="external-link">tm_lines</a></span><span class="op">(</span><span class="st">"flow"</span><span class="op">)</span></code></pre></div>
-<p><img src="sims_files/figure-html/unconstrained-1.png" width="700"></p>
+<p><img src="sims-first-principles_files/figure-html/unconstrained-1.png" width="700"></p>
 <p>We can plot the ‘distance decay’ curve associated with this SIM is as follows:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">od_df</span><span class="op">$</span><span class="va">fc</span><span class="op">)</span>
@@ -170,7 +170,7 @@ A_{i}=\frac{1}{\sum_{j} m_{j} \mathrm{f}\left(c_{i j}\right)}
 <span class="va">od_df</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">length</span>, <span class="va">fc</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p><img src="sims_files/figure-html/distance_decay-1.png" width="700"></p>
+<p><img src="sims-first-principles_files/figure-html/distance_decay-1.png" width="700"></p>
 <p>We can make this production constrained as follows:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">od_dfj</span> <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span>
@@ -192,7 +192,7 @@ A_{i}=\frac{1}{\sum_{j} m_{j} \mathrm{f}\left(c_{i j}\right)}
   <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_polygons.html" class="external-link">tm_borders</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_shape.html" class="external-link">tm_shape</a></span><span class="op">(</span><span class="va">od_top</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_lines.html" class="external-link">tm_lines</a></span><span class="op">(</span><span class="st">"flow_constrained"</span><span class="op">)</span></code></pre></div>
-<p><img src="sims_files/figure-html/constrained-1.png" width="700"></p>
+<p><img src="sims-first-principles_files/figure-html/constrained-1.png" width="700"></p>
 </div>
 <div class="section level2">
 <h2 id="validation">Validation<a class="anchor" aria-label="anchor" href="#validation"></a>
@@ -203,7 +203,7 @@ A_{i}=\frac{1}{\sum_{j} m_{j} \mathrm{f}\left(c_{i j}\right)}
 <span class="va">od_dfjc</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">all</span>, <span class="va">flow_constrained</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p><img src="sims_files/figure-html/validation-1.png" width="700"></p>
+<p><img src="sims-first-principles_files/figure-html/validation-1.png" width="700"></p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">od_dfjc</span><span class="op">$</span><span class="va">all</span>, <span class="va">od_dfjc</span><span class="op">$</span><span class="va">flow_constrained</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span>
 <span class="co">#&gt; [1] NA</span></code></pre></div>

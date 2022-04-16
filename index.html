@@ -56,7 +56,7 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="articles/sims.html">An introduction to spatial interaction models: from first principles</a>
+    <a class="dropdown-item" href="articles/sims-first-principles.html">An introduction to spatial interaction models: from first principles</a>
   </div>
 </li>
       </ul>
@@ -79,15 +79,7 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9">
-<p>The goal of {si} is to demonstrate Spatial Interaction models from first principles (see the <a href="https://robinlovelace.github.io/si/articles/sims.html"><code>sims</code> vignette</a> for a more detailed description of SIMs and implementation in R without using this package for reference). The package also contains reproducible code and documentation demonstrating how they work.</p>
-<p>Spatial Interaction Models (SIMs) estimate movement between spatial entities. They have been central to transport modelling since the 1960s, with many refinements over the <a href="https://www.researchgate.net/publication/284345182_Forecasting_urban_travel_Past_present_and_future" class="external-link">decades</a>. There are four main <a href="https://doi.org/10.1016/j.jtrangeo.2015.12.008" class="external-link">types</a> of traditional SIM:</p>
-<ul>
-<li>Unconstrained</li>
-<li>Production-constrained</li>
-<li>Attraction-constrained</li>
-<li>Doubly-constrained</li>
-</ul>
-<p>The focus of this package is currently on unconstrained and production-constrained SIMs.</p>
+<p>The goal of {si} is to provide a simple and flexible framework for developing spatial interaction models (SIMs), which estimate the amount of movement between spatial entities.</p>
 <!-- # Implementations in other languages -->
 <div class="section level2">
 <h2 id="si-basics">si basics<a class="anchor" aria-label="anchor" href="#si-basics"></a>
@@ -120,7 +112,7 @@
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">od_res</span><span class="op">[</span><span class="st">"res"</span><span class="op">]</span>, logz <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/README-map-1.png"></p>
-<p>Perhaps the most important function in the package is therefore <code><a href="reference/si_to_od.html">si_to_od()</a></code>, which transforms geographic entities (typically zones but points and other geographic features could be used) into a data frame representing the full combination of origin-destination pairs that are less than <code>max_dist</code> meters apart. A common saying in data science is that 80% of the effort goes into the pre-processing stage. This is equally true for spatial interaction modelling as it is for other types of data intensive analysis/modelling work. So what does this function return?</p>
+<p>The <code><a href="reference/si_to_od.html">si_to_od()</a></code> function transforms geographic entities (typically polygons and points) into a data frame representing the full combination of origin-destination pairs that are less than <code>max_dist</code> meters apart. A common saying in data science is that 80% of the effort goes into the pre-processing stage. This is equally true for spatial interaction modelling as it is for other types of data intensive analysis/modelling work. So what does this function return?</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">od</span><span class="op">)</span></code></pre></div>
 <div class="sourceCode" id="cb8"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a> [<span class="dv">1</span>] <span class="st">"O"</span>                         <span class="st">"D"</span>                        </span>
@@ -146,13 +138,19 @@
 <p>We would be interested to hear how the approach presented in this package compared with other implementations such as those presented in the links below. If anyone would like to try the approach or implement it in another language feel free to get in touch via the issue tracker.</p>
 </div>
 <div class="section level2">
-<h2 id="alternative-approaches">Alternative approaches<a class="anchor" aria-label="anchor" href="#alternative-approaches"></a>
+<h2 id="further-reading">Further reading<a class="anchor" aria-label="anchor" href="#further-reading"></a>
 </h2>
-<p>The {si} package is nascent. Anyone looking for more mature approaches could check the following:</p>
+<p>For details on what SIMs are and how they have been defined mathematically and in code from first principles, see the <a href="https://robinlovelace.github.io/si/articles/sims-first-principles.html"><code>sims</code> vignette</a>.</p>
+<p>To dive straight into using {si} to develop SIMs, see the <a href="https://robinlovelace.github.io/si/articles/si.html"><code>si</code> Get started vignette</a>.</p>
+<p>For a detailed introduction to SIMs, support by reproducible R code, see Adam Dennett’s <a href="https://doi.org/10.37970/aps.v2i2.38" class="external-link">2018 paper</a>.</p>
+</div>
+<div class="section level2">
+<h2 id="other-sim-packages">Other SIM packages<a class="anchor" aria-label="anchor" href="#other-sim-packages"></a>
+</h2>
 <ul>
-<li><p>Reproducible <a href="https://rpubs.com/adam_dennett/257231" class="external-link">code</a> implementing SIMs in R by Adam Dennet, based on the outdated <code>sp</code> class system, and based on <a href="https://github.com/adamdennett/LondonSchoolsSIM/blob/main/Schools.Rmd" class="external-link"><code>sf</code> classes</a></p></li>
-<li><p>The <a href="https://github.com/LukeCe/spflow" class="external-link"><code>spflow</code> R package</a> on CRAN</p></li>
-<li><p>The <a href="https://spint.readthedocs.io/en/latest/" class="external-link"><code>spint</code> Python package</a></p></li>
+<li>The <a href="https://github.com/LukeCe/spflow" class="external-link"><code>spflow</code> R package</a> on CRAN</li>
+<li>The <a href="https://spint.readthedocs.io/en/latest/" class="external-link"><code>spint</code> Python package</a>
+</li>
 </ul>
 </div>
 
