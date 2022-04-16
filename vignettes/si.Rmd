@@ -110,5 +110,6 @@ od_sim = si_to_od(origins = zones, destinations = zones)
 head(od_sim, 2)
 ```
 
+Note that the output has duplicate columns: `si_to_od()` joins data from the origin and destination objects into the resulting OD object.
 
 # References

@@ -3,17 +3,17 @@ library(pct)
 library(tidyverse)
 zones = get_pct_zones(region = "west-yorkshire", geography = "msoa")
 centroids = get_pct_centroids(region = "west-yorkshire", geography = "msoa")
-zones = zones %>% 
+si_zones = zones %>% 
   filter(lad_name == "Leeds") %>%
   select(1:13)
-centroids = centroids %>% 
+si_centroids = centroids %>% 
   filter(lad_name == "Leeds") %>%
   select(1:13)
-usethis::use_data(zones, overwrite = TRUE)
-usethis::use_data(centroids, overwrite = TRUE)
+usethis::use_data(si_zones, overwrite = TRUE)
+usethis::use_data(si_centroids, overwrite = TRUE)
 
 od_census = get_od()
-od_census_min = od_census %>% 
+si_od_census = od_census %>% 
   rename(O = geo_code1, D = geo_code2) %>% 
   filter(O %in% zones$geo_code & D %in% zones$geo_code)
-usethis::use_data(od_census_min)
+usethis::use_data(si_od_census)
