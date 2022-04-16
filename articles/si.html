@@ -153,7 +153,19 @@
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">od_sim</span> <span class="op">=</span> <span class="fu"><a href="../reference/si_to_od.html">si_to_od</a></span><span class="op">(</span>origins <span class="op">=</span> <span class="va">zones</span>, destinations <span class="op">=</span> <span class="va">zones</span><span class="op">)</span>
 <span class="co">#&gt; Maximum distance is &gt; 100km. The 'cheap' measure is inaccurate over such</span>
-<span class="co">#&gt; large distances, you'd likely be better using a different 'measure'.</span></code></pre></div>
+<span class="co">#&gt; large distances, you'd likely be better using a different 'measure'.</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">od_sim</span>, <span class="fl">2</span><span class="op">)</span>
+<span class="co">#&gt; Simple feature collection with 2 features and 7 fields</span>
+<span class="co">#&gt; Geometry type: LINESTRING</span>
+<span class="co">#&gt; Dimension:     XY</span>
+<span class="co">#&gt; Bounding box:  xmin: 146.9621 ymin: -33.66837 xmax: 150.7766 ymax: -32.13363</span>
+<span class="co">#&gt; Geodetic CRS:  WGS 84</span>
+<span class="co">#&gt;       O     D distance_euclidean origin_GCCSA_NAME origin_AREA_SQKM</span>
+<span class="co">#&gt; 1 1RNSW 1RNSW                0.0       Rest of NSW         788442.6</span>
+<span class="co">#&gt; 2 1RNSW 1GSYD           412344.8       Rest of NSW         788442.6</span>
+<span class="co">#&gt;   destination_GCCSA_NAME destination_AREA_SQKM                       geometry</span>
+<span class="co">#&gt; 1            Rest of NSW             788442.59 LINESTRING (146.9621 -32.13...</span>
+<span class="co">#&gt; 2         Greater Sydney              12368.19 LINESTRING (146.9621 -32.13...</span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>

@@ -91,67 +91,67 @@ such that the total for each zone of origin cannot go above this value.</p></dd>
 <span class="r-in"><span class="va">od_output</span> <span class="op">=</span> <span class="fu">si_model</span><span class="op">(</span><span class="va">od</span>, fun <span class="op">=</span> <span class="va">fun</span>, beta <span class="op">=</span> <span class="fl">0.3</span>, O <span class="op">=</span> <span class="st">"origin_all"</span>, </span>
 <span class="r-in">  n <span class="op">=</span> <span class="st">"destination_all"</span>, d <span class="op">=</span> <span class="st">"distance_euclidean"</span><span class="op">)</span></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">od_output</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Simple feature collection with 6 features and 32 fields</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Simple feature collection with 6 features and 28 fields</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Geometry type: LINESTRING</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Dimension:     XY</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Bounding box:  xmin: -1.704658 ymin: 53.88306 xmax: -1.346497 ymax: 53.92906</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Geodetic CRS:  WGS 84</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           O         D        ox       oy        dx       dy distance_euclidean</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 E02002330 E02002330 -1.400108 53.92906 -1.400108 53.92906              0.000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 E02002330 E02002331 -1.400108 53.92906 -1.346497 53.92305           3579.804</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 E02002330 E02002332 -1.400108 53.92906 -1.704658 53.91073          20082.413</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 E02002330 E02002333 -1.400108 53.92906 -1.687600 53.90066          19121.983</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 E02002330 E02002334 -1.400108 53.92906 -1.357667 53.88306           5821.556</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 E02002330 E02002335 -1.400108 53.92906 -1.470966 53.89184           6222.126</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   origin_geo_name origin_lad11cd origin_lad_name origin_all origin_bicycle</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1       Leeds 001      E08000035           Leeds       2809             52</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2       Leeds 001      E08000035           Leeds       2809             52</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3       Leeds 001      E08000035           Leeds       2809             52</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4       Leeds 001      E08000035           Leeds       2809             52</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5       Leeds 001      E08000035           Leeds       2809             52</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6       Leeds 001      E08000035           Leeds       2809             52</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   origin_foot origin_car_driver origin_car_passenger origin_motorbike</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1         300              2170                  138               10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2         300              2170                  138               10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3         300              2170                  138               10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4         300              2170                  138               10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5         300              2170                  138               10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6         300              2170                  138               10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   origin_train_tube origin_bus origin_taxi_other destination_geo_name</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                36         89                14            Leeds 001</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2                36         89                14            Leeds 002</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                36         89                14            Leeds 003</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4                36         89                14            Leeds 004</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5                36         89                14            Leeds 005</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6                36         89                14            Leeds 006</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   destination_lad11cd destination_lad_name destination_all destination_bicycle</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1           E08000035                Leeds            2809                  52</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2           E08000035                Leeds            2387                  53</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3           E08000035                Leeds            2471                  39</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4           E08000035                Leeds            3743                  80</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5           E08000035                Leeds            2995                  53</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6           E08000035                Leeds            3056                  33</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   destination_foot destination_car_driver destination_car_passenger</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1              300                   2170                       138</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2              469                   1573                       132</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3              341                   1666                       147</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4              529                   2340                       193</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5              170                   2421                       140</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6              106                   2549                       159</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   destination_motorbike destination_train_tube destination_bus</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                    10                     36              89</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2                    16                     10             126</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                    19                     75             166</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4                    26                    221             335</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5                    10                     43             142</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6                    12                     26             156</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   destination_taxi_other                       geometry        res</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                     14 LINESTRING (-1.400108 53.92... 7890481.00</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2                      8 LINESTRING (-1.400108 53.92... 2290854.16</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3                     18 LINESTRING (-1.400108 53.92...   16784.95</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4                     19 LINESTRING (-1.400108 53.92...   33915.65</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5                     16 LINESTRING (-1.400108 53.92... 1467126.90</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6                     15 LINESTRING (-1.400108 53.92... 1327500.07</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           O         D distance_euclidean origin_geo_name origin_lad11cd</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 E02002330 E02002330              0.000       Leeds 001      E08000035</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 E02002330 E02002331           3579.804       Leeds 001      E08000035</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 E02002330 E02002332          20082.413       Leeds 001      E08000035</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 E02002330 E02002333          19121.983       Leeds 001      E08000035</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 E02002330 E02002334           5821.556       Leeds 001      E08000035</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 E02002330 E02002335           6222.126       Leeds 001      E08000035</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   origin_lad_name origin_all origin_bicycle origin_foot origin_car_driver</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1           Leeds       2809             52         300              2170</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2           Leeds       2809             52         300              2170</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3           Leeds       2809             52         300              2170</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4           Leeds       2809             52         300              2170</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5           Leeds       2809             52         300              2170</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6           Leeds       2809             52         300              2170</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   origin_car_passenger origin_motorbike origin_train_tube origin_bus</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                  138               10                36         89</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                  138               10                36         89</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                  138               10                36         89</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4                  138               10                36         89</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5                  138               10                36         89</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6                  138               10                36         89</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   origin_taxi_other destination_geo_name destination_lad11cd</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                14            Leeds 001           E08000035</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                14            Leeds 002           E08000035</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                14            Leeds 003           E08000035</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4                14            Leeds 004           E08000035</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5                14            Leeds 005           E08000035</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6                14            Leeds 006           E08000035</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   destination_lad_name destination_all destination_bicycle destination_foot</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                Leeds            2809                  52              300</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                Leeds            2387                  53              469</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                Leeds            2471                  39              341</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4                Leeds            3743                  80              529</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5                Leeds            2995                  53              170</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6                Leeds            3056                  33              106</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   destination_car_driver destination_car_passenger destination_motorbike</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                   2170                       138                    10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                   1573                       132                    16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                   1666                       147                    19</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4                   2340                       193                    26</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5                   2421                       140                    10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6                   2549                       159                    12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   destination_train_tube destination_bus destination_taxi_other</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                     36              89                     14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                     10             126                      8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3                     75             166                     18</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4                    221             335                     19</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5                     43             142                     16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6                     26             156                     15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         geometry        res</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 LINESTRING (-1.400108 53.92... 7890481.00</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 LINESTRING (-1.400108 53.92... 2290854.16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 LINESTRING (-1.400108 53.92...   16784.95</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 LINESTRING (-1.400108 53.92...   33915.65</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 LINESTRING (-1.400108 53.92... 1467126.90</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 LINESTRING (-1.400108 53.92... 1327500.07</span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">od</span><span class="op">$</span><span class="va">distance_euclidean</span>, <span class="va">od_output</span><span class="op">$</span><span class="va">res</span><span class="op">)</span></span>
 <span class="r-plt img"><img src="si_model-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span class="va">od_pconst</span> <span class="op">=</span> <span class="fu">si_model</span><span class="op">(</span><span class="va">od</span>, fun <span class="op">=</span> <span class="va">fun</span>, beta <span class="op">=</span> <span class="fl">0.3</span>, O <span class="op">=</span> <span class="st">"origin_all"</span>, n <span class="op">=</span> <span class="st">"destination_all"</span>,</span>
