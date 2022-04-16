@@ -6,6 +6,9 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 bibliography: references.bib
+editor_options:
+  markdown:
+    wrap: sentence
 ---
 
 ```{r, include = FALSE}
@@ -17,7 +20,8 @@ knitr::opts_chunk$set(
 
 # What are SIMs?
 
-Spatial Interaction Models (SIMs) are mathematical models for estimating movement between spatial entities developed by Alan Wilson in the late 1960s and early 1970, with considerable uptake and refinement for transport modelling since then @boyce_forecasting_2015. There are four main types of traditional SIMs [@wilson_family_1971]:
+Spatial Interaction Models (SIMs) are mathematical models for estimating movement between spatial entities developed by Alan Wilson in the late 1960s and early 1970, with considerable uptake and refinement for transport modelling since then @boyce_forecasting_2015.
+There are four main types of traditional SIMs [@wilson_family_1971]:
 
 -   Unconstrained
 
@@ -33,7 +37,8 @@ $$
 T_{i j}=K \frac{W_{i}^{(1)} W_{j}^{(2)}}{c_{i j}^{n}}
 $$
 
-"where $T_{i j}$ is a measure of the interaction between zones $i$ and $W_{i}^{(1)}$ is a measure of the 'mass term' associated with zone $z_i$, $W_{j}^{(2)}$ is a measure of the 'mass term' associated with zone $z_j$, and $c_{ij}$ is a measure of the distance, or generalised cost of travel, between zone $i$ and zone $j$". $K$ is a 'constant of proportionality' and $n$ is a parameter to be estimated.
+"where $T_{i j}$ is a measure of the interaction between zones $i$ and $W_{i}^{(1)}$ is a measure of the 'mass term' associated with zone $z_i$, $W_{j}^{(2)}$ is a measure of the 'mass term' associated with zone $z_j$, and $c_{ij}$ is a measure of the distance, or generalised cost of travel, between zone $i$ and zone $j$".
+$K$ is a 'constant of proportionality' and $n$ is a parameter to be estimated.
 
 Redefining the $W$ terms as $m$ and $n$ for origins and destinations respectively [@simini_universal_2012], this classic definition of the 'gravity model' can be written as follows:
 
@@ -41,7 +46,8 @@ $$
 T_{i j}=K \frac{m_{i} n_{j}}{c_{i j}^{n}}
 $$
 
-For the purposes of this project, we will focus on production-constrained SIMs. These can be defined as follows [@wilson_family_1971]:
+For the purposes of this project, we will focus on production-constrained SIMs.
+These can be defined as follows [@wilson_family_1971]:
 
 $$
 T_{ij} = A_iO_in_jf(c_{ij})
@@ -72,7 +78,8 @@ See @lenormand_systematic_2016 for a comparison of alternative approaches.
 
 # Implementation in R
 
-Before using the functions in this or other packages, it may be worth implementing SIMs from first principles, to gain an understanding of how they work. The code presented below was written before the functions in the `si` package were developed and demonstrate a common way of running SIMs, in a for loop, rather than using vectorised operations (used in the `si` package) which can be faster.
+Before using the functions in this or other packages, it may be worth implementing SIMs from first principles, to gain an understanding of how they work.
+The code presented below was written before the functions in the `si` package were developed, building on @dennett_estimating_2012. The aim is to demonstrate a common way of running SIMs, in a for loop, rather than using vectorised operations (used in the `si` package) which can be faster.
 
 ```{r, message=FALSE}
 library(tmap)

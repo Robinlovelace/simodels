@@ -1,0 +1,24 @@
+---
+title: "Tutorial: spatial interaction models with R"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Tutorial: spatial interaction models with R}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+Pre-requisites: you should have [installed R](https://cran.r-project.org/) and a suitable editor such as [RStudio](https://www.rstudio.com/products/rstudio/download/preview/) or [VSCode with R plugin](https://github.com/REditorSupport/vscode-R).
+See the package's [README](https://robinlovelace.github.io/si/) for instructions on installing the {si} package.
+
+```{r setup}
+library(si)
+```
+
+This tutorial builds on @dennett_estimating_2012's pioneering tutorial.
