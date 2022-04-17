@@ -21,8 +21,20 @@ estimate movement between origins and destinations
 with a spatial interaction model
 }
 \examples{
-origins = si_centroids
-destinations = si_centroids
-odsf = si_to_od(origins, destinations, max_dist = 2000)
+library(sf)
+origins = si_centroids[c(1, 2, 99), ]
+destinations = origins
+plot(origins$geometry)
+odsf = si_to_od(origins, destinations, max_dist = 1200)
+plot(odsf)
+# note: result contains intrazonal flows represented by linestrings
+# with a length of 0, e.g.:
+sf::st_coordinates(odsf$geometry[1])
+# With different destinations compared with origins
+library(sf)
+origins = si_centroids[c(2, 99), c(1, 6, 7)]
+destinations = si_centroids[1, c(1, 6, 8)]
+odsf = si_to_od(origins, destinations)
+nrow(odsf) # no intrazonal flows
 plot(odsf)
 }

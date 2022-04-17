@@ -23,7 +23,7 @@ Depends:
 Imports: 
     dplyr,
     geodist,
-    od,
+    od (>= 0.4.0),
     rlang,
     sf
 Encoding: UTF-8
@@ -36,3 +36,5 @@ Suggests:
     rmarkdown,
     tmap
 VignetteBuilder: knitr
+Remotes:  
+    itsleeds/od
