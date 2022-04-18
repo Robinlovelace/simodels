@@ -13,7 +13,6 @@ knitr::opts_chunk$set(cache = TRUE,
   fig.path = "man/figures/README-")
 ```
 
-
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/robinlovelace/si/workflows/R-CMD-check/badge.svg)](https://github.com/robinlovelace/si/actions)
 <!-- badges: end -->
