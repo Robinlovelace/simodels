@@ -28,10 +28,13 @@
     <loc>https://robinlovelace.github.io/si/reference/si-package.html</loc>
   </url>
   <url>
-    <loc>https://robinlovelace.github.io/si/reference/si_model.html</loc>
+    <loc>https://robinlovelace.github.io/si/reference/si_calculate.html</loc>
   </url>
   <url>
     <loc>https://robinlovelace.github.io/si/reference/si_od_census.html</loc>
+  </url>
+  <url>
+    <loc>https://robinlovelace.github.io/si/reference/si_predict.html</loc>
   </url>
   <url>
     <loc>https://robinlovelace.github.io/si/reference/si_to_od.html</loc>
