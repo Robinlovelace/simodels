@@ -36,5 +36,3 @@ Suggests:
     rmarkdown,
     tmap
 VignetteBuilder: knitr
-Remotes:  
-    itsleeds/od
