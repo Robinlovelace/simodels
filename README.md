@@ -7,9 +7,7 @@ The goal of {si} is to provide a simple and flexible framework for
 developing spatial interaction models (SIMs), which estimate the amount
 of movement between spatial entities.
 
-<!-- # Implementations in other languages -->
-
-## si basics
+## Installation
 
 Install the package as follows:
 
@@ -21,14 +19,19 @@ install.packages("remotes") # if not already installed
 remotes::install_github("robinlovelace/si")
 ```
 
+<!-- # Implementations in other languages -->
+
+## si basics
+
 Run a basic SIM as follows:
 
 ``` r
 library(si)
+# prepare OD data
 od = si_to_od(
-  origins = si_zones,
-  destinations = si_zones,
-  max_dist = 5000
+  origins = si_zones,        # origin locations
+  destinations = si_zones,   # destination locations
+  max_dist = 5000            # maximum distance between OD pairs
   )
 ```
 
@@ -36,11 +39,14 @@ od = si_to_od(
     22% of all possible OD pairs
 
 ``` r
+# specify a function
 gravity_model = function(od, beta) {
   od[["origin_all"]] * od[["destination_all"]] *
     exp(-beta * od[["distance_euclidean"]] / 1000)
 } 
+# perform SIM
 od_res = si_model(od, fun = gravity_model, beta = 0.3, var_p = origin_all)
+# visualize the results
 plot(od_res$distance_euclidean, od_res$res)
 ```
 
