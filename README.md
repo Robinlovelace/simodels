@@ -45,7 +45,7 @@ gravity_model = function(od, beta) {
     exp(-beta * od[["distance_euclidean"]] / 1000)
 } 
 # perform SIM
-od_res = si_model(od, fun = gravity_model, beta = 0.3, var_p = origin_all)
+od_res = si_calculate(od, fun = gravity_model, beta = 0.3, var_p = origin_all)
 # visualize the results
 plot(od_res$distance_euclidean, od_res$res)
 ```
@@ -62,7 +62,7 @@ approaches to be implemented. This flexibility is a key aspect of the
 package, enabling small and easily modified functions to be implemented
 and tested.
 
-The output `si_model()` is a geographic object which can be plotted as a
+The output `si_calculate)` is a geographic object which can be plotted as a
 map:
 
 ``` r
