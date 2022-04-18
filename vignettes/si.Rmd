@@ -120,8 +120,8 @@ A simplistic SIM can be created just based on the distance between points:
 si_power = function(od, beta) {
   (od[["distance_euclidean"]] / 1000)^beta
 } 
-od_model = si_model(od_sim, fun = si_power, beta = -0.8)
-plot(od_model["res"], logz = TRUE)
+od_calculate = si_calculate(od_sim, fun = si_power, beta = -0.8)
+plot(od_calculate["res"], logz = TRUE)
 ```
 
 This approach, ignoring all variables at the level of trip origins and destinations, results in flow estimates with no units.
