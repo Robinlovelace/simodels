@@ -150,6 +150,16 @@ cor(od_joined$Flow, od_joined$res_scaled)^2
 The results show that a simple unconstrained model, without any parameter fitting, can explain less than 20% of the variability in flows.
 We can do better!
 
+```{r}
+od_joined %>% 
+  mutate(decay = distance_euclidean^-0.8) %>% 
+  mutate(decay = decay * (sum(Flow) / sum(decay))) %>% 
+  ggplot() +
+  geom_point(aes(distance_euclidean, Flow)) +
+  geom_line(aes(distance_euclidean, decay), colour = "red") 
+```
+
+
 # A production constrained SIM
 
 The first logical way to improve model fit is to run a production constrained model.
@@ -170,7 +180,7 @@ od_constrained_p = si_calculate(
   beta = -0.8,
   constraint_p = originating_per_zone
   )
-od_joined %>% 
+od_constrained_p %>% 
   ggplot() +
   geom_point(aes(Flow, res))
 cor(od_constrained_p$Flow, od_constrained_p$res)^2
@@ -178,5 +188,28 @@ cor(od_constrained_p$Flow, od_constrained_p$res)^2
 
 Progress!
 We have more than doubled the predictive ability of our model by using a 'production constrained' SIM, as defined mathematically in the [`sim-first-principles` vignette](https://robinlovelace.github.io/si/articles/sims-first-principles.html).
+
+# Training a SIM
+
+An advantage of the flow data used in this example is that we already know the interaction.
+(This raises the question of why a SIM is needed, answer: to test our models and demonstrate the techniques.)
+
+We can do this using the `nls()` function as follows:
+
+```{r}
+f = Flow ~ (distance_euclidean * a)^b
+m = nls(
+  formula = f,
+  data = od_originating,
+  start = list(b = 0.8, a = 0.001),
+  upper = c(5, 100), lower = c(-5, 0.00001),
+  algorithm = "port"
+  )
+m
+od_trained = si_predict(od_originating, model = m,
+  constraint_p = originating_per_zone)
+cor(od_trained$Flow, od_trained$res)
+```
+
 
 # References
