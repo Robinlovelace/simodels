@@ -85,7 +85,17 @@
 <p>You need to have <a href="https://cran.r-project.org/" class="external-link">installed R</a> and a suitable editor such as <a href="https://www.rstudio.com/products/rstudio/download/preview/" class="external-link">RStudio</a> or <a href="https://github.com/REditorSupport/vscode-R" class="external-link">VSCode with R plugin</a>. See the package’s <a href="https://robinlovelace.github.io/si/">README</a> for instructions on installing the {si} package.</p>
 <!--#  Test the necessary packages are installed by loading them (we will also use {dplyr}):-->
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/robinlovelace/si" class="external-link">si</a></span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/robinlovelace/si" class="external-link">si</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Attaching package: 'dplyr'</span>
+<span class="co">#&gt; The following objects are masked from 'package:stats':</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;     filter, lag</span>
+<span class="co">#&gt; The following objects are masked from 'package:base':</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt;     intersect, setdiff, setequal, union</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="input-data">Input data<a class="anchor" aria-label="anchor" href="#input-data"></a>
@@ -154,36 +164,130 @@
 <code class="sourceCode R"><span class="va">od_sim</span> <span class="op">=</span> <span class="fu"><a href="../reference/si_to_od.html">si_to_od</a></span><span class="op">(</span>origins <span class="op">=</span> <span class="va">zones</span>, destinations <span class="op">=</span> <span class="va">zones</span><span class="op">)</span>
 <span class="co">#&gt; Maximum distance is &gt; 100km. The 'cheap' measure is inaccurate over such</span>
 <span class="co">#&gt; large distances, you'd likely be better using a different 'measure'.</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">od_sim</span>, <span class="fl">2</span><span class="op">)</span>
-<span class="co">#&gt; Simple feature collection with 2 features and 7 fields</span>
-<span class="co">#&gt; Geometry type: LINESTRING</span>
-<span class="co">#&gt; Dimension:     XY</span>
-<span class="co">#&gt; Bounding box:  xmin: 146.9621 ymin: -33.66837 xmax: 150.7766 ymax: -32.13363</span>
-<span class="co">#&gt; Geodetic CRS:  WGS 84</span>
-<span class="co">#&gt;       O     D distance_euclidean origin_GCCSA_NAME origin_AREA_SQKM</span>
-<span class="co">#&gt; 1 1RNSW 1RNSW                0.0       Rest of NSW         788442.6</span>
-<span class="co">#&gt; 2 1RNSW 1GSYD           412344.8       Rest of NSW         788442.6</span>
-<span class="co">#&gt;   destination_GCCSA_NAME destination_AREA_SQKM                       geometry</span>
-<span class="co">#&gt; 1            Rest of NSW             788442.59 LINESTRING (146.9621 -32.13...</span>
-<span class="co">#&gt; 2         Greater Sydney              12368.19 LINESTRING (146.9621 -32.13...</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">od_sim</span><span class="op">)</span>
+<span class="co">#&gt; [1] "O"                      "D"                      "distance_euclidean"    </span>
+<span class="co">#&gt; [4] "origin_GCCSA_NAME"      "origin_AREA_SQKM"       "destination_GCCSA_NAME"</span>
+<span class="co">#&gt; [7] "destination_AREA_SQKM"  "geometry"</span></code></pre></div>
 <p>Note that the output has duplicate columns: <code><a href="../reference/si_to_od.html">si_to_od()</a></code> joins data from the origin and destination objects into the resulting OD object.</p>
 </div>
 <div class="section level2">
-<h2 id="running-an-unconstrained-sim">Running an unconstrained SIM<a class="anchor" aria-label="anchor" href="#running-an-unconstrained-sim"></a>
+<h2 id="an-unconstrained-sim">An unconstrained SIM<a class="anchor" aria-label="anchor" href="#an-unconstrained-sim"></a>
 </h2>
 <p>A simplistic SIM can be created just based on the distance between points:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">si_power</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">od</span>, <span class="va">beta</span><span class="op">)</span> <span class="op">{</span>
   <span class="op">(</span><span class="va">od</span><span class="op">[[</span><span class="st">"distance_euclidean"</span><span class="op">]</span><span class="op">]</span> <span class="op">/</span> <span class="fl">1000</span><span class="op">)</span><span class="op">^</span><span class="va">beta</span>
-<span class="op">}</span> 
-<span class="va">od_calculate</span> <span class="op">=</span> <span class="fu"><a href="../reference/si_calculate.html">si_calculate</a></span><span class="op">(</span><span class="va">od_sim</span>, fun <span class="op">=</span> <span class="va">si_power</span>, beta <span class="op">=</span> <span class="op">-</span><span class="fl">0.8</span><span class="op">)</span>
-<span class="fu"><a href="https://r-spatial.github.io/sf/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">od_calculate</span><span class="op">[</span><span class="st">"res"</span><span class="op">]</span>, logz <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="op">}</span>
+<span class="va">od_calculated</span> <span class="op">=</span> <span class="fu"><a href="../reference/si_calculate.html">si_calculate</a></span><span class="op">(</span><span class="va">od_sim</span>, fun <span class="op">=</span> <span class="va">si_power</span>, beta <span class="op">=</span> <span class="op">-</span><span class="fl">0.8</span><span class="op">)</span>
+<span class="fu"><a href="https://r-spatial.github.io/sf/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">od_calculated</span><span class="op">[</span><span class="st">"res"</span><span class="op">]</span>, logz <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="co">#&gt; Warning in classInt::classIntervals(v0, min(nbreaks, n.unq), breaks, warnSmallN</span>
 <span class="co">#&gt; = FALSE): var has infinite values, omitted in finding classes</span></code></pre></div>
 <p><img src="si_files/figure-html/unconstrained1-1.png" width="700"></p>
-<p>This approach, ignoring all variables at the level of trip origins and destinations, results in flow estimates with no units. Before learning how to run constrained SIMs in the next section, let’s add estimates of each zone’s population to the model:</p>
+<p>This approach, ignoring all variables at the level of trip origins and destinations, results in flow estimates with no units. Before learning how to run constrained SIMs, let’s scale the result by the total flow and see how far we are from reality, just focussing on the interzonal OD pairs:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># Todo</span></code></pre></div>
+<code class="sourceCode R"><span class="va">od_interzonal</span> <span class="op">=</span> <span class="va">od</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">Orig_code</span> <span class="op">!=</span> <span class="va">Dest_code</span><span class="op">)</span>
+<span class="va">od_calculated_interzonal</span> <span class="op">=</span> <span class="va">od_calculated</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">O</span> <span class="op">!=</span> <span class="va">D</span><span class="op">)</span> 
+<span class="va">scale_factor</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">od_interzonal</span><span class="op">$</span><span class="va">Flow</span><span class="op">)</span> <span class="op">/</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">od_calculated_interzonal</span><span class="op">$</span><span class="va">res</span><span class="op">)</span>
+<span class="va">od_calculated_interzonal</span> <span class="op">=</span> <span class="va">od_calculated_interzonal</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>res_scaled <span class="op">=</span> <span class="va">res</span> <span class="op">*</span> <span class="va">scale_factor</span><span class="op">)</span>
+<span class="va">od_joined</span> <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">inner_join</a></span><span class="op">(</span>
+  <span class="va">od_calculated_interzonal</span>,
+  <span class="va">od</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>O <span class="op">=</span> <span class="va">Orig_code</span>, D <span class="op">=</span> <span class="va">Dest_code</span><span class="op">)</span>
+  <span class="op">)</span>
+<span class="co">#&gt; Joining, by = c("O", "D")</span>
+<span class="va">od_joined</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">Flow</span>, <span class="va">res_scaled</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<p><img src="si_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">od_joined</span><span class="op">$</span><span class="va">Flow</span>, <span class="va">od_joined</span><span class="op">$</span><span class="va">res_scaled</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span>
+<span class="co">#&gt; [1] 0.1677679</span></code></pre></div>
+<p>The results show that a simple unconstrained model, without any parameter fitting, can explain less than 20% of the variability in flows. We can do better!</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">od_joined</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>decay <span class="op">=</span> <span class="va">distance_euclidean</span><span class="op">^</span><span class="op">-</span><span class="fl">0.8</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>decay <span class="op">=</span> <span class="va">decay</span> <span class="op">*</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">Flow</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">decay</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">distance_euclidean</span>, <span class="va">Flow</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">distance_euclidean</span>, <span class="va">decay</span><span class="op">)</span>, colour <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span> </code></pre></div>
+<p><img src="si_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
+</div>
+<div class="section level2">
+<h2 id="a-production-constrained-sim">A production constrained SIM<a class="anchor" aria-label="anchor" href="#a-production-constrained-sim"></a>
+</h2>
+<p>The first logical way to improve model fit is to run a production constrained model. To do that, we’ll first calculate the total number of people leaving each zone and then use the <code>constraint_p</code> argument:</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">od_originating</span> <span class="op">=</span> <span class="va">od_joined</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">O</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>originating_per_zone <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">Flow</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">ungroup</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">od_constrained_p</span> <span class="op">=</span> <span class="fu"><a href="../reference/si_calculate.html">si_calculate</a></span><span class="op">(</span>
+  <span class="va">od_originating</span>,
+  fun <span class="op">=</span> <span class="va">si_power</span>,
+  beta <span class="op">=</span> <span class="op">-</span><span class="fl">0.8</span>,
+  constraint_p <span class="op">=</span> <span class="va">originating_per_zone</span>
+  <span class="op">)</span>
+<span class="va">od_constrained_p</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">Flow</span>, <span class="va">res</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<p><img src="si_files/figure-html/unnamed-chunk-8-1.png" width="700"></p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">od_constrained_p</span><span class="op">$</span><span class="va">Flow</span>, <span class="va">od_constrained_p</span><span class="op">$</span><span class="va">res</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span>
+<span class="co">#&gt; [1] 0.3891644</span></code></pre></div>
+<p>Progress! We have more than doubled the predictive ability of our model by using a ‘production constrained’ SIM, as defined mathematically in the <a href="https://robinlovelace.github.io/si/articles/sims-first-principles.html"><code>sim-first-principles</code> vignette</a>.</p>
+</div>
+<div class="section level2">
+<h2 id="training-a-sim">Training a SIM<a class="anchor" aria-label="anchor" href="#training-a-sim"></a>
+</h2>
+<p>An advantage of the flow data used in this example is that we already know the interaction. (This raises the question of why a SIM is needed, answer: to test our models and demonstrate the techniques.)</p>
+<p>We can do this using the <code><a href="https://rdrr.io/r/stats/nls.html" class="external-link">nls()</a></code> function as follows:</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">minpack.lm</span><span class="op">)</span>
+<span class="va">f</span> <span class="op">=</span> <span class="va">Flow</span> <span class="op">~</span> <span class="va">a</span> <span class="op">*</span> <span class="op">(</span><span class="va">distance_euclidean</span><span class="op">)</span><span class="op">^</span><span class="va">b</span>
+<span class="va">m</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/minpack.lm/man/nlsLM.html" class="external-link">nlsLM</a></span><span class="op">(</span>
+  formula <span class="op">=</span> <span class="va">f</span>,
+  data <span class="op">=</span> <span class="va">od_originating</span>,
+  <span class="op">)</span>
+<span class="co">#&gt; Warning in nlsLM(formula = f, data = od_originating, ): No starting values specified for some parameters.</span>
+<span class="co">#&gt; Initializing 'a', 'b' to '1.'.</span>
+<span class="co">#&gt; Consider specifying 'start' or using a selfStart model</span>
+<span class="co">#&gt; Warning in nls.lm(par = start, fn = FCT, jac = jac, control = control, lower = lower, : lmdif: info = -1. Number of iterations has reached `maxiter' == 50.</span>
+<span class="va">m</span>
+<span class="co">#&gt; Nonlinear regression model</span>
+<span class="co">#&gt;   model: Flow ~ a * (distance_euclidean)^b</span>
+<span class="co">#&gt;    data: od_originating</span>
+<span class="co">#&gt;          a          b </span>
+<span class="co">#&gt;  2.182e+07 -5.801e-01 </span>
+<span class="co">#&gt;  residual sum-of-squares: 3.089e+10</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Number of iterations till stop: 50 </span>
+<span class="co">#&gt; Achieved convergence tolerance: 1.49e-08</span>
+<span class="co">#&gt; Reason stopped: Number of iterations has reached `maxiter' == 50.</span>
+<span class="co"># Nonlinear regression model</span>
+<span class="co">#   model: Flow ~ a * (distance_euclidean)^b</span>
+<span class="co">#    data: od_originating</span>
+<span class="co">#          a          b </span>
+<span class="co">#  2.182e+07 -5.801e-01 </span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">od_joined</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>decay <span class="op">=</span> <span class="va">distance_euclidean</span><span class="op">^</span><span class="op">-</span><span class="fl">5.801e-01</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>decay <span class="op">=</span> <span class="va">decay</span> <span class="op">*</span> <span class="fl">2.182e+07</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">distance_euclidean</span>, <span class="va">Flow</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">distance_euclidean</span>, <span class="va">decay</span><span class="op">)</span>, colour <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span> </code></pre></div>
+<p><img src="si_files/figure-html/unnamed-chunk-11-1.png" width="700"></p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">od_pred</span> <span class="op">=</span> <span class="fu"><a href="../reference/si_predict.html">si_predict</a></span><span class="op">(</span><span class="va">od_originating</span>, model <span class="op">=</span> <span class="va">m</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">od_pred</span><span class="op">$</span><span class="va">Flow</span>, <span class="va">od_pred</span><span class="op">$</span><span class="va">res</span><span class="op">)</span>
+<span class="co">#&gt; [1] 0.417905</span>
+<span class="va">od_pred_const</span> <span class="op">=</span> <span class="fu"><a href="../reference/si_predict.html">si_predict</a></span><span class="op">(</span><span class="va">od_originating</span>, model <span class="op">=</span> <span class="va">m</span>,
+  constraint_p <span class="op">=</span> <span class="va">originating_per_zone</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">od_pred_const</span><span class="op">$</span><span class="va">Flow</span>, <span class="va">od_pred_const</span><span class="op">$</span><span class="va">res</span><span class="op">)</span>
+<span class="co">#&gt; [1] 0.5817929</span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
