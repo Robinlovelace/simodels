@@ -26,6 +26,7 @@ See the package's [README](https://robinlovelace.github.io/si/) for instructions
 
 ```{r setup}
 library(si)
+library(dplyr)
 ```
 
 # Input data
@@ -112,7 +113,7 @@ names(od_sim)
 
 Note that the output has duplicate columns: `si_to_od()` joins data from the origin and destination objects into the resulting OD object.
 
-# Running an unconstrained SIM
+# An unconstrained SIM
 
 A simplistic SIM can be created just based on the distance between points:
 
@@ -120,17 +121,62 @@ A simplistic SIM can be created just based on the distance between points:
 si_power = function(od, beta) {
   (od[["distance_euclidean"]] / 1000)^beta
 }
-od_calculate = si_calculate(od_sim, fun = si_power, beta = -0.8)
-plot(od_calculate["res"], logz = TRUE)
+od_calculated = si_calculate(od_sim, fun = si_power, beta = -0.8)
+plot(od_calculated["res"], logz = TRUE)
 ```
 
 This approach, ignoring all variables at the level of trip origins and destinations, results in flow estimates with no units.
-Before learning how to run constrained SIMs in the next section, let's add estimates of each zone's population to the model:
+Before learning how to run constrained SIMs, let's scale the result by the total flow and see how far we are from reality, just focussing on the interzonal OD pairs:
 
 ```{r}
-# Todo
+od_interzonal = od %>%
+  filter(Orig_code != Dest_code)
+od_calculated_interzonal = od_calculated %>%
+  filter(O != D) 
+scale_factor = sum(od_interzonal$Flow) /
+  sum(od_calculated_interzonal$res)
+od_calculated_interzonal = od_calculated_interzonal %>% 
+  mutate(res_scaled = res * scale_factor)
+od_joined = inner_join(
+  od_calculated_interzonal,
+  od %>% rename(O = Orig_code, D = Dest_code)
+  )
+od_joined %>% 
+  ggplot() +
+  geom_point(aes(Flow, res_scaled))
+cor(od_joined$Flow, od_joined$res_scaled)^2
+```
+
+The results show that a simple unconstrained model, without any parameter fitting, can explain less than 20% of the variability in flows.
+We can do better!
+
+# A production constrained SIM
+
+The first logical way to improve model fit is to run a production constrained model.
+To do that, we'll first calculate the total number of people leaving each zone and then use the `constraint_p` argument:
+
+```{r}
+od_originating = od_joined %>% 
+  group_by(O) %>% 
+  mutate(originating_per_zone = sum(Flow)) %>% 
+  ungroup()
 ```
 
 
+```{r}
+od_constrained_p = si_calculate(
+  od_originating,
+  fun = si_power,
+  beta = -0.8,
+  constraint_p = originating_per_zone
+  )
+od_joined %>% 
+  ggplot() +
+  geom_point(aes(Flow, res))
+cor(od_constrained_p$Flow, od_constrained_p$res)^2
+```
+
+Progress!
+We have more than doubled the predictive ability of our model by using a 'production constrained' SIM, as defined mathematically in the [`sim-first-principles` vignette](https://robinlovelace.github.io/si/articles/sims-first-principles.html).
 
 # References
