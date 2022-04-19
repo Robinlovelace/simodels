@@ -33,6 +33,7 @@ RoxygenNote: 7.1.2
 Suggests: 
     ggplot2,
     knitr,
+    minpack.lm,
     rmarkdown,
     tmap
 VignetteBuilder: knitr

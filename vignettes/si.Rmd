@@ -27,6 +27,7 @@ See the package's [README](https://robinlovelace.github.io/si/) for instructions
 ```{r setup}
 library(si)
 library(dplyr)
+library(ggplot2)
 ```
 
 # Input data
@@ -196,20 +197,48 @@ An advantage of the flow data used in this example is that we already know the i
 
 We can do this using the `nls()` function as follows:
 
-```{r}
-f = Flow ~ (distance_euclidean * a)^b
+```{r, eval=FALSE, echo=FALSE}
+f = Flow ~ a * (distance_euclidean)^b
 m = nls(
   formula = f,
   data = od_originating,
   start = list(b = 0.8, a = 0.001),
-  upper = c(5, 100), lower = c(-5, 0.00001),
+  upper = c(5, 1e5), lower = c(-5, 0.00001),
   algorithm = "port"
   )
 m
-od_trained = si_predict(od_originating, model = m,
-  constraint_p = originating_per_zone)
-cor(od_trained$Flow, od_trained$res)
 ```
 
+```{r}
+library(minpack.lm)
+f = Flow ~ a * (distance_euclidean)^b
+m = nlsLM(
+  formula = f,
+  data = od_originating,
+  )
+m
+# Nonlinear regression model
+#   model: Flow ~ a * (distance_euclidean)^b
+#    data: od_originating
+#          a          b 
+#  2.182e+07 -5.801e-01 
+```
+
+```{r}
+od_joined %>% 
+  mutate(decay = distance_euclidean^-5.801e-01) %>% 
+  mutate(decay = decay * 2.182e+07) %>% 
+  ggplot() +
+  geom_point(aes(distance_euclidean, Flow)) +
+  geom_line(aes(distance_euclidean, decay), colour = "red") 
+```
+
+```{r}
+od_pred = si_predict(od_originating, model = m)
+cor(od_pred$Flow, od_pred$res)
+od_pred_const = si_predict(od_originating, model = m,
+  constraint_p = originating_per_zone)
+cor(od_pred_const$Flow, od_pred_const$res)
+```
 
 # References
