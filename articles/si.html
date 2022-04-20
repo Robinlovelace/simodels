@@ -282,12 +282,12 @@
 <p><img src="si_files/figure-html/unnamed-chunk-11-1.png" width="700"></p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">od_pred</span> <span class="op">=</span> <span class="fu"><a href="../reference/si_predict.html">si_predict</a></span><span class="op">(</span><span class="va">od_originating</span>, model <span class="op">=</span> <span class="va">m</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">od_pred</span><span class="op">$</span><span class="va">Flow</span>, <span class="va">od_pred</span><span class="op">$</span><span class="va">res</span><span class="op">)</span>
-<span class="co">#&gt; [1] 0.417905</span>
+<span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">od_pred</span><span class="op">$</span><span class="va">Flow</span>, <span class="va">od_pred</span><span class="op">$</span><span class="va">res</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span>
+<span class="co">#&gt; [1] 0.1746446</span>
 <span class="va">od_pred_const</span> <span class="op">=</span> <span class="fu"><a href="../reference/si_predict.html">si_predict</a></span><span class="op">(</span><span class="va">od_originating</span>, model <span class="op">=</span> <span class="va">m</span>,
   constraint_p <span class="op">=</span> <span class="va">originating_per_zone</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">od_pred_const</span><span class="op">$</span><span class="va">Flow</span>, <span class="va">od_pred_const</span><span class="op">$</span><span class="va">res</span><span class="op">)</span>
-<span class="co">#&gt; [1] 0.5817929</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">od_pred_const</span><span class="op">$</span><span class="va">Flow</span>, <span class="va">od_pred_const</span><span class="op">$</span><span class="va">res</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span>
+<span class="co">#&gt; [1] 0.338483</span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
