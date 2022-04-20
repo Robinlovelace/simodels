@@ -235,10 +235,10 @@ od_joined %>%
 
 ```{r}
 od_pred = si_predict(od_originating, model = m)
-cor(od_pred$Flow, od_pred$res)
+cor(od_pred$Flow, od_pred$res)^2
 od_pred_const = si_predict(od_originating, model = m,
   constraint_p = originating_per_zone)
-cor(od_pred_const$Flow, od_pred_const$res)
+cor(od_pred_const$Flow, od_pred_const$res)^2
 ```
 
 # References
