@@ -111,14 +111,14 @@
     <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="op">-</span><span class="va">beta</span> <span class="op">*</span> <span class="va">od</span><span class="op">[[</span><span class="st">"distance_euclidean"</span><span class="op">]</span><span class="op">]</span> <span class="op">/</span> <span class="fl">1000</span><span class="op">)</span>
 <span class="op">}</span> 
 <span class="co"># perform SIM</span>
-<span class="va">od_res</span> <span class="op">=</span> <span class="fu"><a href="reference/si_calculate.html">si_calculate</a></span><span class="op">(</span><span class="va">od</span>, fun <span class="op">=</span> <span class="va">gravity_model</span>, beta <span class="op">=</span> <span class="fl">0.3</span>, var_p <span class="op">=</span> <span class="va">origin_all</span><span class="op">)</span>
+<span class="va">od_res</span> <span class="op">=</span> <span class="fu"><a href="reference/si_calculate.html">si_calculate</a></span><span class="op">(</span><span class="va">od</span>, fun <span class="op">=</span> <span class="va">gravity_model</span>, beta <span class="op">=</span> <span class="fl">0.3</span>, constraint_p <span class="op">=</span> <span class="va">origin_all</span><span class="op">)</span>
 <span class="co"># visualize the results</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">od_res</span><span class="op">$</span><span class="va">distance_euclidean</span>, <span class="va">od_res</span><span class="op">$</span><span class="va">res</span><span class="op">)</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">od_res</span><span class="op">$</span><span class="va">distance_euclidean</span>, <span class="va">od_res</span><span class="op">$</span><span class="va">interaction</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/README-distance-1.png"></p>
 <p>What just happened? As the example above shows, the package allows/encourages you to define and use your own functions to estimate the amount of interaction/movement between places. The resulting estimates of interaction, returned in the column <code>res</code> and plotted with distance in the graphic above, resulted from our choice of spatial interaction model inputs, allowing a wide range of alternative approaches to be implemented. This flexibility is a key aspect of the package, enabling small and easily modified functions to be implemented and tested.</p>
 <p>The output <code>si_calculate)</code> is a geographic object which can be plotted as a map:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">od_res</span><span class="op">[</span><span class="st">"res"</span><span class="op">]</span>, logz <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">od_res</span><span class="op">[</span><span class="st">"interaction"</span><span class="op">]</span>, logz <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p><img src="reference/figures/README-map-1.png"></p>
 <p>The <code><a href="reference/si_to_od.html">si_to_od()</a></code> function transforms geographic entities (typically polygons and points) into a data frame representing the full combination of origin-destination pairs that are less than <code>max_dist</code> meters apart. A common saying in data science is that 80% of the effort goes into the pre-processing stage. This is equally true for spatial interaction modelling as it is for other types of data intensive analysis/modelling work. So what does this function return?</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
@@ -159,6 +159,7 @@
 <li>The <a href="https://github.com/LukeCe/spflow" class="external-link"><code>spflow</code> R package</a> on CRAN</li>
 <li>The <a href="https://spint.readthedocs.io/en/latest/" class="external-link"><code>spint</code> Python package</a>
 </li>
+<li>The <a href="https://cran.r-project.org/package=gravity" class="external-link"><code>gravity</code></a> R package</li>
 </ul>
 </div>
 
