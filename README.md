@@ -45,9 +45,9 @@ gravity_model = function(od, beta) {
     exp(-beta * od[["distance_euclidean"]] / 1000)
 } 
 # perform SIM
-od_res = si_calculate(od, fun = gravity_model, beta = 0.3, var_p = origin_all)
+od_res = si_calculate(od, fun = gravity_model, beta = 0.3, constraint_p = origin_all)
 # visualize the results
-plot(od_res$distance_euclidean, od_res$res)
+plot(od_res$distance_euclidean, od_res$interaction)
 ```
 
 ![](man/figures/README-distance-1.png)
@@ -62,11 +62,11 @@ approaches to be implemented. This flexibility is a key aspect of the
 package, enabling small and easily modified functions to be implemented
 and tested.
 
-The output `si_calculate)` is a geographic object which can be plotted as a
-map:
+The output `si_calculate)` is a geographic object which can be plotted
+as a map:
 
 ``` r
-plot(od_res["res"], logz = TRUE)
+plot(od_res["interaction"], logz = TRUE)
 ```
 
 ![](man/figures/README-map-1.png)
@@ -130,3 +130,5 @@ Adam Dennett’s [2018 paper](https://doi.org/10.37970/aps.v2i2.38).
 -   The [`spflow` R package](https://github.com/LukeCe/spflow) on CRAN
 -   The [`spint` Python
     package](https://spint.readthedocs.io/en/latest/)
+-   The [`gravity`](https://cran.r-project.org/package=gravity) R
+    package
