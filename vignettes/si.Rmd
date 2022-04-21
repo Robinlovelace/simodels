@@ -123,7 +123,7 @@ si_power = function(od, beta) {
   (od[["distance_euclidean"]] / 1000)^beta
 }
 od_calculated = si_calculate(od_sim, fun = si_power, beta = -0.8)
-plot(od_calculated["res"], logz = TRUE)
+plot(od_calculated["interaction"], logz = TRUE)
 ```
 
 This approach, ignoring all variables at the level of trip origins and destinations, results in flow estimates with no units.
@@ -135,17 +135,17 @@ od_interzonal = od %>%
 od_calculated_interzonal = od_calculated %>%
   filter(O != D) 
 scale_factor = sum(od_interzonal$Flow) /
-  sum(od_calculated_interzonal$res)
+  sum(od_calculated_interzonal$interaction)
 od_calculated_interzonal = od_calculated_interzonal %>% 
-  mutate(res_scaled = res * scale_factor)
+  mutate(interaction_scaled = interaction * scale_factor)
 od_joined = inner_join(
   od_calculated_interzonal,
   od %>% rename(O = Orig_code, D = Dest_code)
   )
 od_joined %>% 
   ggplot() +
-  geom_point(aes(Flow, res_scaled))
-cor(od_joined$Flow, od_joined$res_scaled)^2
+  geom_point(aes(Flow, interaction_scaled))
+cor(od_joined$Flow, od_joined$interaction_scaled)^2
 ```
 
 The results show that a simple unconstrained model, without any parameter fitting, can explain less than 20% of the variability in flows.
@@ -183,8 +183,8 @@ od_constrained_p = si_calculate(
   )
 od_constrained_p %>% 
   ggplot() +
-  geom_point(aes(Flow, res))
-cor(od_constrained_p$Flow, od_constrained_p$res)^2
+  geom_point(aes(Flow, interaction))
+cor(od_constrained_p$Flow, od_constrained_p$interaction)^2
 ```
 
 Progress!
@@ -235,10 +235,10 @@ od_joined %>%
 
 ```{r}
 od_pred = si_predict(od_originating, model = m)
-cor(od_pred$Flow, od_pred$res)^2
+cor(od_pred$Flow, od_pred$interaction)^2
 od_pred_const = si_predict(od_originating, model = m,
   constraint_p = originating_per_zone)
-cor(od_pred_const$Flow, od_pred_const$res)^2
+cor(od_pred_const$Flow, od_pred_const$interaction)^2
 ```
 
 # References

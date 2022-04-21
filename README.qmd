@@ -52,7 +52,7 @@ gravity_model = function(od, beta) {
 # perform SIM
 od_res = si_calculate(od, fun = gravity_model, beta = 0.3, var_p = origin_all)
 # visualize the results
-plot(od_res$distance_euclidean, od_res$res)
+plot(od_res$distance_euclidean, od_res$interaction)
 ```
 
 What just happened?
