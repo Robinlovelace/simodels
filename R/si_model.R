@@ -25,13 +25,13 @@
 #'   n = destination_all, d = distance_euclidean)
 #' head(od_output)
 #' plot(od$distance_euclidean, od_output$interaction)
-#' od_pconst = si_calculate(od, fun = fun, beta = 0.3, O = origin_all, n = destination_all,
-#'   d = distance_euclidean, constraint_p = origin_all)
+#' od_pconst = si_calculate(od, fun = fun, beta = 0.3, O = origin_all,
+#'   n = destination_all, d = distance_euclidean, constraint_p = origin_all)
 #' plot(od_pconst$distance_euclidean, od_pconst$interaction)
 #' plot(od_pconst["interaction"], logz = TRUE)
 si_calculate = function(od, fun, constraint_p, ...) {
   dots = rlang::enquos(...)
-  od = mutate(od, interaction = fun(!!!dots))
+  od = dplyr::mutate(od, interaction = fun(!!!dots))
   if (!missing(constraint_p)) {
     od_grouped = dplyr::group_by(od, .data$O)
     od_grouped = dplyr::mutate(
