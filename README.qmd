@@ -50,7 +50,7 @@ gravity_model = function(od, beta) {
     exp(-beta * od[["distance_euclidean"]] / 1000)
 } 
 # perform SIM
-od_res = si_calculate(od, fun = gravity_model, beta = 0.3, var_p = origin_all)
+od_res = si_calculate(od, fun = gravity_model, beta = 0.3, constraint_p = origin_all)
 # visualize the results
 plot(od_res$distance_euclidean, od_res$interaction)
 ```
@@ -63,7 +63,7 @@ This flexibility is a key aspect of the package, enabling small and easily modif
 The output `si_calculate)` is a geographic object which can be plotted as a map:
 
 ```{r map}
-plot(od_res["res"], logz = TRUE)
+plot(od_res["interaction"], logz = TRUE)
 ```
 
 The `si_to_od()` function transforms geographic entities (typically polygons and points) into a data frame representing the full combination of origin-destination pairs that are less than `max_dist` meters apart.
@@ -96,3 +96,4 @@ For a detailed introduction to SIMs, support by reproducible R code, see Adam De
 
 - The [`spflow` R package](https://github.com/LukeCe/spflow) on CRAN
 - The [`spint` Python package](https://spint.readthedocs.io/en/latest/)
+- The [`gravity`](https://cran.r-project.org/package=gravity) R package
