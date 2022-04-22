@@ -27,6 +27,21 @@ Run a basic SIM as follows:
 
 ``` r
 library(si)
+library(dplyr)
+```
+
+
+    Attaching package: 'dplyr'
+
+    The following objects are masked from 'package:stats':
+
+        filter, lag
+
+    The following objects are masked from 'package:base':
+
+        intersect, setdiff, setequal, union
+
+``` r
 # prepare OD data
 od = si_to_od(
   origins = si_zones,        # origin locations
@@ -40,17 +55,41 @@ od = si_to_od(
 
 ``` r
 # specify a function
-gravity_model = function(od, beta) {
-  od[["origin_all"]] * od[["destination_all"]] *
-    exp(-beta * od[["distance_euclidean"]] / 1000)
+gravity_model = function(beta, d, m, n) {
+  m * n * exp(-beta * d / 1000)
 } 
 # perform SIM
-od_res = si_calculate(od, fun = gravity_model, beta = 0.3, constraint_p = origin_all)
+od_res = si_calculate(
+  od,
+  fun = gravity_model,
+  d = distance_euclidean,
+  m = origin_all,
+  n = destination_all,
+  constraint_p = origin_all,
+  beta = 0.3
+  )
 # visualize the results
 plot(od_res$distance_euclidean, od_res$interaction)
 ```
 
 ![](man/figures/README-distance-1.png)
+
+Note: this approach also allows you to use {si} functions in {dplyr}
+pipelines:
+
+``` r
+od_res = od %>% 
+  si_calculate(fun = gravity_model, 
+               m = origin_all,
+               n = destination_all,
+               d = distance_euclidean,
+               beta = 0.3)
+od_res %>% 
+  select(interaction) %>% 
+  plot()
+```
+
+![](man/figures/README-unnamed-chunk-2-1.png)
 
 What just happened? As the example above shows, the package
 allows/encourages you to define and use your own functions to estimate
