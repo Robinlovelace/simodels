@@ -119,10 +119,13 @@ Note that the output has duplicate columns: `si_to_od()` joins data from the ori
 A simplistic SIM can be created just based on the distance between points:
 
 ```{r unconstrained1}
-si_power = function(od, beta) {
-  (od[["distance_euclidean"]] / 1000)^beta
-}
-od_calculated = si_calculate(od_sim, fun = si_power, beta = -0.8)
+si_power = function(d, beta) (d / 1000)^beta
+od_calculated = si_calculate(
+  od_sim,
+  fun = si_power,
+  d = distance_euclidean,
+  beta = -0.8
+  )
 plot(od_calculated["interaction"], logz = TRUE)
 ```
 
@@ -178,6 +181,7 @@ od_originating = od_joined %>%
 od_constrained_p = si_calculate(
   od_originating,
   fun = si_power,
+  d = distance_euclidean,
   beta = -0.8,
   constraint_p = originating_per_zone
   )

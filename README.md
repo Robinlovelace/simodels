@@ -27,40 +27,83 @@ Run a basic SIM as follows:
 
 ``` r
 library(si)
+library(dplyr)
 # prepare OD data
 od = si_to_od(
   origins = si_zones,        # origin locations
   destinations = si_zones,   # destination locations
   max_dist = 5000            # maximum distance between OD pairs
   )
-```
-
-    2505 OD pairs remaining after removing those with a distance greater than 5000 meters:
-    22% of all possible OD pairs
-
-``` r
 # specify a function
-gravity_model = function(od, beta) {
-  od[["origin_all"]] * od[["destination_all"]] *
-    exp(-beta * od[["distance_euclidean"]] / 1000)
+gravity_model = function(beta, d, m, n) {
+  m * n * exp(-beta * d / 1000)
 } 
 # perform SIM
-od_res = si_calculate(od, fun = gravity_model, beta = 0.3, constraint_p = origin_all)
+od_res = si_calculate(
+  od,
+  fun = gravity_model,
+  d = distance_euclidean,
+  m = origin_all,
+  n = destination_all,
+  constraint_p = origin_all,
+  beta = 0.3
+  )
 # visualize the results
 plot(od_res$distance_euclidean, od_res$interaction)
 ```
 
 ![](man/figures/README-distance-1.png)
 
-What just happened? As the example above shows, the package
+What just happened? We created an ‘OD data frame’ with the function
+`si_to_od()` from geographic origins and destinations, and then
+estimated a simple ‘production constrained’ (with the `constraint_p`
+argument) gravity model based on the population in origin and
+destination zones and a custom distance decay function with
+`si_calculate()`. As the example above shows, the package
 allows/encourages you to define and use your own functions to estimate
-the amount of interaction/movement between places. The resulting
-estimates of interaction, returned in the column `res` and plotted with
-distance in the graphic above, resulted from our choice of spatial
-interaction model inputs, allowing a wide range of alternative
-approaches to be implemented. This flexibility is a key aspect of the
-package, enabling small and easily modified functions to be implemented
-and tested.
+the amount of interaction/movement between places.
+
+The approach is also ‘tidy’, allowing use of {si} functions in {dplyr}
+pipelines:
+
+``` r
+od_res = od %>% 
+  si_calculate(fun = gravity_model, 
+               m = origin_all,
+               n = destination_all,
+               d = distance_euclidean,
+               constraint_p = origin_all,
+               beta = 0.3)
+od_res %>% 
+  select(interaction)
+```
+
+    Simple feature collection with 2505 features and 1 field
+    Geometry type: LINESTRING
+    Dimension:     XY
+    Bounding box:  xmin: -1.743949 ymin: 53.71552 xmax: -1.337493 ymax: 53.92906
+    Geodetic CRS:  WGS 84
+    # A tibble: 2,505 × 2
+       interaction                                 geometry
+             <dbl>                         <LINESTRING [°]>
+     1       2177. (-1.400108 53.92906, -1.400108 53.92906)
+     2        632. (-1.400108 53.92906, -1.346497 53.92305)
+     3        556. (-1.346497 53.92305, -1.400108 53.92906)
+     4       1382. (-1.346497 53.92305, -1.346497 53.92305)
+     5        449. (-1.346497 53.92305, -1.357667 53.88306)
+     6        794. (-1.704658 53.91073, -1.704658 53.91073)
+     7        749.   (-1.704658 53.91073, -1.6876 53.90066)
+     8        287. (-1.704658 53.91073, -1.743949 53.88035)
+     9        267. (-1.704658 53.91073, -1.710657 53.87087)
+    10        186. (-1.704658 53.91073, -1.694076 53.86729)
+    # … with 2,495 more rows
+
+The resulting estimates of interaction, returned in the column
+`interaction` and plotted with distance in the graphic above, resulted
+from our choice of spatial interaction model inputs, allowing a wide
+range of alternative approaches to be implemented. This flexibility is a
+key aspect of the package, enabling small and easily modified functions
+to be implemented and tested.
 
 The output `si_calculate)` is a geographic object which can be plotted
 as a map:
