@@ -74,6 +74,13 @@ plot(od_res$distance_euclidean, od_res$interaction)
 
 ![](man/figures/README-distance-1.png)
 
+What just happened? We created an ‘OD data frame’ from geographic
+origins and destinations, and then estimated a simple gravity model
+based on the population in origin and destination zones and a custom
+distance decay function. As the example above shows, the package
+allows/encourages you to define and use your own functions to estimate
+the amount of interaction/movement between places.
+
 Note: this approach also allows you to use {si} functions in {dplyr}
 pipelines:
 
@@ -85,21 +92,33 @@ od_res = od %>%
                d = distance_euclidean,
                beta = 0.3)
 od_res %>% 
-  select(interaction) %>% 
-  plot()
+  select(interaction)
 ```
 
-![](man/figures/README-unnamed-chunk-2-1.png)
+    Simple feature collection with 2505 features and 1 field
+    Geometry type: LINESTRING
+    Dimension:     XY
+    Bounding box:  xmin: -1.743949 ymin: 53.71552 xmax: -1.337493 ymax: 53.92906
+    Geodetic CRS:  WGS 84
+    First 10 features:
+       interaction                       geometry
+    1      7890481 LINESTRING (-1.400108 53.92...
+    2      2290854 LINESTRING (-1.400108 53.92...
+    3      2290854 LINESTRING (-1.346497 53.92...
+    4      5697769 LINESTRING (-1.346497 53.92...
+    5      1850756 LINESTRING (-1.346497 53.92...
+    6      6105841 LINESTRING (-1.704658 53.91...
+    7      5753720 LINESTRING (-1.704658 53.91...
+    8      2202388 LINESTRING (-1.704658 53.91...
+    9      2053541 LINESTRING (-1.704658 53.91...
+    10     1430755 LINESTRING (-1.704658 53.91...
 
-What just happened? As the example above shows, the package
-allows/encourages you to define and use your own functions to estimate
-the amount of interaction/movement between places. The resulting
-estimates of interaction, returned in the column `res` and plotted with
-distance in the graphic above, resulted from our choice of spatial
-interaction model inputs, allowing a wide range of alternative
-approaches to be implemented. This flexibility is a key aspect of the
-package, enabling small and easily modified functions to be implemented
-and tested.
+The resulting estimates of interaction, returned in the column
+`interaction` and plotted with distance in the graphic above, resulted
+from our choice of spatial interaction model inputs, allowing a wide
+range of alternative approaches to be implemented. This flexibility is a
+key aspect of the package, enabling small and easily modified functions
+to be implemented and tested.
 
 The output `si_calculate)` is a geographic object which can be plotted
 as a map:
