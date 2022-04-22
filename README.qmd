@@ -1,7 +1,6 @@
 ---
 # format: html
 format: gfm
-title: "si: code and prose exploring Spatial Interaction models"
 bibliography: vignettes/references.bib
 execute:
   cache: false
@@ -19,7 +18,7 @@ knitr::opts_chunk$set(cache = TRUE,
 [![R-CMD-check](https://github.com/robinlovelace/si/workflows/R-CMD-check/badge.svg)](https://github.com/robinlovelace/si/actions)
 <!-- badges: end -->
 
-The goal of {si} is to provide a simple and flexible framework for developing spatial interaction models (SIMs), which estimate the amount of movement between spatial entities.
+The goal of {si} is to provide a simple, '[tidy](https://dplyr.tidyverse.org/)', and flexible framework for developing spatial interaction models (SIMs), which estimate the amount of movement between spatial entities.
 
 ## Installation
 
