@@ -63,6 +63,10 @@ od_res = si_calculate(
 plot(od_res$distance_euclidean, od_res$interaction)
 ```
 
+What just happened?
+We created an 'OD data frame' from geographic origins and destinations, and then estimated a simple gravity model based on the population in origin and destination zones and a custom distance decay function.
+As the example above shows, the package allows/encourages you to define and use your own functions to estimate the amount of interaction/movement between places.
+
 Note: this approach also allows you to use {si} functions in {dplyr} pipelines:
 
 ```{r}
@@ -73,13 +77,10 @@ od_res = od %>%
                d = distance_euclidean,
                beta = 0.3)
 od_res %>% 
-  select(interaction) %>% 
-  plot()
+  select(interaction)
 ```
 
-What just happened?
-As the example above shows, the package allows/encourages you to define and use your own functions to estimate the amount of interaction/movement between places.
-The resulting estimates of interaction, returned in the column `res` and plotted with distance in the graphic above, resulted from our choice of spatial interaction model inputs, allowing a wide range of alternative approaches to be implemented.
+The resulting estimates of interaction, returned in the column `interaction` and plotted with distance in the graphic above, resulted from our choice of spatial interaction model inputs, allowing a wide range of alternative approaches to be implemented.
 This flexibility is a key aspect of the package, enabling small and easily modified functions to be implemented and tested.
 
 The output `si_calculate)` is a geographic object which can be plotted as a map:
