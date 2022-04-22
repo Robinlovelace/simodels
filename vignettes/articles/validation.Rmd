@@ -1,0 +1,33 @@
+---
+title: "Validation of spatial interaction models"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(si)
+library(sf)
+```
+
+# Validation of 2011 OD data for Leeds, UK
+
+The input datasets for this example are as follows:
+
+- Geographic boundary and centroid data from the [{pct}](https://itsleeds.github.io/pct/) package, trip representing origins and destinations
+- Origin-destination data representing trips to work from the 2011 Census
+- Explanatory variables associated with zones, tbc
+
+The key input datasets are shown below
+
+```{r}
+si_od_census
+plot(si_zones$geometry)
+plot(si_centroids$geometry, add = TRUE)
+```
+
+# Valitation based on 2011 OA-WPZ data

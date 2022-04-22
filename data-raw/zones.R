@@ -16,4 +16,4 @@ od_census = get_od()
 si_od_census = od_census %>% 
   rename(O = geo_code1, D = geo_code2) %>% 
   filter(O %in% zones$geo_code & D %in% zones$geo_code)
-usethis::use_data(si_od_census)
+usethis::use_data(si_od_census, overwrite = TRUE)
