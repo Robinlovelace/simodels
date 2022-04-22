@@ -26,16 +26,17 @@ and user-specified function
 }
 \examples{
 od = si_to_od(si_zones, si_zones, max_dist = 4000)
-fun_dd = function(od, d = "distance_euclidean", beta = 0.3) exp(-beta * od[[d]] / 1000)
-od_dd = si_calculate(od, fun = fun_dd)
+fun_dd = function(d = "distance_euclidean", beta = 0.3) exp(-beta * d / 1000)
+fun_dd(d = (1:5)*1000)
+od_dd = si_calculate(od, fun = fun_dd, d = distance_euclidean)
 plot(od$distance_euclidean, od_dd$interaction)
-fun = function(od, O, n, d, beta) od[[O]] * od[[n]] * exp(-beta * od[[d]]/1000)
-od_output = si_calculate(od, fun = fun, beta = 0.3, O = "origin_all", 
-  n = "destination_all", d = "distance_euclidean")
+fun = function(O, n, d, beta) O * n * exp(-beta * d / 1000)
+od_output = si_calculate(od, fun = fun, beta = 0.3, O = origin_all, 
+  n = destination_all, d = distance_euclidean)
 head(od_output)
 plot(od$distance_euclidean, od_output$interaction)
-od_pconst = si_calculate(od, fun = fun, beta = 0.3, O = "origin_all", n = "destination_all",
-  d = "distance_euclidean", constraint_p = origin_all)
+od_pconst = si_calculate(od, fun = fun, beta = 0.3, O = origin_all,
+  n = destination_all, d = distance_euclidean, constraint_p = origin_all)
 plot(od_pconst$distance_euclidean, od_pconst$interaction)
 plot(od_pconst["interaction"], logz = TRUE)
 }

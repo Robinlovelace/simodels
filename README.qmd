@@ -6,11 +6,13 @@ bibliography: vignettes/references.bib
 execute:
   cache: false
   fig.path: "man/figures/README-"
+  message: false
 ---
 
 ```{r, include=FALSE}
 knitr::opts_chunk$set(cache = TRUE,
-  fig.path = "man/figures/README-")
+  fig.path = "man/figures/README-",
+  message = FALSE)
 ```
 
 <!-- badges: start -->
@@ -38,6 +40,7 @@ Run a basic SIM as follows:
 
 ```{r distance}
 library(si)
+library(dplyr)
 # prepare OD data
 od = si_to_od(
   origins = si_zones,        # origin locations
@@ -45,19 +48,42 @@ od = si_to_od(
   max_dist = 5000            # maximum distance between OD pairs
   )
 # specify a function
-gravity_model = function(od, beta) {
-  od[["origin_all"]] * od[["destination_all"]] *
-    exp(-beta * od[["distance_euclidean"]] / 1000)
+gravity_model = function(beta, d, m, n) {
+  m * n * exp(-beta * d / 1000)
 } 
 # perform SIM
-od_res = si_calculate(od, fun = gravity_model, beta = 0.3, constraint_p = origin_all)
+od_res = si_calculate(
+  od,
+  fun = gravity_model,
+  d = distance_euclidean,
+  m = origin_all,
+  n = destination_all,
+  constraint_p = origin_all,
+  beta = 0.3
+  )
 # visualize the results
 plot(od_res$distance_euclidean, od_res$interaction)
 ```
 
 What just happened?
+We created an 'OD data frame' with the function `si_to_od()` from geographic origins and destinations, and then estimated a simple 'production constrained' (with the `constraint_p` argument) gravity model based on the population in origin and destination zones and a custom distance decay function with `si_calculate()`.
 As the example above shows, the package allows/encourages you to define and use your own functions to estimate the amount of interaction/movement between places.
-The resulting estimates of interaction, returned in the column `res` and plotted with distance in the graphic above, resulted from our choice of spatial interaction model inputs, allowing a wide range of alternative approaches to be implemented.
+
+The approach is also 'tidy', allowing use of {si} functions in {dplyr} pipelines:
+
+```{r}
+od_res = od %>% 
+  si_calculate(fun = gravity_model, 
+               m = origin_all,
+               n = destination_all,
+               d = distance_euclidean,
+               constraint_p = origin_all,
+               beta = 0.3)
+od_res %>% 
+  select(interaction)
+```
+
+The resulting estimates of interaction, returned in the column `interaction` and plotted with distance in the graphic above, resulted from our choice of spatial interaction model inputs, allowing a wide range of alternative approaches to be implemented.
 This flexibility is a key aspect of the package, enabling small and easily modified functions to be implemented and tested.
 
 The output `si_calculate)` is a geographic object which can be plotted as a map:
