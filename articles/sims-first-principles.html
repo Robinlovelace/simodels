@@ -44,6 +44,7 @@
 <li class="active nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/validation.html">Validation of spatial interaction models</a>
     <a class="dropdown-item" href="../articles/sims-first-principles.html">An introduction to spatial interaction models: from first principles</a>
   </div>
 </li>
@@ -206,7 +207,7 @@ A_{i}=\frac{1}{\sum_{j} m_{j} \mathrm{f}\left(c_{i j}\right)}
 <p><img src="sims-first-principles_files/figure-html/validation-1.png" width="700"></p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">od_dfjc</span><span class="op">$</span><span class="va">all</span>, <span class="va">od_dfjc</span><span class="op">$</span><span class="va">flow_constrained</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span>
-<span class="co">#&gt; [1] NA</span></code></pre></div>
+<span class="co">#&gt; [1] 0.1735933</span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>

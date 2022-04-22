@@ -27,6 +27,7 @@
 <li class="nav-item dropdown">
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="../articles/validation.html">Validation of spatial interaction models</a>
     <a class="dropdown-item" href="../articles/sims-first-principles.html">An introduction to spatial interaction models: from first principles</a>
   </div>
 </li>
@@ -64,10 +65,16 @@
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">si_od_census</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 0 × 18</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 18 variables: O &lt;chr&gt;, D &lt;chr&gt;, all &lt;dbl&gt;, from_home &lt;dbl&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   light_rail &lt;dbl&gt;, train &lt;dbl&gt;, bus &lt;dbl&gt;, taxi &lt;dbl&gt;, motorbike &lt;dbl&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   car_driver &lt;dbl&gt;, car_passenger &lt;dbl&gt;, bicycle &lt;dbl&gt;, foot &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 6 × 18</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   O      D       all from_home light_rail train   bus  taxi motorbike car_driver</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> E0200… E020…   168         0          1     2     3     1         1         81</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> E0200… E020…   332         0          0     5    23     0         0        221</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> E0200… E020…    16         0          0     2     0     0         0         13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> E0200… E020…    86         0          0     0     1     0         0         78</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span> E0200… E020…    12         0          0     0     0     0         0         10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span> E0200… E020…    10         0          0     0     1     0         0          7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 8 more variables: car_passenger &lt;dbl&gt;, bicycle &lt;dbl&gt;, foot &lt;dbl&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   other &lt;dbl&gt;, geo_name1 &lt;chr&gt;, geo_name2 &lt;chr&gt;, la_1 &lt;chr&gt;, la_2 &lt;chr&gt;</span></span>
 </code></pre></div>
     </div>
