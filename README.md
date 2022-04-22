@@ -3,7 +3,8 @@
 [![R-CMD-check](https://github.com/robinlovelace/si/workflows/R-CMD-check/badge.svg)](https://github.com/robinlovelace/si/actions)
 <!-- badges: end -->
 
-The goal of {si} is to provide a simple and flexible framework for
+The goal of {si} is to provide a simple,
+‘[tidy](https://dplyr.tidyverse.org/)’, and flexible framework for
 developing spatial interaction models (SIMs), which estimate the amount
 of movement between spatial entities.
 
