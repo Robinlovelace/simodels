@@ -28,32 +28,12 @@ Run a basic SIM as follows:
 ``` r
 library(si)
 library(dplyr)
-```
-
-
-    Attaching package: 'dplyr'
-
-    The following objects are masked from 'package:stats':
-
-        filter, lag
-
-    The following objects are masked from 'package:base':
-
-        intersect, setdiff, setequal, union
-
-``` r
 # prepare OD data
 od = si_to_od(
   origins = si_zones,        # origin locations
   destinations = si_zones,   # destination locations
   max_dist = 5000            # maximum distance between OD pairs
   )
-```
-
-    2505 OD pairs remaining after removing those with a distance greater than 5000 meters:
-    22% of all possible OD pairs
-
-``` r
 # specify a function
 gravity_model = function(beta, d, m, n) {
   m * n * exp(-beta * d / 1000)

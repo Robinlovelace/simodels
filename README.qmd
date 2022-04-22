@@ -6,11 +6,13 @@ bibliography: vignettes/references.bib
 execute:
   cache: false
   fig.path: "man/figures/README-"
+  message: false
 ---
 
 ```{r, include=FALSE}
 knitr::opts_chunk$set(cache = TRUE,
-  fig.path = "man/figures/README-")
+  fig.path = "man/figures/README-",
+  message = FALSE)
 ```
 
 <!-- badges: start -->
