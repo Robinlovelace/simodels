@@ -74,14 +74,16 @@ plot(od_res$distance_euclidean, od_res$interaction)
 
 ![](man/figures/README-distance-1.png)
 
-What just happened? We created an ‘OD data frame’ from geographic
-origins and destinations, and then estimated a simple gravity model
-based on the population in origin and destination zones and a custom
-distance decay function. As the example above shows, the package
+What just happened? We created an ‘OD data frame’ with the function
+`si_to_od()` from geographic origins and destinations, and then
+estimated a simple ‘production constrained’ (with the `constraint_p`
+argument) gravity model based on the population in origin and
+destination zones and a custom distance decay function with
+`si_calculate()`. As the example above shows, the package
 allows/encourages you to define and use your own functions to estimate
 the amount of interaction/movement between places.
 
-Note: this approach also allows you to use {si} functions in {dplyr}
+The approach is also ‘tidy’, allowing use of {si} functions in {dplyr}
 pipelines:
 
 ``` r
@@ -90,6 +92,7 @@ od_res = od %>%
                m = origin_all,
                n = destination_all,
                d = distance_euclidean,
+               constraint_p = origin_all,
                beta = 0.3)
 od_res %>% 
   select(interaction)
@@ -100,18 +103,20 @@ od_res %>%
     Dimension:     XY
     Bounding box:  xmin: -1.743949 ymin: 53.71552 xmax: -1.337493 ymax: 53.92906
     Geodetic CRS:  WGS 84
-    First 10 features:
-       interaction                       geometry
-    1      7890481 LINESTRING (-1.400108 53.92...
-    2      2290854 LINESTRING (-1.400108 53.92...
-    3      2290854 LINESTRING (-1.346497 53.92...
-    4      5697769 LINESTRING (-1.346497 53.92...
-    5      1850756 LINESTRING (-1.346497 53.92...
-    6      6105841 LINESTRING (-1.704658 53.91...
-    7      5753720 LINESTRING (-1.704658 53.91...
-    8      2202388 LINESTRING (-1.704658 53.91...
-    9      2053541 LINESTRING (-1.704658 53.91...
-    10     1430755 LINESTRING (-1.704658 53.91...
+    # A tibble: 2,505 × 2
+       interaction                                 geometry
+             <dbl>                         <LINESTRING [°]>
+     1       2177. (-1.400108 53.92906, -1.400108 53.92906)
+     2        632. (-1.400108 53.92906, -1.346497 53.92305)
+     3        556. (-1.346497 53.92305, -1.400108 53.92906)
+     4       1382. (-1.346497 53.92305, -1.346497 53.92305)
+     5        449. (-1.346497 53.92305, -1.357667 53.88306)
+     6        794. (-1.704658 53.91073, -1.704658 53.91073)
+     7        749.   (-1.704658 53.91073, -1.6876 53.90066)
+     8        287. (-1.704658 53.91073, -1.743949 53.88035)
+     9        267. (-1.704658 53.91073, -1.710657 53.87087)
+    10        186. (-1.704658 53.91073, -1.694076 53.86729)
+    # … with 2,495 more rows
 
 The resulting estimates of interaction, returned in the column
 `interaction` and plotted with distance in the graphic above, resulted
