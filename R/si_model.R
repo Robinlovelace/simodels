@@ -7,7 +7,7 @@
 #'   [si_to_od()]
 #' @param fun A function that calculates the interaction (e.g. the number of trips)
 #'   between each OD pair
-#' @param constraint_p Use this argument to run a 'production constrained' SIM.
+#' @param constraint_production Use this argument to run a 'production constrained' SIM.
 #'   Character string corresponding to column in the `od`
 #'   dataset that constrains the total 'interaction' (e.g. n. trips) for all OD pairs
 #'   such that the total for each zone of origin cannot go above this value.
@@ -28,20 +28,20 @@
 #' head(od_output)
 #' plot(od$distance_euclidean, od_output$interaction)
 #' od_pconst = si_calculate(od, fun = fun, beta = 0.3, O = origin_all,
-#'   n = destination_all, d = distance_euclidean, constraint_p = origin_all)
+#'   n = destination_all, d = distance_euclidean, constraint_production = origin_all)
 #' plot(od_pconst$distance_euclidean, od_pconst$interaction)
 #' plot(od_pconst["interaction"], logz = TRUE)
 #' od_dd = si_calculate(od, fun = fun_dd, d = distance_euclidean, output_col = "res")
 #' head(od_dd$res)
-si_calculate = function(od, fun, constraint_p, ..., output_col = "interaction") {
+si_calculate = function(od, fun, constraint_production, ..., output_col = "interaction") {
   dots = rlang::enquos(...)
   od = dplyr::mutate(od, {{output_col}} := fun(!!!dots))
-  if (!missing(constraint_p)) {
+  if (!missing(constraint_production)) {
     od_grouped = dplyr::group_by(od, .data$O)
     od_grouped = dplyr::mutate(
       od_grouped,
       output_col = .data[[output_col]] /
-        sum(.data[[output_col]]) * mean( {{constraint_p}} )
+        sum(.data[[output_col]]) * mean( {{constraint_production}} )
       )
     od = dplyr::ungroup(od_grouped)
   }
@@ -57,14 +57,14 @@ si_calculate = function(od, fun, constraint_p, ..., output_col = "interaction") 
 #' od = si_to_od(si_zones, si_zones, max_dist = 4000)
 #' m = lm(od$origin_all ~ od$origin_bicycle)
 #' od_updated = si_predict(od, m)
-si_predict = function(od, model, constraint_p, output_col = "interaction") {
+si_predict = function(od, model, constraint_production, output_col = "interaction") {
   od[[output_col]] = stats::predict(model, od)
-  if (!missing(constraint_p)) {
+  if (!missing(constraint_production)) {
     od_grouped = dplyr::group_by(od, .data$O)
     od_grouped = dplyr::mutate(
       od_grouped,
       interaction = .data[[output_col]] /
-        sum(.data[[output_col]]) * mean( {{constraint_p}} )
+        sum(.data[[output_col]]) * mean( {{constraint_production}} )
       )
     od = dplyr::ungroup(od_grouped)
   }

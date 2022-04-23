@@ -4,7 +4,7 @@
 \alias{si_calculate}
 \title{Calculate flow using a pre-existing function}
 \usage{
-si_calculate(od, fun, constraint_p, ..., output_col = "interaction")
+si_calculate(od, fun, constraint_production, ..., output_col = "interaction")
 }
 \arguments{
 \item{od}{A data frame representing origin-destination data, e.g. as created by
@@ -13,7 +13,7 @@ si_calculate(od, fun, constraint_p, ..., output_col = "interaction")
 \item{fun}{A function that calculates the interaction (e.g. the number of trips)
 between each OD pair}
 
-\item{constraint_p}{Use this argument to run a 'production constrained' SIM.
+\item{constraint_production}{Use this argument to run a 'production constrained' SIM.
 Character string corresponding to column in the \code{od}
 dataset that constrains the total 'interaction' (e.g. n. trips) for all OD pairs
 such that the total for each zone of origin cannot go above this value.}
@@ -39,7 +39,7 @@ od_output = si_calculate(od, fun = fun, beta = 0.3, O = origin_all,
 head(od_output)
 plot(od$distance_euclidean, od_output$interaction)
 od_pconst = si_calculate(od, fun = fun, beta = 0.3, O = origin_all,
-  n = destination_all, d = distance_euclidean, constraint_p = origin_all)
+  n = destination_all, d = distance_euclidean, constraint_production = origin_all)
 plot(od_pconst$distance_euclidean, od_pconst$interaction)
 plot(od_pconst["interaction"], logz = TRUE)
 od_dd = si_calculate(od, fun = fun_dd, d = distance_euclidean, output_col = "res")
