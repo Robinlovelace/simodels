@@ -222,7 +222,7 @@
 <div class="section level2">
 <h2 id="a-production-constrained-sim">A production constrained SIM<a class="anchor" aria-label="anchor" href="#a-production-constrained-sim"></a>
 </h2>
-<p>The first logical way to improve model fit is to run a production constrained model. To do that, we’ll first calculate the total number of people leaving each zone and then use the <code>constraint_p</code> argument:</p>
+<p>The first logical way to improve model fit is to run a production constrained model. To do that, we’ll first calculate the total number of people leaving each zone and then use the <code>constraint_production</code> argument:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">od_originating</span> <span class="op">=</span> <span class="va">od_joined</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">O</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
@@ -234,7 +234,7 @@
   fun <span class="op">=</span> <span class="va">si_power</span>,
   d <span class="op">=</span> <span class="va">distance_euclidean</span>,
   beta <span class="op">=</span> <span class="op">-</span><span class="fl">0.8</span>,
-  constraint_p <span class="op">=</span> <span class="va">originating_per_zone</span>
+  constraint_production <span class="op">=</span> <span class="va">originating_per_zone</span>
   <span class="op">)</span>
 <span class="va">od_constrained_p</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
@@ -290,7 +290,7 @@
 <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">od_pred</span><span class="op">$</span><span class="va">Flow</span>, <span class="va">od_pred</span><span class="op">$</span><span class="va">interaction</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span>
 <span class="co">#&gt; [1] 0.1746446</span>
 <span class="va">od_pred_const</span> <span class="op">=</span> <span class="fu"><a href="../reference/si_predict.html">si_predict</a></span><span class="op">(</span><span class="va">od_originating</span>, model <span class="op">=</span> <span class="va">m</span>,
-  constraint_p <span class="op">=</span> <span class="va">originating_per_zone</span><span class="op">)</span>
+  constraint_production <span class="op">=</span> <span class="va">originating_per_zone</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">od_pred_const</span><span class="op">$</span><span class="va">Flow</span>, <span class="va">od_pred_const</span><span class="op">$</span><span class="va">interaction</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span>
 <span class="co">#&gt; [1] 0.338483</span></code></pre></div>
 </div>
