@@ -83,7 +83,8 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/robinlovelace/si" class="external-link">si</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span>
-<span class="co">#&gt; Linking to GEOS 3.8.0, GDAL 3.0.4, PROJ 6.3.1; sf_use_s2() is TRUE</span></code></pre></div>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/r-tmap/tmap" class="external-link">tmap</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></code></pre></div>
 <div class="section level2">
 <h2 id="validation-of-2011-od-data-for-leeds-uk">Validation of 2011 OD data for Leeds, UK<a class="anchor" aria-label="anchor" href="#validation-of-2011-od-data-for-leeds-uk"></a>
 </h2>
@@ -96,25 +97,64 @@
 <p>The key input datasets are shown below</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">si_od_census</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 54,106 × 18</span></span>
+<span class="co">#&gt; <span style="color: #949494;"># A tibble: 10,536 × 18</span></span>
 <span class="co">#&gt;    O     D       all from_home light_rail train   bus  taxi motorbike car_driver</span>
 <span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> E020… E020…   168         0          1     2     3     1         1         81</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> E020… E020…   332         0          0     5    23     0         0        221</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> E020… E020…    16         0          0     2     0     0         0         13</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> E020… E020…    86         0          0     0     1     0         0         78</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> E020… E020…    12         0          0     0     0     0         0         10</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> E020… E020…    10         0          0     0     1     0         0          7</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> E020… E020…     5         0          0     0     0     0         0          5</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> E020… E020…    40         0          0     0     7     1         1         27</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> E020… E020…    10         0          0     0     0     0         0          9</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">10</span> E020… E020…    13         0          0     0     0     0         0         13</span>
-<span class="co">#&gt; <span style="color: #949494;"># … with 54,096 more rows, and 8 more variables: car_passenger &lt;dbl&gt;,</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> E020… E020…    66         0          0     0     0     0         1         29</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> E020… E020…   742         0          0     1     5     1         1        426</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> E020… E020…     2         0          0     0     0     0         0          2</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> E020… E020…     9         0          0     0     0     0         0          6</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> E020… E020…    50         0          0     0     3     1         0         43</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> E020… E020…    23         0          0     0     0     0         0         20</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> E020… E020…     4         0          0     0     0     0         0          4</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> E020… E020…     2         0          0     0     0     0         0          2</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> E020… E020…     1         0          0     0     0     0         0          1</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">10</span> E020… E020…     3         0          0     0     0     0         0          3</span>
+<span class="co">#&gt; <span style="color: #949494;"># … with 10,526 more rows, and 8 more variables: car_passenger &lt;dbl&gt;,</span></span>
 <span class="co">#&gt; <span style="color: #949494;">#   bicycle &lt;dbl&gt;, foot &lt;dbl&gt;, other &lt;dbl&gt;, geo_name1 &lt;chr&gt;, geo_name2 &lt;chr&gt;,</span></span>
 <span class="co">#&gt; <span style="color: #949494;">#   la_1 &lt;chr&gt;, la_2 &lt;chr&gt;</span></span>
 <span class="fu"><a href="https://r-spatial.github.io/sf/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">si_zones</span><span class="op">$</span><span class="va">geometry</span><span class="op">)</span>
 <span class="fu"><a href="https://r-spatial.github.io/sf/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">si_centroids</span><span class="op">$</span><span class="va">geometry</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p><img src="validation_files/figure-html/unnamed-chunk-2-1.png" width="700"></p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">od_from_si</span> <span class="op">=</span> <span class="fu"><a href="../reference/si_to_od.html">si_to_od</a></span><span class="op">(</span>origins <span class="op">=</span> <span class="va">si_centroids</span>, destinations <span class="op">=</span> <span class="va">si_centroids</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">si_od_census</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">od_from_si</span><span class="op">)</span>
+<span class="co">#&gt; [1] 0.920255</span></code></pre></div>
+<p>The output shows that more than 90% of all possible combinations of OD pairs going from and to every zone are present in the validation dataset. The maximum number of unique OD pairs for a given OD dataset is the number of origins multiplied by the number of destinations. In this case that is 107 * 107 which is 1.144910^{4} Before proceeding it’s worth doing some sanity checks to find out:</p>
+<ul>
+<li>What does the spatial distribution of travel to work in Leeds look like?</li>
+<li>Which OD pairs that are</li>
+</ul>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">si_od_census_sf</span> <span class="op">=</span> <span class="va">si_od_census</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu">od</span><span class="fu">::</span><span class="fu"><a href="https://itsleeds.github.io/od/reference/od_to_sf.html" class="external-link">od_to_sf</a></span><span class="op">(</span><span class="va">si_centroids</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span><span class="va">all</span>, `Percent active` <span class="op">=</span> <span class="op">(</span><span class="va">bicycle</span> <span class="op">+</span> <span class="va">foot</span><span class="op">)</span> <span class="op">/</span> <span class="va">all</span> <span class="op">*</span> <span class="fl">100</span><span class="op">)</span>
+<span class="co">#&gt; 0 origins with no match in zone ids</span>
+<span class="co">#&gt; 0 destinations with no match in zone ids</span>
+<span class="co">#&gt;  points not in od data removed.</span>
+
+<span class="va">si_od_census_sf</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">`Percent active`</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_shape.html" class="external-link">tm_shape</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_lines.html" class="external-link">tm_lines</a></span><span class="op">(</span>col <span class="op">=</span> <span class="st">"Percent active"</span>, lwd <span class="op">=</span> <span class="st">"all"</span>, scale <span class="op">=</span> <span class="fl">3</span>, palette <span class="op">=</span> <span class="st">"viridis"</span>,
+           breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">0.4</span>, <span class="fl">1</span><span class="op">)</span> <span class="op">*</span> <span class="fl">100</span>, legend.lwd.show <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_scale_bar.html" class="external-link">tm_scale_bar</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<p><img src="validation_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
+<p>The figure above clearly shows that Leeds is a monocentric city with relatively high levels of active travel near the centre but with low levels of active travel in the outskirts. From that we can predict the ~8% of OD pairs that <em>are not</em> in the dataset: long distance OD pairs avoiding the centre. Let’s find out:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">od_pairs_with_no_travel</span> <span class="op">=</span> <span class="va">od_from_si</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">O</span>, <span class="va">D</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">si_od_census</span><span class="op">$</span><span class="va">O</span>, <span class="va">si_od_census</span><span class="op">$</span><span class="va">D</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">od_pairs_with_no_travel</span><span class="op">$</span><span class="va">distance_euclidean</span><span class="op">)</span>
+<span class="co">#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. </span>
+<span class="co">#&gt;    3362    9407   12881   13555   17598   27761</span>
+<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_measures.html" class="external-link">st_length</a></span><span class="op">(</span><span class="va">si_od_census_sf</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt;    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. </span>
+<span class="co">#&gt;       0    5042    8091    8795   11751   26698</span></code></pre></div>
+<p>As expected, the mean length of OD pairs in the observed Census is substantially less, and that’s before calculating the weighted mean, which is just over 5 km:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/stats/weighted.mean.html" class="external-link">weighted.mean</a></span><span class="op">(</span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_measures.html" class="external-link">st_length</a></span><span class="op">(</span><span class="va">si_od_census_sf</span><span class="op">)</span>, w <span class="op">=</span> <span class="va">si_od_census_sf</span><span class="op">$</span><span class="va">all</span><span class="op">)</span>
+<span class="co">#&gt; 5258.856 [m]</span></code></pre></div>
+<p>In any case, let’s proceed to some estimates of travel.</p>
 </div>
 <div class="section level2">
 <h2 id="valitation-based-on-2011-oa-wpz-data">Valitation based on 2011 OA-WPZ data<a class="anchor" aria-label="anchor" href="#valitation-based-on-2011-oa-wpz-data"></a>
