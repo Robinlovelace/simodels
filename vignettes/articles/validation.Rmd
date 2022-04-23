@@ -12,8 +12,10 @@ knitr::opts_chunk$set(
 ```{r setup, message=FALSE}
 library(si)
 library(sf)
+library(od)
 library(tmap)
 library(dplyr)
+library(ggplot2)
 ```
 
 # Validation of 2011 OD data for Leeds, UK
@@ -47,7 +49,7 @@ Before proceeding it's worth doing some sanity checks to find out:
 
 ```{r}
 si_od_census_sf = si_od_census %>% 
-  od::od_to_sf(si_centroids) %>%
+  od_to_sf(si_centroids) %>%
   mutate(all, `Percent active` = (bicycle + foot) / all * 100)
 
 si_od_census_sf %>%
@@ -77,7 +79,23 @@ weighted.mean(sf::st_length(si_od_census_sf), w = si_od_census_sf$all)
 
 In any case, let's proceed to some estimates of travel.
 
+The very simplest model we could imagine to simulate movement between zones in the city, given knowledge of how many people travel to work between and within the zones of Leeds in total (`r round(sum(si_od_census$all) / 1000)`k), is to divide that movement equally between each OD pair.
+In that case we would have:
 
+```{r}
+od_from_si$flow_equal = sum(si_od_census$all) / nrow(od_from_si)
+```
 
+Plotting this against the observed number of trips from the census data shows that, as we would expect, there is no correlation between this simplistic non-model and reality:
+
+```{r}
+od_joined = left_join(od_from_si, si_od_census)
+od_joined %>% 
+  ggplot(aes(all, flow_equal)) +
+  geom_point()
+```
+
+So, how can we do better?
+Although the classic gravity model is often presented as the most type, we can actually go a step simpler than that, using linear and exponential decay to approximate travel, without any attention paid to the population in each zone or any other factor.
 
 # Valitation based on 2011 OA-WPZ data
