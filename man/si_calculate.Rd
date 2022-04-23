@@ -4,7 +4,7 @@
 \alias{si_calculate}
 \title{Calculate flow using a pre-existing function}
 \usage{
-si_calculate(od, fun, constraint_p, ...)
+si_calculate(od, fun, constraint_p, ..., output_col = "interaction")
 }
 \arguments{
 \item{od}{A data frame representing origin-destination data, e.g. as created by
@@ -19,6 +19,9 @@ dataset that constrains the total 'interaction' (e.g. n. trips) for all OD pairs
 such that the total for each zone of origin cannot go above this value.}
 
 \item{...}{Arguments passed to \code{fun}}
+
+\item{output_col}{Character string containing the name of the new output
+column. \code{"interaction"} by default.}
 }
 \description{
 Executes a spatial interaction model based on an OD data frame
@@ -39,4 +42,6 @@ od_pconst = si_calculate(od, fun = fun, beta = 0.3, O = origin_all,
   n = destination_all, d = distance_euclidean, constraint_p = origin_all)
 plot(od_pconst$distance_euclidean, od_pconst$interaction)
 plot(od_pconst["interaction"], logz = TRUE)
+od_dd = si_calculate(od, fun = fun_dd, d = distance_euclidean, output_col = "res")
+head(od_dd$res)
 }

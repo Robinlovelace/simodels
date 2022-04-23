@@ -4,7 +4,7 @@
 \alias{si_predict}
 \title{Predict si model based on pre-trained model}
 \usage{
-si_predict(od, model, constraint_p)
+si_predict(od, model, constraint_p, output_col = "interaction")
 }
 \arguments{
 \item{od}{A data frame representing origin-destination data, e.g. as created by
@@ -16,6 +16,9 @@ si_predict(od, model, constraint_p)
 Character string corresponding to column in the \code{od}
 dataset that constrains the total 'interaction' (e.g. n. trips) for all OD pairs
 such that the total for each zone of origin cannot go above this value.}
+
+\item{output_col}{Character string containing the name of the new output
+column. \code{"interaction"} by default.}
 }
 \description{
 Predict si model based on pre-trained model

@@ -30,4 +30,6 @@ plot(si_zones$geometry)
 plot(si_centroids$geometry, add = TRUE)
 ```
 
+
+
 # Valitation based on 2011 OA-WPZ data
