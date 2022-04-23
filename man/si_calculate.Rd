@@ -4,7 +4,15 @@
 \alias{si_calculate}
 \title{Calculate flow using a pre-existing function}
 \usage{
-si_calculate(od, fun, constraint_production, ..., output_col = "interaction")
+si_calculate(
+  od,
+  fun,
+  constraint_production,
+  constraint_attraction,
+  constraint_total,
+  output_col = "interaction",
+  ...
+)
 }
 \arguments{
 \item{od}{A data frame representing origin-destination data, e.g. as created by
@@ -13,15 +21,24 @@ si_calculate(od, fun, constraint_production, ..., output_col = "interaction")
 \item{fun}{A function that calculates the interaction (e.g. the number of trips)
 between each OD pair}
 
-\item{constraint_production}{Use this argument to run a 'production constrained' SIM.
-Character string corresponding to column in the \code{od}
-dataset that constrains the total 'interaction' (e.g. n. trips) for all OD pairs
-such that the total for each zone of origin cannot go above this value.}
+\item{constraint_production}{Character representing column in \code{od}.
+This argument, when set, ensures that the outputs are 'production constrained':
+the total 'interaction' (e.g. n. trips) for all OD pairs is set such that
+the total for each zone of origin cannot go above this value.}
 
-\item{...}{Arguments passed to \code{fun}}
+\item{constraint_attraction}{Character representing column in \code{od}.
+This argument, when set, ensures that the outputs are 'attraction constrained':
+the total 'interaction' (e.g. n. trips) for all OD pairs is set such that
+the sum of trips to destination is equal to the mean value per destination.}
+
+\item{constraint_total}{Single number representing the total interaction.
+This argument, when set, ensures that the sum of the interaction
+calculated will equal the value given.}
 
 \item{output_col}{Character string containing the name of the new output
 column. \code{"interaction"} by default.}
+
+\item{...}{Arguments passed to \code{fun}}
 }
 \description{
 Executes a spatial interaction model based on an OD data frame
@@ -44,4 +61,6 @@ plot(od_pconst$distance_euclidean, od_pconst$interaction)
 plot(od_pconst["interaction"], logz = TRUE)
 od_dd = si_calculate(od, fun = fun_dd, d = distance_euclidean, output_col = "res")
 head(od_dd$res)
+od_dd = si_calculate(od, fun = fun_dd, d = distance_euclidean, constraint_total = 10)
+sum(od_dd$interaction)
 }
