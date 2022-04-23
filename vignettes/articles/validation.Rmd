@@ -30,6 +30,13 @@ plot(si_zones$geometry)
 plot(si_centroids$geometry, add = TRUE)
 ```
 
+```{r}
+od_from_si = si_to_od(origins = si_centroids, destinations = si_centroids)
+nrow(si_od_census) / nrow(od_from_si)
+```
+
+
+
 
 
 # Valitation based on 2011 OA-WPZ data
