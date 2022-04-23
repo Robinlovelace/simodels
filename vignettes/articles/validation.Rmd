@@ -9,9 +9,11 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
+```{r setup, message=FALSE}
 library(si)
 library(sf)
+library(tmap)
+library(dplyr)
 ```
 
 # Validation of 2011 OD data for Leeds, UK
@@ -35,6 +37,45 @@ od_from_si = si_to_od(origins = si_centroids, destinations = si_centroids)
 nrow(si_od_census) / nrow(od_from_si)
 ```
 
+The output shows that more than 90% of all possible combinations of OD pairs going from and to every zone are present in the validation dataset.
+The maximum number of unique OD pairs for a given OD dataset is the number of origins multiplied by the number of destinations.
+In this case that is `r nrow(si_zones)` * `r nrow(si_zones)` which is `r nrow(si_zones)^2` 
+Before proceeding it's worth doing some sanity checks to find out:
+
+- What does the spatial distribution of travel to work in Leeds look like?
+- Which OD pairs that are 
+
+```{r}
+si_od_census_sf = si_od_census %>% 
+  od::od_to_sf(si_centroids) %>%
+  mutate(all, `Percent active` = (bicycle + foot) / all * 100)
+
+si_od_census_sf %>%
+  arrange(`Percent active`) %>% 
+  tm_shape() +
+  tm_lines(col = "Percent active", lwd = "all", scale = 3, palette = "viridis",
+           breaks = c(0, 0.1, 0.2, 0.4, 1) * 100, legend.lwd.show = FALSE) +
+  tm_scale_bar()
+```
+
+The figure above clearly shows that Leeds is a monocentric city with relatively high levels of active travel near the centre but with low levels of active travel in the outskirts.
+From that we can predict the ~8% of OD pairs that *are not* in the dataset: long distance OD pairs avoiding the centre.
+Let's find out:
+
+```{r}
+od_pairs_with_no_travel = od_from_si %>% 
+  filter(!paste(O, D) %in% paste(si_od_census$O, si_od_census$D))
+summary(od_pairs_with_no_travel$distance_euclidean)
+summary(sf::st_length(si_od_census_sf))
+```
+
+As expected, the mean length of OD pairs in the observed Census is substantially less, and that's before calculating the weighted mean, which is just over 5 km:
+
+```{r}
+weighted.mean(sf::st_length(si_od_census_sf), w = si_od_census_sf$all)
+```
+
+In any case, let's proceed to some estimates of travel.
 
 
 
