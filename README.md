@@ -46,7 +46,7 @@ od_res = si_calculate(
   d = distance_euclidean,
   m = origin_all,
   n = destination_all,
-  constraint_p = origin_all,
+  constraint_production = origin_all,
   beta = 0.3
   )
 # visualize the results
@@ -57,7 +57,7 @@ plot(od_res$distance_euclidean, od_res$interaction)
 
 What just happened? We created an ‘OD data frame’ with the function
 `si_to_od()` from geographic origins and destinations, and then
-estimated a simple ‘production constrained’ (with the `constraint_p`
+estimated a simple ‘production constrained’ (with the `constraint_production`
 argument) gravity model based on the population in origin and
 destination zones and a custom distance decay function with
 `si_calculate()`. As the example above shows, the package
@@ -73,7 +73,7 @@ od_res = od %>%
                m = origin_all,
                n = destination_all,
                d = distance_euclidean,
-               constraint_p = origin_all,
+               constraint_production = origin_all,
                beta = 0.3)
 od_res %>% 
   select(interaction)

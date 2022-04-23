@@ -167,7 +167,7 @@ od_joined %>%
 # A production constrained SIM
 
 The first logical way to improve model fit is to run a production constrained model.
-To do that, we'll first calculate the total number of people leaving each zone and then use the `constraint_p` argument:
+To do that, we'll first calculate the total number of people leaving each zone and then use the `constraint_production` argument:
 
 ```{r}
 od_originating = od_joined %>% 
@@ -183,7 +183,7 @@ od_constrained_p = si_calculate(
   fun = si_power,
   d = distance_euclidean,
   beta = -0.8,
-  constraint_p = originating_per_zone
+  constraint_production = originating_per_zone
   )
 od_constrained_p %>% 
   ggplot() +
@@ -241,7 +241,7 @@ od_joined %>%
 od_pred = si_predict(od_originating, model = m)
 cor(od_pred$Flow, od_pred$interaction)^2
 od_pred_const = si_predict(od_originating, model = m,
-  constraint_p = originating_per_zone)
+  constraint_production = originating_per_zone)
 cor(od_pred_const$Flow, od_pred_const$interaction)^2
 ```
 
