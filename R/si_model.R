@@ -12,6 +12,8 @@
 #'   dataset that constrains the total 'interaction' (e.g. n. trips) for all OD pairs
 #'   such that the total for each zone of origin cannot go above this value.
 #' @param ... Arguments passed to `fun`
+#' @param output_col Character string containing the name of the new output
+#'   column. `"interaction"` by default.
 #' @export
 #' @importFrom rlang .data
 #' @examples
@@ -29,15 +31,17 @@
 #'   n = destination_all, d = distance_euclidean, constraint_p = origin_all)
 #' plot(od_pconst$distance_euclidean, od_pconst$interaction)
 #' plot(od_pconst["interaction"], logz = TRUE)
-si_calculate = function(od, fun, constraint_p, ...) {
+#' od_dd = si_calculate(od, fun = fun_dd, d = distance_euclidean, output_col = "res")
+#' head(od_dd$res)
+si_calculate = function(od, fun, constraint_p, ..., output_col = "interaction") {
   dots = rlang::enquos(...)
-  od = dplyr::mutate(od, interaction = fun(!!!dots))
+  od = dplyr::mutate(od, {{output_col}} := fun(!!!dots))
   if (!missing(constraint_p)) {
     od_grouped = dplyr::group_by(od, .data$O)
     od_grouped = dplyr::mutate(
       od_grouped,
-      interaction = .data$interaction /
-        sum(.data$interaction) * mean( {{constraint_p}} )
+      output_col = .data[[output_col]] /
+        sum(.data[[output_col]]) * mean( {{constraint_p}} )
       )
     od = dplyr::ungroup(od_grouped)
   }
@@ -53,14 +57,14 @@ si_calculate = function(od, fun, constraint_p, ...) {
 #' od = si_to_od(si_zones, si_zones, max_dist = 4000)
 #' m = lm(od$origin_all ~ od$origin_bicycle)
 #' od_updated = si_predict(od, m)
-si_predict = function(od, model, constraint_p) {
-  od$interaction = stats::predict(model, od)
+si_predict = function(od, model, constraint_p, output_col = "interaction") {
+  od[[output_col]] = stats::predict(model, od)
   if (!missing(constraint_p)) {
     od_grouped = dplyr::group_by(od, .data$O)
     od_grouped = dplyr::mutate(
       od_grouped,
-      interaction = .data$interaction /
-        sum(.data$interaction) * mean( {{constraint_p}} )
+      interaction = .data[[output_col]] /
+        sum(.data[[output_col]]) * mean( {{constraint_p}} )
       )
     od = dplyr::ungroup(od_grouped)
   }
