@@ -83,8 +83,10 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/robinlovelace/si" class="external-link">si</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/itsleeds/od" class="external-link">od</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/r-tmap/tmap" class="external-link">tmap</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></code></pre></div>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></code></pre></div>
 <div class="section level2">
 <h2 id="validation-of-2011-od-data-for-leeds-uk">Validation of 2011 OD data for Leeds, UK<a class="anchor" aria-label="anchor" href="#validation-of-2011-od-data-for-leeds-uk"></a>
 </h2>
@@ -127,7 +129,7 @@
 </ul>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">si_od_census_sf</span> <span class="op">=</span> <span class="va">si_od_census</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu">od</span><span class="fu">::</span><span class="fu"><a href="https://itsleeds.github.io/od/reference/od_to_sf.html" class="external-link">od_to_sf</a></span><span class="op">(</span><span class="va">si_centroids</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://itsleeds.github.io/od/reference/od_to_sf.html" class="external-link">od_to_sf</a></span><span class="op">(</span><span class="va">si_centroids</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span><span class="va">all</span>, `Percent active` <span class="op">=</span> <span class="op">(</span><span class="va">bicycle</span> <span class="op">+</span> <span class="va">foot</span><span class="op">)</span> <span class="op">/</span> <span class="va">all</span> <span class="op">*</span> <span class="fl">100</span><span class="op">)</span>
 <span class="co">#&gt; 0 origins with no match in zone ids</span>
 <span class="co">#&gt; 0 destinations with no match in zone ids</span>
@@ -155,6 +157,19 @@
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/stats/weighted.mean.html" class="external-link">weighted.mean</a></span><span class="op">(</span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/geos_measures.html" class="external-link">st_length</a></span><span class="op">(</span><span class="va">si_od_census_sf</span><span class="op">)</span>, w <span class="op">=</span> <span class="va">si_od_census_sf</span><span class="op">$</span><span class="va">all</span><span class="op">)</span>
 <span class="co">#&gt; 5258.856 [m]</span></code></pre></div>
 <p>In any case, let’s proceed to some estimates of travel.</p>
+<p>The very simplest model we could imagine to simulate movement between zones in the city, given knowledge of how many people travel to work between and within the zones of Leeds in total (236k), is to divide that movement equally between each OD pair. In that case we would have:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">od_from_si</span><span class="op">$</span><span class="va">flow_equal</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">si_od_census</span><span class="op">$</span><span class="va">all</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">od_from_si</span><span class="op">)</span></code></pre></div>
+<p>Plotting this against the observed number of trips from the census data shows that, as we would expect, there is no correlation between this simplistic non-model and reality:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">od_joined</span> <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">od_from_si</span>, <span class="va">si_od_census</span><span class="op">)</span>
+<span class="co">#&gt; Joining, by = c("O", "D")</span>
+<span class="va">od_joined</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">all</span>, <span class="va">flow_equal</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span>
+<span class="co">#&gt; Warning: Removed 913 rows containing missing values (geom_point).</span></code></pre></div>
+<p><img src="validation_files/figure-html/unnamed-chunk-8-1.png" width="700"></p>
+<p>So, how can we do better? Although the classic gravity model is often presented as the most type, we can actually go a step simpler than that, using linear and exponential decay to approximate travel, without any attention paid to the population in each zone or any other factor.</p>
 </div>
 <div class="section level2">
 <h2 id="valitation-based-on-2011-oa-wpz-data">Valitation based on 2011 OA-WPZ data<a class="anchor" aria-label="anchor" href="#valitation-based-on-2011-oa-wpz-data"></a>
