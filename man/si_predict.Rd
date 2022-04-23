@@ -4,7 +4,15 @@
 \alias{si_predict}
 \title{Predict si model based on pre-trained model}
 \usage{
-si_predict(od, model, constraint_production, output_col = "interaction")
+si_predict(
+  od,
+  model,
+  constraint_production,
+  constraint_attraction,
+  constraint_total,
+  output_col = "interaction",
+  ...
+)
 }
 \arguments{
 \item{od}{A data frame representing origin-destination data, e.g. as created by
@@ -12,13 +20,24 @@ si_predict(od, model, constraint_production, output_col = "interaction")
 
 \item{model}{A model object, e.g. from \code{\link[=lm]{lm()}} or \code{\link[=glm]{glm()}}}
 
-\item{constraint_production}{Use this argument to run a 'production constrained' SIM.
-Character string corresponding to column in the \code{od}
-dataset that constrains the total 'interaction' (e.g. n. trips) for all OD pairs
-such that the total for each zone of origin cannot go above this value.}
+\item{constraint_production}{Character representing column in \code{od}.
+This argument, when set, ensures that the outputs are 'production constrained':
+the total 'interaction' (e.g. n. trips) for all OD pairs is set such that
+the total for each zone of origin cannot go above this value.}
+
+\item{constraint_attraction}{Character representing column in \code{od}.
+This argument, when set, ensures that the outputs are 'attraction constrained':
+the total 'interaction' (e.g. n. trips) for all OD pairs is set such that
+the sum of trips to destination is equal to the mean value per destination.}
+
+\item{constraint_total}{Single number representing the total interaction.
+This argument, when set, ensures that the sum of the interaction
+calculated will equal the value given.}
 
 \item{output_col}{Character string containing the name of the new output
 column. \code{"interaction"} by default.}
+
+\item{...}{Arguments passed to \code{fun}}
 }
 \description{
 Predict si model based on pre-trained model

@@ -7,10 +7,17 @@
 #'   [si_to_od()]
 #' @param fun A function that calculates the interaction (e.g. the number of trips)
 #'   between each OD pair
-#' @param constraint_production Use this argument to run a 'production constrained' SIM.
-#'   Character string corresponding to column in the `od`
-#'   dataset that constrains the total 'interaction' (e.g. n. trips) for all OD pairs
-#'   such that the total for each zone of origin cannot go above this value.
+#' @param constraint_production Character representing column in `od`.
+#'   This argument, when set, ensures that the outputs are 'production constrained':
+#'   the total 'interaction' (e.g. n. trips) for all OD pairs is set such that
+#'   the total for each zone of origin cannot go above this value.
+#' @param constraint_attraction Character representing column in `od`.
+#'   This argument, when set, ensures that the outputs are 'attraction constrained':
+#'   the total 'interaction' (e.g. n. trips) for all OD pairs is set such that
+#'   the sum of trips to destination is equal to the mean value per destination.
+#' @param constraint_total Single number representing the total interaction.
+#'   This argument, when set, ensures that the sum of the interaction
+#'   calculated will equal the value given.
 #' @param ... Arguments passed to `fun`
 #' @param output_col Character string containing the name of the new output
 #'   column. `"interaction"` by default.
@@ -33,17 +40,27 @@
 #' plot(od_pconst["interaction"], logz = TRUE)
 #' od_dd = si_calculate(od, fun = fun_dd, d = distance_euclidean, output_col = "res")
 #' head(od_dd$res)
-si_calculate = function(od, fun, constraint_production, ..., output_col = "interaction") {
+#' od_dd = si_calculate(od, fun = fun_dd, d = distance_euclidean, constraint_total = 10)
+#' sum(od_dd$interaction)
+si_calculate = function(
+    od,
+    fun,
+    constraint_production,
+    constraint_attraction,
+    constraint_total,
+    output_col = "interaction",
+    ...
+    ) {
   dots = rlang::enquos(...)
   od = dplyr::mutate(od, {{output_col}} := fun(!!!dots))
   if (!missing(constraint_production)) {
-    od_grouped = dplyr::group_by(od, .data$O)
-    od_grouped = dplyr::mutate(
-      od_grouped,
-      output_col = .data[[output_col]] /
-        sum(.data[[output_col]]) * mean( {{constraint_production}} )
-      )
-    od = dplyr::ungroup(od_grouped)
+    od = constrain_production(od, output_col, {{constraint_production}})
+  }
+  if (!missing(constraint_attraction)) {
+    message("Not yet implemented")
+  }
+  if (!missing(constraint_total)) {
+    od = constrain_total(od, output_col, constraint_total)
   }
   od
 }
@@ -57,16 +74,41 @@ si_calculate = function(od, fun, constraint_production, ..., output_col = "inter
 #' od = si_to_od(si_zones, si_zones, max_dist = 4000)
 #' m = lm(od$origin_all ~ od$origin_bicycle)
 #' od_updated = si_predict(od, m)
-si_predict = function(od, model, constraint_production, output_col = "interaction") {
+si_predict = function(
+    od,
+    model,
+    constraint_production,
+    constraint_attraction,
+    constraint_total,
+    output_col = "interaction",
+    ...
+) {
   od[[output_col]] = stats::predict(model, od)
   if (!missing(constraint_production)) {
-    od_grouped = dplyr::group_by(od, .data$O)
-    od_grouped = dplyr::mutate(
-      od_grouped,
-      interaction = .data[[output_col]] /
-        sum(.data[[output_col]]) * mean( {{constraint_production}} )
-      )
-    od = dplyr::ungroup(od_grouped)
+    od = constrain_production(od, output_col, {{constraint_production}})
   }
+  if (!missing(constraint_attraction)) {
+    message("Not yet implemented")
+  }
+  if (!missing(constraint_total)) {
+    od = constrain_total(od, output_col, constraint_total)
+  }
+  od
+}
+
+constrain_production = function(od, output_col, constraint_production) {
+  # todo: should the grouping var (the first column, 1) be an argument?
+  od_grouped = dplyr::group_by_at(od, 1)
+  od_grouped = dplyr::mutate(
+    od_grouped,
+    {{output_col}} := .data[[output_col]] /
+      sum(.data[[output_col]]) * mean( {{constraint_production}} )
+  )
+  od = dplyr::ungroup(od_grouped)
+  od
+}
+
+constrain_total = function(od, output_col, constraint_total) {
+  od[[output_col]] = od[[output_col]] / sum(od[[output_col]]) * constraint_total
   od
 }
