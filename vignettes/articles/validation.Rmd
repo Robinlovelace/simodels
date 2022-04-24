@@ -97,5 +97,23 @@ od_joined %>%
 
 So, how can we do better?
 Although the classic gravity model is often presented as the most type, we can actually go a step simpler than that, using linear and exponential decay to approximate travel, without any attention paid to the population in each zone or any other factor.
+So let's get stuck in and fit some models!
+
+```{r}
+total = sum(si_od_census$all)
+m1 = lm(all ~ distance_euclidean, data = od_joined)
+od_joined = si_predict(od_joined, model = m1, constraint_total = total, output_col = "flow_m1")
+od_joined %>% 
+  ggplot(aes(distance_euclidean, flow_m1)) +
+  geom_point()
+od_joined %>% 
+  ggplot(aes(all, flow_m1)) +
+  geom_point()
+sum(od_joined$flow_m1) == sum(od_joined$all, na.rm = TRUE)
+cor(od_joined$all, od_joined$flow_m1, use = "complete.obs")^2
+```
+
+The simple linear model implemented in the code chunk above predicts flow solely on the basis of distance between OD pairs.
+The results are *slightly* better than the 'equal trips for all OD pairs' approach but still pretty bad, explaining only 7% of the variability observed in `all` trips between OD pairs in the census dataset.
 
 # Valitation based on 2011 OA-WPZ data
