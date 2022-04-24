@@ -109,6 +109,10 @@ constrain_production = function(od, output_col, constraint_production) {
 }
 
 constrain_total = function(od, output_col, constraint_total) {
+  if(min(od[[output_col]]) < 0) {
+    message("Negative values in output, setting them to zero")
+    od[[output_col]][od[[output_col]] < 0] = 0
+  }
   od[[output_col]] = od[[output_col]] / sum(od[[output_col]]) * constraint_total
   od
 }
