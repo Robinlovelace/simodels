@@ -115,5 +115,6 @@ cor(od_joined$all, od_joined$flow_m1, use = "complete.obs")^2
 
 The simple linear model implemented in the code chunk above predicts flow solely on the basis of distance between OD pairs.
 The results are *slightly* better than the 'equal trips for all OD pairs' approach but still pretty bad, explaining only 7% of the variability observed in `all` trips between OD pairs in the census dataset.
+Furthermore, the result also reveals an issue when fitting models to OD datasets: because 'negative flow' does not make sense in this contexts, models that can predict negative values should be questioned.
 
 # Valitation based on 2011 OA-WPZ data
