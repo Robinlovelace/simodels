@@ -89,7 +89,8 @@ od_from_si$flow_equal = sum(si_od_census$all) / nrow(od_from_si)
 Plotting this against the observed number of trips from the census data shows that, as we would expect, there is no correlation between this simplistic non-model and reality:
 
 ```{r}
-od_joined = left_join(od_from_si, si_od_census)
+od_joined = left_join(od_from_si, si_od_census) %>% 
+  mutate(all = case_when(is.na(all) ~ 0, TRUE ~ all))
 od_joined %>% 
   ggplot(aes(all, flow_equal)) +
   geom_point()
@@ -116,5 +117,107 @@ cor(od_joined$all, od_joined$flow_m1, use = "complete.obs")^2
 The simple linear model implemented in the code chunk above predicts flow solely on the basis of distance between OD pairs.
 The results are *slightly* better than the 'equal trips for all OD pairs' approach but still pretty bad, explaining only 7% of the variability observed in `all` trips between OD pairs in the census dataset.
 Furthermore, the result also reveals an issue when fitting models to OD datasets: because 'negative flow' does not make sense in this contexts, models that can predict negative values should be questioned.
+
+An approach that prevents negative values, that also captures the fact that there is non-linear (near exponential) decay with distance and travel, is SIMs with exponential decay.
+We can implement such a model as follows:
+
+```{r, error=TRUE}
+od_joined = od_joined %>% 
+  mutate(distance_nonzero = case_when(
+    distance_euclidean == 0 ~ 50,
+    TRUE ~ distance_euclidean))
+m2 = nls(
+  formula = all ~ a + distance_nonzero^b,
+  start = list(a = 5, b = -0.8),
+  data = od_joined
+  )
+```
+
+As shown in the code above, the model fails to converge.
+An alternative approach is as follows:
+
+
+```{r}
+m2 = minpack.lm::nlsLM(
+  formula = all ~ a + distance_nonzero^b,
+  start = list(a = 5, b = -0.8),
+  data = od_joined
+  )
+# m2 = gslnls::gsl_nls(
+#   all ~ a + distance_nonzero^b,
+#   start = list(a = 10, b = -0.08),
+#   # control = gslnls::gsl_nls_control(scale = "more"),
+#   control = gslnls::gsl_nls_control( solver = "svd"),
+#   data = od_joined
+#   )
+od_joined = od_joined %>% 
+  si_predict(m2, constraint_total = total, output_col = "flow_m2")
+od_joined %>% 
+  ggplot(aes(distance_euclidean, flow_m2)) +
+  geom_point()
+od_joined %>% 
+  ggplot(aes(all, flow_m2)) +
+  geom_point()
+cor(od_joined$all, od_joined$flow_m2, use = "complete.obs")^2
+```
+
+
+We can overcome this using a [self starting function](https://douglas-watson.github.io/post/2018-09_exponential_curve_fitting/): 
+
+```{r}
+m3 = nls(
+  formula = all ~ SSasymp(distance_nonzero, a, b, lrc = log_alpha),
+  data = od_joined
+  )
+od_joined = od_joined %>% 
+  si_predict(m3, constraint_total = total, output_col = "flow_m3")
+od_joined %>% 
+  ggplot(aes(distance_euclidean, flow_m3)) +
+  geom_point()
+od_joined %>% 
+  ggplot(aes(all, flow_m3)) +
+  geom_point()
+cor(od_joined$all, od_joined$flow_m3, use = "complete.obs")^2
+```
+
+
+
+```{r, eval=FALSE, echo=FALSE}
+m3 = minpack.lm::nlsLM(
+  formula = all ~ a + exp(distance_nonzero*b),
+  start = list(a = 50, b = -0.008),
+  data = od_joined
+  )
+od_joined = od_joined %>% 
+  si_predict(m3, constraint_total = total, output_col = "flow_m3")
+od_joined %>% 
+  ggplot(aes(distance_euclidean, flow_m3)) +
+  geom_point()
+od_joined %>% 
+  ggplot(aes(all, flow_m3)) +
+  geom_point()
+cor(od_joined$all, od_joined$flow_m3, use = "complete.obs")^2
+```
+
+Another approach is with the `minpack.lm` package:
+
+
+```{r}
+m4 = minpack.lm::nlsLM(
+  formula = all ~ a + distance_nonzero^b,
+  start = list(a = 5, b = -0.8),
+  data = od_joined
+  )
+od_joined = od_joined %>% 
+  si_predict(m4, constraint_production = origin_all, output_col = "flow_m4")
+od_joined %>% 
+  ggplot(aes(distance_euclidean, flow_m4)) +
+  geom_point()
+od_joined %>% 
+  ggplot(aes(all, flow_m4)) +
+  geom_point()
+cor(od_joined$all, od_joined$flow_m4, use = "complete.obs")^2
+```
+
 
 # Valitation based on 2011 OA-WPZ data
