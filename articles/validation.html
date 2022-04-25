@@ -251,14 +251,10 @@
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">od_joined</span><span class="op">$</span><span class="va">all</span>, <span class="va">od_joined</span><span class="op">$</span><span class="va">flow_m3</span>, use <span class="op">=</span> <span class="st">"complete.obs"</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span>
 <span class="co">#&gt; [1] 0.1441077</span></code></pre></div>
 <p>Another approach is with the <code>minpack.lm</code> package:</p>
+<p>We can make this ‘production constrained’ as follows:</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">m4</span> <span class="op">=</span> <span class="fu">minpack.lm</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/minpack.lm/man/nlsLM.html" class="external-link">nlsLM</a></span><span class="op">(</span>
-  formula <span class="op">=</span> <span class="va">all</span> <span class="op">~</span> <span class="va">a</span> <span class="op">+</span> <span class="va">distance_nonzero</span><span class="op">^</span><span class="va">b</span>,
-  start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>a <span class="op">=</span> <span class="fl">5</span>, b <span class="op">=</span> <span class="op">-</span><span class="fl">0.8</span><span class="op">)</span>,
-  data <span class="op">=</span> <span class="va">od_joined</span>
-  <span class="op">)</span>
-<span class="va">od_joined</span> <span class="op">=</span> <span class="va">od_joined</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
-  <span class="fu"><a href="../reference/si_predict.html">si_predict</a></span><span class="op">(</span><span class="va">m4</span>, constraint_production <span class="op">=</span> <span class="va">origin_all</span>, output_col <span class="op">=</span> <span class="st">"flow_m4"</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">od_joined</span> <span class="op">=</span> <span class="va">od_joined</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="../reference/si_predict.html">si_predict</a></span><span class="op">(</span><span class="va">m3</span>, constraint_production <span class="op">=</span> <span class="va">origin_all</span>, output_col <span class="op">=</span> <span class="st">"flow_m4"</span><span class="op">)</span>
 <span class="va">od_joined</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">distance_euclidean</span>, <span class="va">flow_m4</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
@@ -270,7 +266,23 @@
 <p><img src="validation_files/figure-html/unnamed-chunk-14-2.png" width="700"></p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">od_joined</span><span class="op">$</span><span class="va">all</span>, <span class="va">od_joined</span><span class="op">$</span><span class="va">flow_m4</span>, use <span class="op">=</span> <span class="st">"complete.obs"</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span>
-<span class="co">#&gt; [1] 0.0003988892</span></code></pre></div>
+<span class="co">#&gt; [1] 0.1299208</span></code></pre></div>
+<p>And ‘attraction constrained’ as follows:</p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">od_joined</span> <span class="op">=</span> <span class="va">od_joined</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="../reference/si_predict.html">si_predict</a></span><span class="op">(</span><span class="va">m3</span>, constraint_attraction <span class="op">=</span> <span class="va">destination_all</span>, output_col <span class="op">=</span> <span class="st">"flow_m5"</span><span class="op">)</span>
+<span class="va">od_joined</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">distance_euclidean</span>, <span class="va">flow_m5</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<p><img src="validation_files/figure-html/unnamed-chunk-15-1.png" width="700"></p>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">od_joined</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span><span class="va">all</span>, <span class="va">flow_m5</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<p><img src="validation_files/figure-html/unnamed-chunk-15-2.png" width="700"></p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">od_joined</span><span class="op">$</span><span class="va">all</span>, <span class="va">od_joined</span><span class="op">$</span><span class="va">flow_m5</span>, use <span class="op">=</span> <span class="st">"complete.obs"</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span>
+<span class="co">#&gt; [1] 0.6217939</span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="valitation-based-on-2011-oa-wpz-data">Valitation based on 2011 OA-WPZ data<a class="anchor" aria-label="anchor" href="#valitation-based-on-2011-oa-wpz-data"></a>
@@ -289,7 +301,7 @@
 
 <div class="pkgdown-footer-right">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
 </div>
 
     </footer>
