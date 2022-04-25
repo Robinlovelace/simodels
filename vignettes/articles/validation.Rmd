@@ -180,7 +180,7 @@ od_joined %>%
 cor(od_joined$all, od_joined$flow_m3, use = "complete.obs")^2
 ```
 
-
+Another approach is with the `minpack.lm` package:
 
 ```{r, eval=FALSE, echo=FALSE}
 m3 = minpack.lm::nlsLM(
@@ -199,17 +199,11 @@ od_joined %>%
 cor(od_joined$all, od_joined$flow_m3, use = "complete.obs")^2
 ```
 
-Another approach is with the `minpack.lm` package:
-
+We can make this 'production constrained' as follows:
 
 ```{r}
-m4 = minpack.lm::nlsLM(
-  formula = all ~ a + distance_nonzero^b,
-  start = list(a = 5, b = -0.8),
-  data = od_joined
-  )
 od_joined = od_joined %>% 
-  si_predict(m4, constraint_production = origin_all, output_col = "flow_m4")
+  si_predict(m3, constraint_production = origin_all, output_col = "flow_m4")
 od_joined %>% 
   ggplot(aes(distance_euclidean, flow_m4)) +
   geom_point()
@@ -218,6 +212,21 @@ od_joined %>%
   geom_point()
 cor(od_joined$all, od_joined$flow_m4, use = "complete.obs")^2
 ```
+
+And 'attraction constrained' as follows:
+
+```{r}
+od_joined = od_joined %>% 
+  si_predict(m3, constraint_attraction = destination_all, output_col = "flow_m5")
+od_joined %>% 
+  ggplot(aes(distance_euclidean, flow_m5)) +
+  geom_point()
+od_joined %>% 
+  ggplot(aes(all, flow_m5)) +
+  geom_point()
+cor(od_joined$all, od_joined$flow_m5, use = "complete.obs")^2
+```
+
 
 
 # Valitation based on 2011 OA-WPZ data
