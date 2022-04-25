@@ -116,7 +116,7 @@
   m <span class="op">=</span> <span class="va">origin_all</span>,
   n <span class="op">=</span> <span class="va">destination_all</span>,
   constraint_production <span class="op">=</span> <span class="va">origin_all</span>,
-  beta <span class="op">=</span> <span class="fl">0.3</span>
+  beta <span class="op">=</span> <span class="fl">0.9</span>
   <span class="op">)</span>
 <span class="co"># visualize the results</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">od_res</span><span class="op">$</span><span class="va">distance_euclidean</span>, <span class="va">od_res</span><span class="op">$</span><span class="va">interaction</span><span class="op">)</span></code></pre></div>
@@ -175,7 +175,51 @@
 <span id="cb8-13"><a href="#cb8-13"></a>[<span class="dv">25</span>] <span class="st">"destination_train_tube"</span>    <span class="st">"destination_bus"</span>          </span>
 <span id="cb8-14"><a href="#cb8-14"></a>[<span class="dv">27</span>] <span class="st">"destination_taxi_other"</span>    <span class="st">"geometry"</span>                 </span></code></pre></div>
 <p>As shown in the output above, the function allows you to use any variable in the origin or destination data in the function, with column names appended with <code>origin</code> and <code>destination</code>.</p>
-<p>Note: support for OD datasets in which the origins and destinations are different objects is work in progress (see <a href="https://github.com/Robinlovelace/si/issues/3" class="external-link">#3</a>).</p>
+<p>The approach works equally well when origin and destination points are different, as shown in the following example which estimates the number of trips to pubs in Leeds, assuming that for every trip to the pub there are 50 trips to work:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">zones_pubs</span> <span class="op">=</span> <span class="va">si_zones</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>to_pubs <span class="op">=</span> <span class="va">all</span> <span class="op">/</span> <span class="fl">50</span><span class="op">)</span>
+<span class="va">pubs_example</span> <span class="op">=</span> <span class="va">si_pubs</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span>pattern <span class="op">=</span> <span class="st">"Chemic|Nag"</span>, x <span class="op">=</span> <span class="va">name</span><span class="op">)</span><span class="op">)</span>
+<span class="va">pubs_example</span><span class="op">$</span><span class="va">size</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">80</span><span class="op">)</span>
+<span class="va">od_to_pubs</span> <span class="op">=</span> <span class="fu"><a href="reference/si_to_od.html">si_to_od</a></span><span class="op">(</span><span class="va">zones_pubs</span>, <span class="va">pubs_example</span><span class="op">)</span>
+<span class="va">od_to_pubs_result</span> <span class="op">=</span> <span class="va">od_to_pubs</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="reference/si_calculate.html">si_calculate</a></span><span class="op">(</span>fun <span class="op">=</span> <span class="va">gravity_model</span>, 
+               m <span class="op">=</span> <span class="va">origin_to_pubs</span>,
+               n <span class="op">=</span> <span class="va">destination_size</span>,
+               d <span class="op">=</span> <span class="va">distance_euclidean</span>,
+               beta <span class="op">=</span> <span class="fl">0.5</span>,
+               constraint_production <span class="op">=</span> <span class="va">origin_to_pubs</span><span class="op">)</span>
+<span class="va">od_to_pubs_result</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">O</span>, <span class="va">D</span>, <span class="va">destination_name</span>, <span class="va">interaction</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>Simple feature collection with <span class="dv">214</span> features and <span class="dv">4</span> fields</span>
+<span id="cb10-2"><a href="#cb10-2"></a>Geometry type<span class="op">:</span><span class="st"> </span>LINESTRING</span>
+<span id="cb10-3"><a href="#cb10-3"></a>Dimension<span class="op">:</span><span class="st">     </span>XY</span>
+<span id="cb10-4"><a href="#cb10-4"></a>Bounding box<span class="op">:</span><span class="st">  </span>xmin<span class="op">:</span><span class="st"> </span><span class="fl">-1.743949</span> ymin<span class="op">:</span><span class="st"> </span><span class="fl">53.71552</span> xmax<span class="op">:</span><span class="st"> </span><span class="fl">-1.337493</span> ymax<span class="op">:</span><span class="st"> </span><span class="fl">53.92906</span></span>
+<span id="cb10-5"><a href="#cb10-5"></a>Geodetic CRS<span class="op">:</span><span class="st">  </span>WGS <span class="dv">84</span></span>
+<span id="cb10-6"><a href="#cb10-6"></a><span class="co"># A tibble: 214 × 5</span></span>
+<span id="cb10-7"><a href="#cb10-7"></a>   O         D         destination_name  interaction                    geometry</span>
+<span id="cb10-8"><a href="#cb10-8"></a>   <span class="op">&lt;</span>chr<span class="op">&gt;</span><span class="st">     </span><span class="er">&lt;</span>chr<span class="op">&gt;</span><span class="st">     </span><span class="er">&lt;</span>chr<span class="op">&gt;</span><span class="st">                   </span><span class="er">&lt;</span>dbl<span class="op">&gt;</span><span class="st">            </span><span class="er">&lt;</span>LINESTRING [°]<span class="op">&gt;</span></span>
+<span id="cb10-9"><a href="#cb10-9"></a><span class="st"> </span><span class="dv">1</span> E02002330 <span class="dv">127960333</span> The Chemic Tavern        <span class="fl">18.4</span> (<span class="op">-</span><span class="fl">1.400108</span> <span class="fl">53.92906</span>, <span class="fl">-1.55</span>…</span>
+<span id="cb10-10"><a href="#cb10-10"></a> <span class="dv">2</span> E02002331 <span class="dv">127960333</span> The Chemic Tavern        <span class="fl">15.9</span> (<span class="op">-</span><span class="fl">1.346497</span> <span class="fl">53.92305</span>, <span class="fl">-1.55</span>…</span>
+<span id="cb10-11"><a href="#cb10-11"></a> <span class="dv">3</span> E02002332 <span class="dv">127960333</span> The Chemic Tavern        <span class="fl">25.5</span> (<span class="op">-</span><span class="fl">1.704658</span> <span class="fl">53.91073</span>, <span class="fl">-1.55</span>…</span>
+<span id="cb10-12"><a href="#cb10-12"></a> <span class="dv">4</span> E02002333 <span class="dv">127960333</span> The Chemic Tavern        <span class="fl">38.7</span> (<span class="op">-</span><span class="fl">1.6876</span> <span class="fl">53.90066</span>, <span class="fl">-1.5528</span>…</span>
+<span id="cb10-13"><a href="#cb10-13"></a> <span class="dv">5</span> E02002334 <span class="dv">127960333</span> The Chemic Tavern        <span class="fl">20.9</span> (<span class="op">-</span><span class="fl">1.357667</span> <span class="fl">53.88306</span>, <span class="fl">-1.55</span>…</span>
+<span id="cb10-14"><a href="#cb10-14"></a> <span class="dv">6</span> E02002335 <span class="dv">127960333</span> The Chemic Tavern        <span class="fl">19.9</span> (<span class="op">-</span><span class="fl">1.470966</span> <span class="fl">53.89184</span>, <span class="fl">-1.55</span>…</span>
+<span id="cb10-15"><a href="#cb10-15"></a> <span class="dv">7</span> E02002336 <span class="dv">127960333</span> The Chemic Tavern        <span class="fl">25.5</span> (<span class="op">-</span><span class="fl">1.624775</span> <span class="fl">53.88589</span>, <span class="fl">-1.55</span>…</span>
+<span id="cb10-16"><a href="#cb10-16"></a> <span class="dv">8</span> E02002337 <span class="dv">127960333</span> The Chemic Tavern        <span class="fl">37.2</span> (<span class="op">-</span><span class="fl">1.743949</span> <span class="fl">53.88035</span>, <span class="fl">-1.55</span>…</span>
+<span id="cb10-17"><a href="#cb10-17"></a> <span class="dv">9</span> E02002338 <span class="dv">127960333</span> The Chemic Tavern        <span class="fl">36.8</span> (<span class="op">-</span><span class="fl">1.710657</span> <span class="fl">53.87087</span>, <span class="fl">-1.55</span>…</span>
+<span id="cb10-18"><a href="#cb10-18"></a><span class="dv">10</span> E02002339 <span class="dv">127960333</span> The Chemic Tavern        <span class="fl">29.0</span> (<span class="op">-</span><span class="fl">1.694076</span> <span class="fl">53.86729</span>, <span class="fl">-1.55</span>…</span>
+<span id="cb10-19"><a href="#cb10-19"></a><span class="co"># … with 204 more rows</span></span></code></pre></div>
+<p>We can plot the top 20 desire lines between zone centroids and the 2 pubs in the example dataset as follows:</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/r-tmap/tmap" class="external-link">tmap</a></span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tmap_mode.html" class="external-link">tmap_mode</a></span><span class="op">(</span><span class="st">"view"</span><span class="op">)</span>
+<span class="va">od_to_pubs_result</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/top_n.html" class="external-link">top_n</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">50</span>, wt <span class="op">=</span> <span class="va">interaction</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_shape.html" class="external-link">tm_shape</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://rdrr.io/pkg/tmap/man/tm_lines.html" class="external-link">tm_lines</a></span><span class="op">(</span>col <span class="op">=</span> <span class="st">"interaction"</span>, palette <span class="op">=</span> <span class="st">"viridis"</span>, scale <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></code></pre></div>
+<p><img src="reference/figures/README-pubmap-1.png"></p>
 </div>
 <div class="section level2">
 <h2 id="feedback">Feedback<a class="anchor" aria-label="anchor" href="#feedback"></a>
