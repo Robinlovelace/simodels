@@ -108,13 +108,13 @@ constrain_production = function(od, output_col, constraint_production) {
   od
 }
 
-constrain_attraction = function(od, output_col, constraint_production) {
+constrain_attraction = function(od, output_col, constraint_attraction) {
   # todo: should the grouping var (the first column, 2) be an argument?
   od_grouped = dplyr::group_by_at(od, 2)
   od_grouped = dplyr::mutate(
     od_grouped,
     {{output_col}} := .data[[output_col]] /
-      sum(.data[[output_col]]) * mean( {{constraint_production}} )
+      sum(.data[[output_col]]) * mean( {{constraint_attraction}} )
   )
   od = dplyr::ungroup(od_grouped)
   od
