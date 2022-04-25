@@ -5,9 +5,12 @@
 <!-- badges: end -->
 
 The goal of {si} is to provide a simple,
-‘[tidy](https://dplyr.tidyverse.org/)’, and flexible framework for
-developing spatial interaction models (SIMs), which estimate the amount
-of movement between spatial entities.
+[tidy](https://www.tidyverse.org/), and flexible framework for
+developing spatial interaction models (SIMs). SIMs estimate the amount
+of movement between spatial entities and can be used for many things,
+including to support evidence-based investment in sustainable transport
+infrastructure and prioritisation of location options for public
+services.
 
 ## Installation
 
