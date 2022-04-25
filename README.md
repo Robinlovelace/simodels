@@ -180,3 +180,6 @@ Adam Dennett’s [2018 paper](https://doi.org/10.37970/aps.v2i2.38).
 -   The
     [`mobility`](https://covid-19-mobility-data-network.github.io/mobility/index.html)
     R package
+-   The [gravity functions in the
+    scikit-mobility](https://scikit-mobility.github.io/scikit-mobility/reference/models.html#module-skmob.models.gravity)
+    Python package
