@@ -48,7 +48,7 @@ od_res = si_calculate(
   m = origin_all,
   n = destination_all,
   constraint_production = origin_all,
-  beta = 0.3
+  beta = 0.9
   )
 # visualize the results
 plot(od_res$distance_euclidean, od_res$interaction)
@@ -147,9 +147,62 @@ As shown in the output above, the function allows you to use any
 variable in the origin or destination data in the function, with column
 names appended with `origin` and `destination`.
 
-Note: support for OD datasets in which the origins and destinations are
-different objects is work in progress (see
-[\#3](https://github.com/Robinlovelace/si/issues/3)).
+The approach works equally well when origin and destination points are
+different, as shown in the following example which estimates the number
+of trips to pubs in Leeds, assuming that for every trip to the pub there
+are 50 trips to work:
+
+``` r
+zones_pubs = si_zones %>% 
+  mutate(to_pubs = all / 50)
+pubs_example = si_pubs %>% 
+  filter(grepl(pattern = "Chemic|Nag", x = name))
+pubs_example$size = c(100, 80)
+od_to_pubs = si_to_od(zones_pubs, pubs_example)
+od_to_pubs_result = od_to_pubs %>% 
+  si_calculate(fun = gravity_model, 
+               m = origin_to_pubs,
+               n = destination_size,
+               d = distance_euclidean,
+               beta = 0.5,
+               constraint_production = origin_to_pubs)
+od_to_pubs_result %>% 
+  select(O, D, destination_name, interaction)
+```
+
+    Simple feature collection with 214 features and 4 fields
+    Geometry type: LINESTRING
+    Dimension:     XY
+    Bounding box:  xmin: -1.743949 ymin: 53.71552 xmax: -1.337493 ymax: 53.92906
+    Geodetic CRS:  WGS 84
+    # A tibble: 214 × 5
+       O         D         destination_name  interaction                    geometry
+       <chr>     <chr>     <chr>                   <dbl>            <LINESTRING [°]>
+     1 E02002330 127960333 The Chemic Tavern        18.4 (-1.400108 53.92906, -1.55…
+     2 E02002331 127960333 The Chemic Tavern        15.9 (-1.346497 53.92305, -1.55…
+     3 E02002332 127960333 The Chemic Tavern        25.5 (-1.704658 53.91073, -1.55…
+     4 E02002333 127960333 The Chemic Tavern        38.7 (-1.6876 53.90066, -1.5528…
+     5 E02002334 127960333 The Chemic Tavern        20.9 (-1.357667 53.88306, -1.55…
+     6 E02002335 127960333 The Chemic Tavern        19.9 (-1.470966 53.89184, -1.55…
+     7 E02002336 127960333 The Chemic Tavern        25.5 (-1.624775 53.88589, -1.55…
+     8 E02002337 127960333 The Chemic Tavern        37.2 (-1.743949 53.88035, -1.55…
+     9 E02002338 127960333 The Chemic Tavern        36.8 (-1.710657 53.87087, -1.55…
+    10 E02002339 127960333 The Chemic Tavern        29.0 (-1.694076 53.86729, -1.55…
+    # … with 204 more rows
+
+We can plot the top 20 desire lines between zone centroids and the 2
+pubs in the example dataset as follows:
+
+``` r
+library(tmap)
+tmap_mode("view")
+od_to_pubs_result %>% 
+  top_n(n = 50, wt = interaction) %>% 
+  tm_shape() +
+  tm_lines(col = "interaction", palette = "viridis", scale = 2)
+```
+
+![](man/figures/README-pubmap-1.png)
 
 ## Feedback
 
