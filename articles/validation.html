@@ -266,7 +266,9 @@
 <p><img src="validation_files/figure-html/unnamed-chunk-14-2.png" width="700"></p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">od_joined</span><span class="op">$</span><span class="va">all</span>, <span class="va">od_joined</span><span class="op">$</span><span class="va">flow_m4</span>, use <span class="op">=</span> <span class="st">"complete.obs"</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span>
-<span class="co">#&gt; [1] 0.1299208</span></code></pre></div>
+<span class="co">#&gt; [1] 0.1299208</span>
+<span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">od_joined</span><span class="op">$</span><span class="va">flow_m4</span><span class="op">)</span>
+<span class="co">#&gt; [1] 20237</span></code></pre></div>
 <p>And ‘attraction constrained’ as follows:</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">od_joined</span> <span class="op">=</span> <span class="va">od_joined</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
@@ -282,7 +284,11 @@
 <p><img src="validation_files/figure-html/unnamed-chunk-15-2.png" width="700"></p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">od_joined</span><span class="op">$</span><span class="va">all</span>, <span class="va">od_joined</span><span class="op">$</span><span class="va">flow_m5</span>, use <span class="op">=</span> <span class="st">"complete.obs"</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span>
-<span class="co">#&gt; [1] 0.6217939</span></code></pre></div>
+<span class="co">#&gt; [1] 0.6217939</span>
+<span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">od_joined</span><span class="op">$</span><span class="va">flow_m5</span><span class="op">)</span>
+<span class="co">#&gt; [1] 20237</span>
+<span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">od_joined</span><span class="op">$</span><span class="va">all</span><span class="op">)</span>
+<span class="co">#&gt; [1] 236326</span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="valitation-based-on-2011-oa-wpz-data">Valitation based on 2011 OA-WPZ data<a class="anchor" aria-label="anchor" href="#valitation-based-on-2011-oa-wpz-data"></a>
