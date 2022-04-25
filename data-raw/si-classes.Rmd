@@ -1,0 +1,30 @@
+---
+title: "Using the si package with different input classes"
+output: github_document
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+# remotes::install_github("robinlovelace/si")
+library(si)
+# ?si_predict
+```
+
+```{r}
+od = si_to_od(si_zones, si_zones, max_dist = 4000)
+m = lm(od$origin_all ~ od$origin_bicycle)
+od_updated = si_predict(od, m)
+class(od_updated)
+od_dt = data.table::data.table(od)
+class(od_dt)
+od_updated_dt = si_predict(od_dt, m)
+class(od_updated_dt)
+identical(od_updated$interaction, od_updated_dt$interaction)
+```
+
