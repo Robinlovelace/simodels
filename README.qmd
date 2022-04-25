@@ -123,3 +123,4 @@ For a detailed introduction to SIMs, support by reproducible R code, see Adam De
 - The [`spint` Python package](https://spint.readthedocs.io/en/latest/)
 - The [`gravity`](https://cran.r-project.org/package=gravity) R package
 - The [`mobility`](https://covid-19-mobility-data-network.github.io/mobility/index.html) R package
+- The [gravity functions in the scikit-mobility](https://scikit-mobility.github.io/scikit-mobility/reference/models.html#module-skmob.models.gravity) Python package
