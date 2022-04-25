@@ -211,6 +211,7 @@ od_joined %>%
   ggplot(aes(all, flow_m4)) +
   geom_point()
 cor(od_joined$all, od_joined$flow_m4, use = "complete.obs")^2
+sum(od_joined$flow_m4)
 ```
 
 And 'attraction constrained' as follows:
@@ -225,6 +226,8 @@ od_joined %>%
   ggplot(aes(all, flow_m5)) +
   geom_point()
 cor(od_joined$all, od_joined$flow_m5, use = "complete.obs")^2
+sum(od_joined$flow_m5)
+sum(od_joined$all)
 ```
 
 
