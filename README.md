@@ -1,3 +1,4 @@
+
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/robinlovelace/si/workflows/R-CMD-check/badge.svg)](https://github.com/robinlovelace/si/actions)
@@ -57,10 +58,10 @@ plot(od_res$distance_euclidean, od_res$interaction)
 
 What just happened? We created an ‘OD data frame’ with the function
 `si_to_od()` from geographic origins and destinations, and then
-estimated a simple ‘production constrained’ (with the `constraint_production`
-argument) gravity model based on the population in origin and
-destination zones and a custom distance decay function with
-`si_calculate()`. As the example above shows, the package
+estimated a simple ‘production constrained’ (with the
+`constraint_production` argument) gravity model based on the population
+in origin and destination zones and a custom distance decay function
+with `si_calculate()`. As the example above shows, the package
 allows/encourages you to define and use your own functions to estimate
 the amount of interaction/movement between places.
 
@@ -171,8 +172,11 @@ Adam Dennett’s [2018 paper](https://doi.org/10.37970/aps.v2i2.38).
 
 ## Other SIM packages
 
--   The [`spflow` R package](https://github.com/LukeCe/spflow) on CRAN
+-   The [`spflow` R package](https://github.com/LukeCe/spflow)
 -   The [`spint` Python
     package](https://spint.readthedocs.io/en/latest/)
 -   The [`gravity`](https://cran.r-project.org/package=gravity) R
     package
+-   The
+    [`mobility`](https://covid-19-mobility-data-network.github.io/mobility/index.html)
+    R package
