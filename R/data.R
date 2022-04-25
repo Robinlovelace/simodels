@@ -24,3 +24,15 @@ NULL
 #' @examples
 #' head(si_od_census)
 NULL
+
+#' Example destinations dataset: pubs in Leeds
+#'
+#' Example dataset from Leeds, UK
+#' @note Regenerate the data with scripts in the `data-raw` directory.
+#'
+#' @docType data
+#' @keywords datasets
+#' @name si_pubs
+#' @examples
+#' head(si_pubs)
+NULL
