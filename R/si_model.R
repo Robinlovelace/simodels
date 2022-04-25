@@ -57,7 +57,7 @@ si_calculate = function(
     od = constrain_production(od, output_col, {{constraint_production}})
   }
   if (!missing(constraint_attraction)) {
-    message("Not yet implemented")
+    od = constrain_attraction(od, output_col, {{constraint_attraction}})
   }
   if (!missing(constraint_total)) {
     od = constrain_total(od, output_col, constraint_total)
@@ -88,7 +88,7 @@ si_predict = function(
     od = constrain_production(od, output_col, {{constraint_production}})
   }
   if (!missing(constraint_attraction)) {
-    message("Not yet implemented")
+    od = constrain_attraction(od, output_col, {{constraint_attraction}})
   }
   if (!missing(constraint_total)) {
     od = constrain_total(od, output_col, constraint_total)
@@ -99,6 +99,18 @@ si_predict = function(
 constrain_production = function(od, output_col, constraint_production) {
   # todo: should the grouping var (the first column, 1) be an argument?
   od_grouped = dplyr::group_by_at(od, 1)
+  od_grouped = dplyr::mutate(
+    od_grouped,
+    {{output_col}} := .data[[output_col]] /
+      sum(.data[[output_col]]) * mean( {{constraint_production}} )
+  )
+  od = dplyr::ungroup(od_grouped)
+  od
+}
+
+constrain_attraction = function(od, output_col, constraint_production) {
+  # todo: should the grouping var (the first column, 2) be an argument?
+  od_grouped = dplyr::group_by_at(od, 2)
   od_grouped = dplyr::mutate(
     od_grouped,
     {{output_col}} := .data[[output_col]] /
