@@ -9,6 +9,10 @@
 #' @param max_dist Euclidean distance in meters (numeric).
 #'   Only OD pairs that are this distance apart or less will be returned
 #'   and therefore included in the SIM.
+#' @param intrazonal Include intrazonal OD pairs?
+#'   Intrazonal OD pairs represent movement from one
+#'   place in a zone to another place in the same zone.
+#'   `TRUE` by default.
 #' @export
 #' @examples
 #' library(sf)
@@ -28,7 +32,7 @@
 #' nrow(odsf) # no intrazonal flows
 #' plot(odsf)
 si_to_od = function(origins, destinations, max_dist = Inf, intrazonal = TRUE) {
-  if(identical(origins$geometry, destinations$geometry)) {
+  if(identical(origins, destinations)) {
     od_df = od::points_to_od(origins)
   } else {
     od_df = od::points_to_od(origins, destinations)
@@ -54,8 +58,7 @@ si_to_od = function(origins, destinations, max_dist = Inf, intrazonal = TRUE) {
   
   # Intrazonal check
   if(!intrazonal){
-    od_df = od_df %>% 
-      dplyr::filter(distance_euclidean > 0)
+    od_df = dplyr::filter(od_df, distance_euclidean > 0)
   }
   
   od_sfc = od::odc_to_sfc(od_df[3:6])
