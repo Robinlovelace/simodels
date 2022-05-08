@@ -27,29 +27,37 @@
 #' odsf = si_to_od(origins, destinations)
 #' nrow(odsf) # no intrazonal flows
 #' plot(odsf)
-si_to_od = function(origins, destinations, max_dist = Inf) {
-  if(identical(origins, destinations)) {
+si_to_od = function(origins, destinations, max_dist = Inf, intrazonal = TRUE) {
+  if(identical(origins$geometry, destinations$geometry)) {
     od_df = od::points_to_od(origins)
   } else {
     od_df = od::points_to_od(origins, destinations)
   }
   od_df$distance_euclidean = geodist::geodist(
-      x = od_df[c("ox", "oy")],
-      y = od_df[c("dx", "dy")],
-      paired = TRUE
-      )
+    x = od_df[c("ox", "oy")],
+    y = od_df[c("dx", "dy")],
+    paired = TRUE
+  )
+  # Max dist check
   if(max(od_df$distance_euclidean) > max_dist) {
-      nrow_before = nrow(od_df)
-      od_df = od_df[od_df$distance_euclidean <= max_dist, ]
-      nrow_after = nrow(od_df)
-      pct_kept = round(nrow_after / nrow_before * 100)
-      message(
-          nrow_after,
-          " OD pairs remaining after removing those with a distance greater than ", # nolint
-          max_dist, " meters", ":\n",
-          pct_kept, "% of all possible OD pairs"
-          )
+    nrow_before = nrow(od_df)
+    od_df = od_df[od_df$distance_euclidean <= max_dist, ]
+    nrow_after = nrow(od_df)
+    pct_kept = round(nrow_after / nrow_before * 100)
+    message(
+      nrow_after,
+      " OD pairs remaining after removing those with a distance greater than ", # nolint
+      max_dist, " meters", ":\n",
+      pct_kept, "% of all possible OD pairs"
+    )
   }
+  
+  # Intrazonal check
+  if(!intrazonal){
+    od_df = od_df %>% 
+      dplyr::filter(distance_euclidean > 0)
+  }
+  
   od_sfc = od::odc_to_sfc(od_df[3:6])
   sf::st_crs(od_sfc) = 4326 # todo: add CRS argument?
   od_df = od_df[-c(3:6)]
