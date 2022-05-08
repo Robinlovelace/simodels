@@ -4,7 +4,7 @@
 \alias{si_to_od}
 \title{Prepare OD data frame}
 \usage{
-si_to_od(origins, destinations, max_dist = Inf)
+si_to_od(origins, destinations, max_dist = Inf, intrazonal = TRUE)
 }
 \arguments{
 \item{origins}{\code{sf} object representing origin locations/zones}
@@ -14,6 +14,11 @@ si_to_od(origins, destinations, max_dist = Inf)
 \item{max_dist}{Euclidean distance in meters (numeric).
 Only OD pairs that are this distance apart or less will be returned
 and therefore included in the SIM.}
+
+\item{intrazonal}{Include intrazonal OD pairs?
+Intrazonal OD pairs represent movement from one
+place in a zone to another place in the same zone.
+\code{TRUE} by default.}
 }
 \description{
 Prepares an OD data frame that next could be used to
