@@ -23,7 +23,20 @@ place in a zone to another place in the same zone.
 \description{
 Prepares an OD data frame that next could be used to
 estimate movement between origins and destinations
-with a spatial interaction model
+with a spatial interaction model.
+}
+\details{
+In most origin-destination datasets the spatial entities that constitute
+origins (typically administrative zones) also represent destinations.
+In this 'unipartite' case \code{origins} and \code{destinations} should be passed
+the same object, an \code{sf} data frame representing administrative zones.
+
+'Bipartite' datasets, by contrast, represent
+"spatial interaction systems where origins cannot act as
+destinations and vice versa" (Hasova et al. \href{https://lenkahas.com/files/preprint.pdf}{2022}).
+
+a different
+\code{sf} object can be passed to the \code{destinations} argument.
 }
 \examples{
 library(sf)

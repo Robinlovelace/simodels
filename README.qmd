@@ -21,6 +21,9 @@ knitr::opts_chunk$set(cache = TRUE,
 The goal of {si} is to provide a simple, [tidy](https://www.tidyverse.org/), and flexible framework for developing spatial interaction models (SIMs).
 SIMs estimate the amount of movement between spatial entities and can be used for many things, including to support evidence-based investment in sustainable transport infrastructure and prioritisation of location options for public services.
 
+Unlike many software tools designed to support spatial interaction modelling, {si} does not define (or even encourage use of) any particular functional forms or modelling frameworks for predicting movement between origins and destinations.
+Instead, it provides a framework enabling you to use model function forms or models of your choosing, ensuring flexibility and encouraging flexibility.
+
 ## Installation
 
 Install the package as follows:
@@ -86,7 +89,7 @@ od_res %>%
 The resulting estimates of interaction, returned in the column `interaction` and plotted with distance in the graphic above, resulted from our choice of spatial interaction model inputs, allowing a wide range of alternative approaches to be implemented.
 This flexibility is a key aspect of the package, enabling small and easily modified functions to be implemented and tested.
 
-The output `si_calculate)` is a geographic object which can be plotted as a map:
+The output of `si_calculate()` is a geographic object that can be plotted with `sf`'s plot method (or other geographic data visualisation packages):
 
 ```{r map}
 plot(od_res["interaction"], logz = TRUE)
@@ -97,15 +100,14 @@ A common saying in data science is that 80% of the effort goes into the pre-proc
 This is equally true for spatial interaction modelling as it is for other types of data intensive analysis/modelling work.
 So what does this function return?
 
-```{r}
-names(od)
-```
+As documented in the [si vignette](https://robinlovelace.github.io/si/articles/si.html), the function allows you to use any variable in the origin or destination data by joining all attributes onto the OD data frame, with column names appended with `origin` and `destination`.
 
-As shown in the output above, the function allows you to use any variable in the origin or destination data in the function, with column names appended with `origin` and `destination`.
-
-The approach works equally well when origin and destination points are different, as shown in the following example which estimates the number of trips to pubs in Leeds, assuming that for every trip to the pub there are 50 trips to work:
+The approach works equally well for 'bipartite' SIMs, in which origin and destination points are different (Hasova et al. [2022](https://lenkahas.com/files/preprint.pdf)).
+The following example implements a bipartite SIM that estimates the number of trips from administrative zones to pubs in Leeds:
 
 ```{r pubs}
+# Set n. trips to pubs, assuming that for every trip to the pub there are
+# 50 trips to work (this would be validated/tested/modelled in empirical work)
 zones_pubs = si_zones %>% 
   mutate(to_pubs = all / 50)
 pubs_example = si_pubs %>% 
@@ -125,7 +127,7 @@ od_to_pubs_result %>%
 
 We can plot the top 20 desire lines between zone centroids and the 2 pubs in the example dataset as follows:
 
-```{r pubmap}
+```{r pubmap, eval=FALSE}
 library(tmap)
 tmap_mode("view")
 od_to_pubs_result %>% 
@@ -134,7 +136,7 @@ od_to_pubs_result %>%
   tm_lines(col = "interaction", palette = "viridis", scale = 2)
 ```
 
-
+![](https://user-images.githubusercontent.com/1825120/168485930-1adf9970-7dc1-4417-891e-2d5a1ec5e170.png)
 
 ## Feedback
 

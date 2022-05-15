@@ -1,4 +1,3 @@
-
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/robinlovelace/si/workflows/R-CMD-check/badge.svg)](https://github.com/robinlovelace/si/actions)
@@ -11,6 +10,13 @@ of movement between spatial entities and can be used for many things,
 including to support evidence-based investment in sustainable transport
 infrastructure and prioritisation of location options for public
 services.
+
+Unlike many software tools designed to support spatial interaction
+modelling, {si} does not define (or even encourage use of) any
+particular functional forms or modelling frameworks for predicting
+movement between origins and destinations. Instead, it provides a
+framework enabling you to use model function forms or models of your
+choosing, ensuring flexibility and encouraging flexibility.
 
 ## Installation
 
@@ -110,8 +116,9 @@ range of alternative approaches to be implemented. This flexibility is a
 key aspect of the package, enabling small and easily modified functions
 to be implemented and tested.
 
-The output `si_calculate)` is a geographic object which can be plotted
-as a map:
+The output of `si_calculate()` is a geographic object that can be
+plotted with `sf`’s plot method (or other geographic data visualisation
+packages):
 
 ``` r
 plot(od_res["interaction"], logz = TRUE)
@@ -127,35 +134,21 @@ pre-processing stage. This is equally true for spatial interaction
 modelling as it is for other types of data intensive analysis/modelling
 work. So what does this function return?
 
-``` r
-names(od)
-```
+As documented in the [si
+vignette](https://robinlovelace.github.io/si/articles/si.html), the
+function allows you to use any variable in the origin or destination
+data by joining all attributes onto the OD data frame, with column names
+appended with `origin` and `destination`.
 
-     [1] "O"                         "D"                        
-     [3] "distance_euclidean"        "origin_geo_name"          
-     [5] "origin_lad11cd"            "origin_lad_name"          
-     [7] "origin_all"                "origin_bicycle"           
-     [9] "origin_foot"               "origin_car_driver"        
-    [11] "origin_car_passenger"      "origin_motorbike"         
-    [13] "origin_train_tube"         "origin_bus"               
-    [15] "origin_taxi_other"         "destination_geo_name"     
-    [17] "destination_lad11cd"       "destination_lad_name"     
-    [19] "destination_all"           "destination_bicycle"      
-    [21] "destination_foot"          "destination_car_driver"   
-    [23] "destination_car_passenger" "destination_motorbike"    
-    [25] "destination_train_tube"    "destination_bus"          
-    [27] "destination_taxi_other"    "geometry"                 
-
-As shown in the output above, the function allows you to use any
-variable in the origin or destination data in the function, with column
-names appended with `origin` and `destination`.
-
-The approach works equally well when origin and destination points are
-different, as shown in the following example which estimates the number
-of trips to pubs in Leeds, assuming that for every trip to the pub there
-are 50 trips to work:
+The approach works equally well for ‘bipartite’ SIMs, in which origin
+and destination points are different (Hasova et
+al. [2022](https://lenkahas.com/files/preprint.pdf)). The following
+example implements a bipartite SIM that estimates the number of trips
+from administrative zones to pubs in Leeds:
 
 ``` r
+# Set n. trips to pubs, assuming that for every trip to the pub there are
+# 50 trips to work (this would be validated/tested/modelled in empirical work)
 zones_pubs = si_zones %>% 
   mutate(to_pubs = all / 50)
 pubs_example = si_pubs %>% 
@@ -205,7 +198,7 @@ od_to_pubs_result %>%
   tm_lines(col = "interaction", palette = "viridis", scale = 2)
 ```
 
-![](man/figures/README-pubmap-1.png)
+![](https://user-images.githubusercontent.com/1825120/168485930-1adf9970-7dc1-4417-891e-2d5a1ec5e170.png)
 
 ## Feedback
 
