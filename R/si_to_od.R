@@ -2,8 +2,20 @@
 #'
 #' Prepares an OD data frame that next could be used to
 #' estimate movement between origins and destinations 
-#' with a spatial interaction model
-#'
+#' with a spatial interaction model.
+#' 
+#' In most origin-destination datasets the spatial entities that constitute
+#' origins (typically administrative zones) also represent destinations.
+#' In this 'unipartite' case `origins` and `destinations` should be passed
+#' the same object, an `sf` data frame representing administrative zones.
+#' 
+#' 'Bipartite' datasets, by contrast, represent
+#' "spatial interaction systems where origins cannot act as
+#' destinations and vice versa" (Hasova et al. [2022](https://lenkahas.com/files/preprint.pdf)). 
+#' 
+#'  a different
+#' `sf` object can be passed to the `destinations` argument.
+#' 
 #' @param origins `sf` object representing origin locations/zones
 #' @param destinations `sf` object representing destination locations/zones
 #' @param max_dist Euclidean distance in meters (numeric).
