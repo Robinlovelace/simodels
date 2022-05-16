@@ -117,7 +117,7 @@ Note that the output has duplicate columns: `si_to_od()` joins data from the ori
 
 # An unconstrained SIM
 
-A simplistic SIM can be created just based on the distance between points:
+A simplistic SIM - in this case an inverse power distance decay function (negative exponential is another commonly used decay function) - can be created just based on the distance between points:
 
 ```{r unconstrained1}
 si_power = function(d, beta) (d / 1000)^beta
