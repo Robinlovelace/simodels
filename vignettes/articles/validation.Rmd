@@ -180,7 +180,7 @@ od_joined %>%
 cor(od_joined$all, od_joined$flow_m3, use = "complete.obs")^2
 ```
 
-Another approach is with the `minpack.lm` package:
+Another approach is with the `minpack.lm` package
 
 ```{r, eval=FALSE, echo=FALSE}
 m3 = minpack.lm::nlsLM(
@@ -214,11 +214,21 @@ cor(od_joined$all, od_joined$flow_m4, use = "complete.obs")^2
 sum(od_joined$flow_m4)
 ```
 
-And 'attraction constrained' as follows:
+And 'attraction constrained' as follows (first we calculate the number of people arriving at each zone):
 
 ```{r}
-od_joined = od_joined %>% 
-  si_predict(m3, constraint_attraction = destination_all, output_col = "flow_m5")
+zones_attraction = inner_join(
+  si_centroids,
+  si_od_census %>% 
+  group_by(geo_code = D) %>% 
+  summarise(attractiveness = sum(all))
+)
+od_attraction = si_to_od(origins = zones_attraction, destinations = zones_attraction)
+od_joined_attraction = left_join(od_attraction, si_od_census) %>% 
+  mutate(all = case_when(is.na(all) ~ 0, TRUE ~ all))
+
+od_joined = od_joined_attraction %>% 
+  si_predict(m3, constraint_attraction = destination_attractiveness, output_col = "flow_m5")
 od_joined %>% 
   ggplot(aes(distance_euclidean, flow_m5)) +
   geom_point()
