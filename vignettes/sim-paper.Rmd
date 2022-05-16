@@ -1,49 +1,54 @@
 ---
-# title: "si: A Package for Developing Spatial Interaction Models"
-
-output: rticles::jss_article
-documentclass: jss
-author:
-  - name: FirstName LastName
-    orcid: 0000-0000-0000-0000
-    affiliation: University/Company
-    # use this syntax to add text on several lines
-    address: |
-      | First line
-      | Second line
-    email: \email{name@company.com}
-    url: http://rstudio.com
-  - name: Second Author
-    orcid: 0000-0000-0000-0000
-    affiliation: 'Affiliation \AND'
-    # To add another line, use \AND at the end of the previous one as above
-  - name: Third Author
-    orcid: 0000-0000-0000-0000
-    address: |
-      | Department of Statistics and Mathematics,
-      | Faculty of Biosciences,
-      | Universitat Autònoma de Barcelona
-    affiliation: |
-      | Universitat Autònoma 
-      | de Barcelona
-    # use a different affiliation in adress field (differently formated here)
-    affiliation2: Universitat Autònoma de Barcelona
-title:
-  formatted: "\\pkg{si}: A Package for Developing Spatial Interaction Models"
-  # If you use tex in the formatted title, also supply version without
-  plain:     "si: A Package for Developing Spatial Interaction Models"
-  # For running headers, if needed
-  short:     "\\pkg{si}: Spatial Interaction Models"
-abstract: >
-  The abstract of the article.
-keywords:
-  # at least one keyword must be supplied
-  formatted: [spatial interaction, movement, "\\proglang{R}"]
-  plain:     [spatial interaction, movement, R]
-preamble: >
-  \usepackage{amsmath}
-
+title: "si: A Package for Developing Spatial Interaction Models"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{si: A Package for Developing Spatial Interaction Models}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+  
 bibliography: paper.bib
+
+# output: rticles::jss_article
+# documentclass: jss
+# author:
+#   - name: FirstName LastName
+#     orcid: 0000-0000-0000-0000
+#     affiliation: University/Company
+#     # use this syntax to add text on several lines
+#     address: |
+#       | First line
+#       | Second line
+#     email: \email{name@company.com}
+#     url: http://rstudio.com
+#   - name: Second Author
+#     orcid: 0000-0000-0000-0000
+#     affiliation: 'Affiliation \AND'
+#     # To add another line, use \AND at the end of the previous one as above
+#   - name: Third Author
+#     orcid: 0000-0000-0000-0000
+#     address: |
+#       | Department of Statistics and Mathematics,
+#       | Faculty of Biosciences,
+#       | Universitat Autònoma de Barcelona
+#     affiliation: |
+#       | Universitat Autònoma 
+#       | de Barcelona
+#     # use a different affiliation in adress field (differently formated here)
+#     affiliation2: Universitat Autònoma de Barcelona
+# title:
+#   formatted: "\\pkg{si}: A Package for Developing Spatial Interaction Models"
+#   # If you use tex in the formatted title, also supply version without
+#   plain:     "si: A Package for Developing Spatial Interaction Models"
+#   # For running headers, if needed
+#   short:     "\\pkg{si}: Spatial Interaction Models"
+# abstract: >
+#   The abstract of the article.
+# keywords:
+#   # at least one keyword must be supplied
+#   formatted: [spatial interaction, movement, "\\proglang{R}"]
+#   plain:     [spatial interaction, movement, R]
+# preamble: >
+#   \usepackage{amsmath}
 ---
 
 ```{r echo=FALSE, eval=FALSE}
