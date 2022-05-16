@@ -62,7 +62,7 @@ options(prompt = 'R> ', continue = '+ ')
 # Introduction
 
 Spatial Interaction Models (SIMs) are mathematical models for estimating movement between spatial entities.
-SIMs were first developed by Alan Wilson in the late 1960s and early 1970, with considerable uptake and refinement for transport modelling since then [@boyce_forecasting_2015]. There are four main types of traditional SIMs [@wilson_family_1971]:
+Tirst developed by Alan Wilson in the late 1960s and early 1970, SIMs have become a key tool for transport modelling with substantial practical applications [@boyce_forecasting_2015]. There are four main types of traditional SIMs [@wilson_family_1971]:
 
 -   Unconstrained
 
