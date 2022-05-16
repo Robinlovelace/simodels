@@ -1,4 +1,7 @@
 ---
+# title: "si: A Package for Developing Spatial Interaction Models"
+
+output: rticles::jss_article
 documentclass: jss
 author:
   - name: FirstName LastName
@@ -26,21 +29,26 @@ author:
     # use a different affiliation in adress field (differently formated here)
     affiliation2: Universitat Autònoma de Barcelona
 title:
-  formatted: "A Capitalized Title: Something about a Package \\pkg{foo}"
+  formatted: "\\pkg{si}: A Package for Developing Spatial Interaction Models"
   # If you use tex in the formatted title, also supply version without
-  plain:     "A Capitalized Title: Something about a Package foo"
+  plain:     "si: A Package for Developing Spatial Interaction Models"
   # For running headers, if needed
-  short:     "\\pkg{foo}: A Capitalized Title"
+  short:     "\\pkg{si}: Spatial Interaction Models"
 abstract: >
   The abstract of the article.
 keywords:
   # at least one keyword must be supplied
-  formatted: [keywords, not capitalized, "\\proglang{Java}"]
-  plain:     [keywords, not capitalized, Java]
+  formatted: [spatial interaction, movement, "\\proglang{R}"]
+  plain:     [spatial interaction, movement, R]
 preamble: >
   \usepackage{amsmath}
-output: rticles::jss_article
+
+bibliography: paper.bib
 ---
+
+```{r echo=FALSE, eval=FALSE}
+rbbt::bbt_update_bib(path_rmd = "vignettes/paper.Rmd", "vignettes/paper.bib")
+```
 
 ```{r, setup, include=FALSE}
 options(prompt = 'R> ', continue = '+ ')
@@ -48,20 +56,39 @@ options(prompt = 'R> ', continue = '+ ')
 
 # Introduction
 
-This template demonstrates some of the basic LaTeX that you need to know to create a JSS article.
+Spatial Interaction Models (SIMs) are mathematical models for estimating movement between spatial entities.
+SIMs were first developed by Alan Wilson in the late 1960s and early 1970, with considerable uptake and refinement for transport modelling since then @boyce_forecasting_2015.
+There are four main types of traditional SIMs [@wilson_family_1971]:
+
+-   Unconstrained
+
+-   Production-constrained
+
+-   Attraction-constrained
+
+-   Doubly-constrained
+
+An early and highly influential type of SIM was the 'gravity model', defined by @wilson_family_1971 as follows (in a paper that explored many iterations on this formulation):
+
+$$
+T_{i j}=K \frac{W_{i}^{(1)} W_{j}^{(2)}}{c_{i j}^{n}}
+$$
 
 ## Code formatting
 
 In general, don't use Markdown, but use the more precise LaTeX commands instead:
 
-* \proglang{Java}
-* \pkg{plyr}
+-   \proglang{Java}
+
+-   \pkg{plyr}
 
 One exception is inline code, which can be written inside a pair of backticks (i.e., using the Markdown syntax).
 
-If you want to use LaTeX commands in headers, you need to provide a `short-title` attribute. You can also provide a custom identifier if necessary. See the header of Section \ref{r-code} for example.
+If you want to use LaTeX commands in headers, you need to provide a `short-title` attribute.
+You can also provide a custom identifier if necessary.
+See the header of Section \ref{r-code} for example.
 
-# \proglang{R} code {short-title="R code" #r-code}
+# \proglang{R} code {#r-code short-title="R code"}
 
 Can be inserted in regular R markdown blocks.
 
@@ -72,5 +99,5 @@ x
 
 ## Features specific to \pkg{rticles} {short-title="Features specific to rticles"}
 
-* Adding short titles to section headers is a feature specific to \pkg{rticles} (implemented via a Pandoc Lua filter). This feature is currently not supported by Pandoc and we will update this template if [it is officially supported in the future](https://github.com/jgm/pandoc/issues/4409).
-* Using the `\AND` syntax in the `author` field to add authors on a new line. This is a specific to the `rticles::jss_article` format.
+-   Adding short titles to section headers is a feature specific to \pkg{rticles} (implemented via a Pandoc Lua filter). This feature is currently not supported by Pandoc and we will update this template if [it is officially supported in the future](https://github.com/jgm/pandoc/issues/4409).
+-   Using the `\AND` syntax in the `author` field to add authors on a new line. This is a specific to the `rticles::jss_article` format.
