@@ -1,0 +1,133 @@
+---
+# title: "sim: A Package for Developing Spatial Interaction Models"
+# output: rmarkdown::html_vignette
+# vignette: >
+#   %\VignetteIndexEntry{sim: A Package for Developing Spatial Interaction Models}
+#   %\VignetteEngine{knitr::rmarkdown}
+#   %\VignetteEncoding{UTF-8}
+  
+bibliography: paper.bib
+
+output: rticles::jss_article
+documentclass: jss
+author:
+  - name: FirstName LastName
+    orcid: 0000-0000-0000-0000
+    affiliation: University/Company
+    # use this syntax to add text on several lines
+    address: |
+      | First line
+      | Second line
+    email: \email{name@company.com}
+    url: http://rstudio.com
+  - name: Second Author
+    orcid: 0000-0000-0000-0000
+    affiliation: 'Affiliation \AND'
+    # To add another line, use \AND at the end of the previous one as above
+  - name: Third Author
+    orcid: 0000-0000-0000-0000
+    address: |
+      | Department of Statistics and Mathematics,
+      | Faculty of Biosciences,
+      | Universitat Autònoma de Barcelona
+    affiliation: |
+      | Universitat Autònoma
+      | de Barcelona
+    # use a different affiliation in adress field (differently formated here)
+    affiliation2: Universitat Autònoma de Barcelona
+title:
+  formatted: "\\pkg{sim}: A Package for Developing Spatial Interaction Models"
+  # If you use tex in the formatted title, also supply version without
+  plain:     "sim: A Package for Developing Spatial Interaction Models"
+  # For running headers, if needed
+  short:     "\\pkg{sim}: Spatial Interaction Models"
+abstract: >
+  The abstract of the article.
+keywords:
+  # at least one keyword must be supplied
+  formatted: [spatial interaction, movement, "\\proglang{R}"]
+  plain:     [spatial interaction, movement, R]
+preamble: >
+  \usepackage{amsmath}
+---
+
+```{r echo=FALSE, eval=FALSE}
+rbbt::bbt_update_bib(path_rmd = "vignettes/paper.Rmd", "vignettes/paper.bib")
+```
+
+```{r, setup, include=FALSE}
+options(prompt = 'R> ', continue = '+ ')
+```
+
+# Introduction
+
+Spatial Interaction Models (SIMs) are mathematical models for estimating movement between spatial entities.
+First developed by Alan Wilson in the late 1960s and early 1970, SIMs have become a key tool for transport modelling with substantial practical applications [@boyce_forecasting_2015].
+There are four main types of traditional SIMs [@wilson_family_1971]:
+
+-   Unconstrained
+
+-   Production-constrained
+
+-   Attraction-constrained
+
+-   Doubly-constrained
+
+An early and highly influential type of SIM was the 'gravity model', defined by @wilson_family_1971 as follows (in a paper that explored many iterations on this formulation):
+
+$$
+T_{i j}=K \frac{W_{i}^{(1)} W_{j}^{(2)}}{c_{i j}^{n}}
+$$ "where $T_{i j}$ is a measure of the interaction between zones $i$ and $W_{i}^{(1)}$ is a measure of the 'mass term' associated with zone $z_i$, $W_{j}^{(2)}$ is a measure of the 'mass term' associated with zone $z_j$, and $c_{ij}$ is a measure of the distance, or generalised cost of travel, between zone $i$ and zone $j$".
+$K$ is a 'constant of proportionality' and $n$ is a parameter to be estimated.
+
+Redefining the $W$ terms as $m$ and $n$ for origins and destinations respectively [@simini_universal_2012], this classic definition of the 'gravity model' can be written as follows:
+
+$$
+T_{i j}=K \frac{m_{i} n_{j}}{c_{i j}^{n}}
+$$
+
+For the purposes of this project, we will focus on production-constrained SIMs.
+These can be defined as follows [@wilson_family_1971]:
+
+$$
+T_{ij} = A_iO_in_jf(c_{ij})
+$$
+
+where $A$ is a balancing factor defined as:
+
+$$
+A_{i}=\frac{1}{\sum_{j} m_{j} \mathrm{f}\left(c_{i j}\right)}
+$$
+
+$O_i$ is analogous to the travel demand in zone $i$, which can be roughly approximated by its population.
+
+More recent innovations in SIMs including the 'radiation model' @simini_universal_2012.
+See @lenormand_systematic_2016 for a comparison of alternative approaches.
+
+## Code formatting
+
+In general, don't use Markdown, but use the more precise LaTeX commands instead:
+
+-   \proglang{Java}
+
+-   \pkg{plyr}
+
+One exception is inline code, which can be written inside a pair of backticks (i.e., using the Markdown syntax).
+
+If you want to use LaTeX commands in headers, you need to provide a `short-title` attribute.
+You can also provide a custom identifier if necessary.
+See the header of Section \ref{r-code} for example.
+
+# \proglang{R} code {#r-code short-title="R code"}
+
+Can be inserted in regular R markdown blocks.
+
+```{r}
+x <- 1:10
+x
+```
+
+## Features specific to \pkg{rticles} {short-title="Features specific to rticles"}
+
+-   Adding short titles to section headers is a feature specific to \pkg{rticles} (implemented via a Pandoc Lua filter). This feature is currently not supported by Pandoc and we will update this template if [it is officially supported in the future](https://github.com/jgm/pandoc/issues/4409).
+-   Using the `\AND` syntax in the `author` field to add authors on a new line. This is a specific to the `rticles::jss_article` format.
