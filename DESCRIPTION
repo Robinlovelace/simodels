@@ -12,8 +12,9 @@ Description: Develop spatial interaction models (SIMs).  SIMs predict the
     geographic entities representing trip origins and destinations.  SIMs
     can be unconstrained, production-constrained, attraction-constrained
     and doubly-constrained (Wilson 1979) <doi:10.1068/a030001>.  The
-    package contains functions for unconstrained and doubly-constrained
-    SIMs.
+    package contains functions for creating origin-destination datasets
+    from geographic input datasets and calculating movement between
+    origin-destination pairs.
 License: AGPL (>= 3)
 URL: https://github.com/robinlovelace/simodels,
     https://robinlovelace.github.io/simodels/
