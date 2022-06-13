@@ -32,9 +32,7 @@ library(ggplot2)
 
 # Input data
 
-This tutorial builds on a [reproducible](https://github.com/adamdennett/SIModelling/blob/SIModelling-Edits/SimAus2.Rmd) guide to SIMs in R [@dennett_modelling_2018].^[
-See @dennett_estimating_2012 or an earlier guide on SIMs in R.
-]
+This tutorial builds on a [reproducible](https://github.com/adamdennett/SIModelling/blob/SIModelling-Edits/SimAus2.Rmd) guide to SIMs in R [@dennett_modelling_2018].
 We start by importing open access data representing movement between zones in Australia (thanks to Adam Dennett for making the files accessible):
 
 ```{r import}
