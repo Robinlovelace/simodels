@@ -1,6 +1,6 @@
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/Robinlovelace/sim/workflows/R-CMD-check/badge.svg)](https://github.com/Robinlovelace/sim/actions)
+[![R-CMD-check](https://github.com/Robinlovelace/simm/workflows/R-CMD-check/badge.svg)](https://github.com/Robinlovelace/simm/actions)
 <!-- badges: end -->
 
 The goal of {sim} is to provide a simple,
@@ -27,7 +27,7 @@ install.packages("remotes") # if not already installed
 ```
 
 ``` r
-remotes::install_github("Robinlovelace/sim")
+remotes::install_github("Robinlovelace/simm")
 ```
 
 <!-- # Implementations in other languages -->
@@ -135,7 +135,7 @@ modelling as it is for other types of data intensive analysis/modelling
 work. So what does this function return?
 
 As documented in the [si
-vignette](https://robinlovelace.github.io/si/articles/si.html), the
+vignette](https://robinlovelace.github.io/sim/articles/sim.html), the
 function allows you to use any variable in the origin or destination
 data by joining all attributes onto the OD data frame, with column names
 appended with `origin` and `destination`.
@@ -211,10 +211,10 @@ it in another language feel free to get in touch via the issue tracker.
 
 For details on what SIMs are and how they have been defined
 mathematically and in code from first principles, see the [`sims`
-vignette](https://robinlovelace.github.io/si/articles/sims-first-principles.html).
+vignette](https://robinlovelace.github.io/sim/articles/simms-first-principles.html).
 
 To dive straight into using {sim} to develop SIMs, see the [`si` Get
-started vignette](https://robinlovelace.github.io/si/articles/si.html).
+started vignette](https://robinlovelace.github.io/sim/articles/sim.html).
 
 For a detailed introduction to SIMs, support by reproducible R code, see
 Adam Dennett’s [2018 paper](https://doi.org/10.37970/aps.v2i2.38).

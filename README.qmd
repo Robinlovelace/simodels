@@ -15,7 +15,7 @@ knitr::opts_chunk$set(cache = TRUE,
 ```
 
 <!-- badges: start -->
-[![R-CMD-check](https://github.com/Robinlovelace/sim/workflows/R-CMD-check/badge.svg)](https://github.com/Robinlovelace/sim/actions)
+[![R-CMD-check](https://github.com/Robinlovelace/simm/workflows/R-CMD-check/badge.svg)](https://github.com/Robinlovelace/simm/actions)
 <!-- badges: end -->
 
 The goal of {sim} is to provide a simple, [tidy](https://www.tidyverse.org/), and flexible framework for developing spatial interaction models (SIMs).
@@ -33,7 +33,7 @@ install.packages("remotes") # if not already installed
 ```
 
 ```r
-remotes::install_github("Robinlovelace/sim")
+remotes::install_github("Robinlovelace/simm")
 ```
 
 <!-- # Implementations in other languages -->
@@ -100,7 +100,7 @@ A common saying in data science is that 80% of the effort goes into the pre-proc
 This is equally true for spatial interaction modelling as it is for other types of data intensive analysis/modelling work.
 So what does this function return?
 
-As documented in the [si vignette](https://robinlovelace.github.io/si/articles/si.html), the function allows you to use any variable in the origin or destination data by joining all attributes onto the OD data frame, with column names appended with `origin` and `destination`.
+As documented in the [si vignette](https://robinlovelace.github.io/sim/articles/sim.html), the function allows you to use any variable in the origin or destination data by joining all attributes onto the OD data frame, with column names appended with `origin` and `destination`.
 
 The approach works equally well for 'bipartite' SIMs, in which origin and destination points are different (Hasova et al. [2022](https://lenkahas.com/files/preprint.pdf)).
 The following example implements a bipartite SIM that estimates the number of trips from administrative zones to pubs in Leeds:
@@ -145,9 +145,9 @@ If anyone would like to try the approach or implement it in another language fee
 
 ## Further reading
 
-For details on what SIMs are and how they have been defined mathematically and in code from first principles, see the [`sims` vignette](https://robinlovelace.github.io/si/articles/sims-first-principles.html).
+For details on what SIMs are and how they have been defined mathematically and in code from first principles, see the [`sims` vignette](https://robinlovelace.github.io/sim/articles/simms-first-principles.html).
 
-To dive straight into using {sim} to develop SIMs, see the [`si` Get started vignette](https://robinlovelace.github.io/si/articles/si.html).
+To dive straight into using {sim} to develop SIMs, see the [`si` Get started vignette](https://robinlovelace.github.io/sim/articles/sim.html).
 
 For a detailed introduction to SIMs, support by reproducible R code, see Adam Dennett's [2018 paper](https://doi.org/10.37970/aps.v2i2.38).
 
