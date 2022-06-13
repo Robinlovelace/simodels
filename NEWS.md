@@ -1,3 +1,5 @@
+# sim 0.0.4
+
 # sim 0.0.3
 
 * New `NEWS.md` file to track changes to the package.

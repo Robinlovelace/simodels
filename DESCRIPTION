@@ -1,6 +1,6 @@
 Package: sim
 Title: Flexible Framework for Developing Spatial Interaction Models
-Version: 0.0.3
+Version: 0.0.4
 Authors@R: c(
     person("Robin", "Lovelace", , "rob00x@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-5679-6536")),
