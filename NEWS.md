@@ -1,4 +1,6 @@
-# sim 0.0.4
+# sim 0.0.4 (2022-06)
+
+* Package renamed to avoid clash with existing `SI` package (#20)
 
 # sim 0.0.3
 
