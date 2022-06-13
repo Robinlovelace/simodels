@@ -2,7 +2,7 @@
 % Please edit documentation in R/si_model.R
 \name{si_predict}
 \alias{si_predict}
-\title{Predict si model based on pre-trained model}
+\title{Predict spatial interaction based on pre-trained model}
 \usage{
 si_predict(
   od,
@@ -40,7 +40,7 @@ column. \code{"interaction"} by default.}
 \item{...}{Arguments passed to \code{fun}}
 }
 \description{
-Predict si model based on pre-trained model
+Predict spatial interaction based on pre-trained model
 }
 \examples{
 od = si_to_od(si_zones, si_zones, max_dist = 4000)

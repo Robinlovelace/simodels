@@ -211,9 +211,9 @@ For details on what SIMs are and how they have been defined
 mathematically and in code from first principles, see the [`sims`
 vignette](https://robinlovelace.github.io/simodels/articles/sims-first-principles.html).
 
-To dive straight into using {simodels} to develop SIMs, see the [`si`
-Get started
-vignette](https://robinlovelace.github.io/simodels/articles/si.html).
+To dive straight into using {simodels} to develop SIMs, see the [Get
+started
+vignette](https://robinlovelace.github.io/simodels/articles/simodels.html).
 
 For a detailed introduction to SIMs, support by reproducible R code, see
 Adam Dennett’s [2018 paper](https://doi.org/10.37970/aps.v2i2.38).
