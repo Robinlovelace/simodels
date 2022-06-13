@@ -3,10 +3,10 @@ pkgdown: 2.0.4
 pkgdown_sha: ~
 articles:
   validation: validation.html
-  sim: sim.html
+  simodels: simodels.html
   sims-first-principles: sims-first-principles.html
-last_built: 2022-06-13T21:21Z
+last_built: 2022-06-13T21:47Z
 urls:
-  reference: https://robinlovelace.github.io/sim/reference
-  article: https://robinlovelace.github.io/sim/articles
+  reference: https://robinlovelace.github.io/simodels/reference
+  article: https://robinlovelace.github.io/simodels/articles
 
