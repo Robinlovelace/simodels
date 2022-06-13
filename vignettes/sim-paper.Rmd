@@ -62,7 +62,8 @@ options(prompt = 'R> ', continue = '+ ')
 # Introduction
 
 Spatial Interaction Models (SIMs) are mathematical models for estimating movement between spatial entities.
-Tirst developed by Alan Wilson in the late 1960s and early 1970, SIMs have become a key tool for transport modelling with substantial practical applications [@boyce_forecasting_2015]. There are four main types of traditional SIMs [@wilson_family_1971]:
+First developed by Alan Wilson in the late 1960s and early 1970, SIMs have become a key tool for transport modelling with substantial practical applications [@boyce_forecasting_2015].
+There are four main types of traditional SIMs [@wilson_family_1971]:
 
 -   Unconstrained
 
@@ -76,7 +77,32 @@ An early and highly influential type of SIM was the 'gravity model', defined by 
 
 $$
 T_{i j}=K \frac{W_{i}^{(1)} W_{j}^{(2)}}{c_{i j}^{n}}
+$$ "where $T_{i j}$ is a measure of the interaction between zones $i$ and $W_{i}^{(1)}$ is a measure of the 'mass term' associated with zone $z_i$, $W_{j}^{(2)}$ is a measure of the 'mass term' associated with zone $z_j$, and $c_{ij}$ is a measure of the distance, or generalised cost of travel, between zone $i$ and zone $j$".
+$K$ is a 'constant of proportionality' and $n$ is a parameter to be estimated.
+
+Redefining the $W$ terms as $m$ and $n$ for origins and destinations respectively [@simini_universal_2012], this classic definition of the 'gravity model' can be written as follows:
+
 $$
+T_{i j}=K \frac{m_{i} n_{j}}{c_{i j}^{n}}
+$$
+
+For the purposes of this project, we will focus on production-constrained SIMs.
+These can be defined as follows [@wilson_family_1971]:
+
+$$
+T_{ij} = A_iO_in_jf(c_{ij})
+$$
+
+where $A$ is a balancing factor defined as:
+
+$$
+A_{i}=\frac{1}{\sum_{j} m_{j} \mathrm{f}\left(c_{i j}\right)}
+$$
+
+$O_i$ is analogous to the travel demand in zone $i$, which can be roughly approximated by its population.
+
+More recent innovations in SIMs including the 'radiation model' @simini_universal_2012.
+See @lenormand_systematic_2016 for a comparison of alternative approaches.
 
 ## Code formatting
 
