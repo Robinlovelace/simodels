@@ -12,7 +12,7 @@ knitr::opts_chunk$set(
 
 ```{r setup}
 # remotes::install_github("robinlovelace/si")
-library(si)
+library(sim)
 # ?si_predict
 ```
 

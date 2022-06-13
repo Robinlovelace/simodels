@@ -37,7 +37,7 @@ remotes::install_github("robinlovelace/si")
 Run a basic SIM as follows:
 
 ``` r
-library(si)
+library(sim)
 library(dplyr)
 # prepare OD data
 od = si_to_od(
