@@ -32,7 +32,7 @@ remotes::install_github("robinlovelace/simodels")
 
 <!-- # Implementations in other languages -->
 
-## simodels basics
+## simodel basics
 
 Run a basic SIM as follows:
 
@@ -74,8 +74,8 @@ with `si_calculate()`. As the example above shows, the package
 allows/encourages you to define and use your own functions to estimate
 the amount of interaction/movement between places.
 
-The approach is also ‘tidy’, allowing use of {simodels} functions in {dplyr}
-pipelines:
+The approach is also ‘tidy’, allowing use of {simodels} functions in
+{dplyr} pipelines:
 
 ``` r
 od_res = od %>% 
@@ -134,9 +134,7 @@ pre-processing stage. This is equally true for spatial interaction
 modelling as it is for other types of data intensive analysis/modelling
 work. So what does this function return?
 
-As documented in the [simodels
-vignette](https://robinlovelace.github.io/simodels/articles/simodels.html), the
-function allows you to use any variable in the origin or destination
+The function allows you to use any variable in the origin or destination
 data by joining all attributes onto the OD data frame, with column names
 appended with `origin` and `destination`.
 
@@ -213,8 +211,9 @@ For details on what SIMs are and how they have been defined
 mathematically and in code from first principles, see the [`sims`
 vignette](https://robinlovelace.github.io/simodels/articles/sims-first-principles.html).
 
-To dive straight into using {simodels} to develop SIMs, see the [`simodels` Get
-started vignette](https://robinlovelace.github.io/simodels/articles/simodels.html).
+To dive straight into using {simodels} to develop SIMs, see the [`si`
+Get started
+vignette](https://robinlovelace.github.io/simodels/articles/si.html).
 
 For a detailed introduction to SIMs, support by reproducible R code, see
 Adam Dennett’s [2018 paper](https://doi.org/10.37970/aps.v2i2.38).

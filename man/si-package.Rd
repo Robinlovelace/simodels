@@ -2,7 +2,7 @@
 % Please edit documentation in R/si-package.R
 \docType{package}
 \name{si-package}
-\alias{si}
+\alias{simodels}
 \alias{si-package}
 \title{si: Flexible Framework for Developing Spatial Interaction Models}
 \description{
@@ -12,8 +12,8 @@ Develop spatial interaction models (SIMs). SIMs predict the amount of interactio
 Useful links:
 \itemize{
   \item \url{https://github.com/robinlovelace/si}
-  \item \url{https://robinlovelace.github.io/si/}
-  \item Report bugs at \url{https://github.com/robinlovelace/si/issues}
+  \item \url{https://robinlovelace.github.io/simodels/}
+  \item Report bugs at \url{https://github.com/robinlovelace/simodels/issues}
 }
 
 }
