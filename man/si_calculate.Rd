@@ -40,6 +40,9 @@ column. \code{"interaction"} by default.}
 
 \item{...}{Arguments passed to \code{fun}}
 }
+\value{
+An sf data frame
+}
 \description{
 Executes a spatial interaction model based on an OD data frame
 and user-specified function

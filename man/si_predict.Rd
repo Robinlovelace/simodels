@@ -39,6 +39,9 @@ column. \code{"interaction"} by default.}
 
 \item{...}{Arguments passed to \code{fun}}
 }
+\value{
+An sf data frame
+}
 \description{
 Predict spatial interaction based on pre-trained model
 }

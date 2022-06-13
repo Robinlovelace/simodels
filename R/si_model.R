@@ -21,6 +21,7 @@
 #' @param ... Arguments passed to `fun`
 #' @param output_col Character string containing the name of the new output
 #'   column. `"interaction"` by default.
+#' @return An sf data frame
 #' @export
 #' @importFrom rlang .data
 #' @examples
@@ -69,6 +70,7 @@ si_calculate = function(
 #' @param model A model object, e.g. from [lm()] or [glm()]
 #' @inheritParams si_calculate
 #' @seealso si_calculate
+#' @return An sf data frame
 #' @export 
 #' @examples
 #' od = si_to_od(si_zones, si_zones, max_dist = 4000)

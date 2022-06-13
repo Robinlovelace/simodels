@@ -25,6 +25,7 @@
 #'   Intrazonal OD pairs represent movement from one
 #'   place in a zone to another place in the same zone.
 #'   `TRUE` by default.
+#' @return An sf data frame
 #' @export
 #' @examples
 #' library(sf)

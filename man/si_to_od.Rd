@@ -20,6 +20,9 @@ Intrazonal OD pairs represent movement from one
 place in a zone to another place in the same zone.
 \code{TRUE} by default.}
 }
+\value{
+An sf data frame
+}
 \description{
 Prepares an OD data frame that next could be used to
 estimate movement between origins and destinations
