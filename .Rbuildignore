@@ -10,3 +10,4 @@
 ^README_cache/*$
 ^\.lintr$
 ^vignettes/articles$
+^cran-comments\.md$
