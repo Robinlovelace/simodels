@@ -1,6 +1,6 @@
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/robinlovelace/si/workflows/R-CMD-check/badge.svg)](https://github.com/robinlovelace/si/actions)
+[![R-CMD-check](https://github.com/Robinlovelace/sim/workflows/R-CMD-check/badge.svg)](https://github.com/Robinlovelace/sim/actions)
 <!-- badges: end -->
 
 The goal of {sim} is to provide a simple,
@@ -27,7 +27,7 @@ install.packages("remotes") # if not already installed
 ```
 
 ``` r
-remotes::install_github("robinlovelace/si")
+remotes::install_github("Robinlovelace/sim")
 ```
 
 <!-- # Implementations in other languages -->

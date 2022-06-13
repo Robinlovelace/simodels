@@ -38,7 +38,7 @@ See @dennett_estimating_2012 or an earlier guide on SIMs in R.
 We start by importing open access data representing movement between zones in Australia (thanks to Adam Dennett for making the files accessible):
 
 ```{r import}
-u1 = "https://github.com/Robinlovelace/si/releases/download/0.0.1/zones_aus.geojson"
+u1 = "https://github.com/Robinlovelace/sim/releases/download/0.0.1/zones_aus.geojson"
 zones_aus = sf::read_sf(u1)
 u2 = "https://www.dropbox.com/s/wi3zxlq5pff1yda/AusMig2011.csv?raw=1"
 od_aus = read.csv(u2)

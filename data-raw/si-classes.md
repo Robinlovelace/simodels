@@ -2,7 +2,7 @@ Using the si package with different input classes
 ================
 
 ``` r
-# remotes::install_github("robinlovelace/si")
+# remotes::install_github("Robinlovelace/sim")
 library(sim)
 # ?si_predict
 ```
