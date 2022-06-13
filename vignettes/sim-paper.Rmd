@@ -36,11 +36,11 @@ author:
     # use a different affiliation in adress field (differently formated here)
     affiliation2: Universitat Autònoma de Barcelona
 title:
-  formatted: "\\pkg{si}: A Package for Developing Spatial Interaction Models"
+  formatted: "\\pkg{sim}: A Package for Developing Spatial Interaction Models"
   # If you use tex in the formatted title, also supply version without
   plain:     "si: A Package for Developing Spatial Interaction Models"
   # For running headers, if needed
-  short:     "\\pkg{si}: Spatial Interaction Models"
+  short:     "\\pkg{sim}: Spatial Interaction Models"
 abstract: >
   The abstract of the article.
 keywords:

@@ -3,7 +3,7 @@
 [![R-CMD-check](https://github.com/robinlovelace/si/workflows/R-CMD-check/badge.svg)](https://github.com/robinlovelace/si/actions)
 <!-- badges: end -->
 
-The goal of {si} is to provide a simple,
+The goal of {sim} is to provide a simple,
 [tidy](https://www.tidyverse.org/), and flexible framework for
 developing spatial interaction models (SIMs). SIMs estimate the amount
 of movement between spatial entities and can be used for many things,
@@ -12,7 +12,7 @@ infrastructure and prioritisation of location options for public
 services.
 
 Unlike many software tools designed to support spatial interaction
-modelling, {si} does not define (or even encourage use of) any
+modelling, {sim} does not define (or even encourage use of) any
 particular functional forms or modelling frameworks for predicting
 movement between origins and destinations. Instead, it provides a
 framework enabling you to use model function forms or models of your
@@ -74,7 +74,7 @@ with `si_calculate()`. As the example above shows, the package
 allows/encourages you to define and use your own functions to estimate
 the amount of interaction/movement between places.
 
-The approach is also ‘tidy’, allowing use of {si} functions in {dplyr}
+The approach is also ‘tidy’, allowing use of {sim} functions in {dplyr}
 pipelines:
 
 ``` r
@@ -213,7 +213,7 @@ For details on what SIMs are and how they have been defined
 mathematically and in code from first principles, see the [`sims`
 vignette](https://robinlovelace.github.io/si/articles/sims-first-principles.html).
 
-To dive straight into using {si} to develop SIMs, see the [`si` Get
+To dive straight into using {sim} to develop SIMs, see the [`si` Get
 started vignette](https://robinlovelace.github.io/si/articles/si.html).
 
 For a detailed introduction to SIMs, support by reproducible R code, see

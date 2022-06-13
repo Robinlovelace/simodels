@@ -18,10 +18,10 @@ knitr::opts_chunk$set(cache = TRUE,
 [![R-CMD-check](https://github.com/robinlovelace/si/workflows/R-CMD-check/badge.svg)](https://github.com/robinlovelace/si/actions)
 <!-- badges: end -->
 
-The goal of {si} is to provide a simple, [tidy](https://www.tidyverse.org/), and flexible framework for developing spatial interaction models (SIMs).
+The goal of {sim} is to provide a simple, [tidy](https://www.tidyverse.org/), and flexible framework for developing spatial interaction models (SIMs).
 SIMs estimate the amount of movement between spatial entities and can be used for many things, including to support evidence-based investment in sustainable transport infrastructure and prioritisation of location options for public services.
 
-Unlike many software tools designed to support spatial interaction modelling, {si} does not define (or even encourage use of) any particular functional forms or modelling frameworks for predicting movement between origins and destinations.
+Unlike many software tools designed to support spatial interaction modelling, {sim} does not define (or even encourage use of) any particular functional forms or modelling frameworks for predicting movement between origins and destinations.
 Instead, it provides a framework enabling you to use model function forms or models of your choosing, ensuring flexibility and encouraging flexibility.
 
 ## Installation
@@ -72,7 +72,7 @@ What just happened?
 We created an 'OD data frame' with the function `si_to_od()` from geographic origins and destinations, and then estimated a simple 'production constrained' (with the `constraint_production` argument) gravity model based on the population in origin and destination zones and a custom distance decay function with `si_calculate()`.
 As the example above shows, the package allows/encourages you to define and use your own functions to estimate the amount of interaction/movement between places.
 
-The approach is also 'tidy', allowing use of {si} functions in {dplyr} pipelines:
+The approach is also 'tidy', allowing use of {sim} functions in {dplyr} pipelines:
 
 ```{r}
 od_res = od %>% 
@@ -147,7 +147,7 @@ If anyone would like to try the approach or implement it in another language fee
 
 For details on what SIMs are and how they have been defined mathematically and in code from first principles, see the [`sims` vignette](https://robinlovelace.github.io/si/articles/sims-first-principles.html).
 
-To dive straight into using {si} to develop SIMs, see the [`si` Get started vignette](https://robinlovelace.github.io/si/articles/si.html).
+To dive straight into using {sim} to develop SIMs, see the [`si` Get started vignette](https://robinlovelace.github.io/si/articles/si.html).
 
 For a detailed introduction to SIMs, support by reproducible R code, see Adam Dennett's [2018 paper](https://doi.org/10.37970/aps.v2i2.38).
 
