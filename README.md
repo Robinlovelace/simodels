@@ -32,7 +32,7 @@ remotes::install_github("Robinlovelace/simm")
 
 <!-- # Implementations in other languages -->
 
-## si basics
+## sim basics
 
 Run a basic SIM as follows:
 
@@ -134,7 +134,7 @@ pre-processing stage. This is equally true for spatial interaction
 modelling as it is for other types of data intensive analysis/modelling
 work. So what does this function return?
 
-As documented in the [si
+As documented in the [sim
 vignette](https://robinlovelace.github.io/sim/articles/sim.html), the
 function allows you to use any variable in the origin or destination
 data by joining all attributes onto the OD data frame, with column names
@@ -214,7 +214,8 @@ mathematically and in code from first principles, see the [`sims`
 vignette](https://robinlovelace.github.io/sim/articles/simms-first-principles.html).
 
 To dive straight into using {sim} to develop SIMs, see the [`si` Get
-started vignette](https://robinlovelace.github.io/sim/articles/sim.html).
+started
+vignette](https://robinlovelace.github.io/sim/articles/sim.html).
 
 For a detailed introduction to SIMs, support by reproducible R code, see
 Adam Dennett’s [2018 paper](https://doi.org/10.37970/aps.v2i2.38).

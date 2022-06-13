@@ -1,8 +1,8 @@
 ---
-# title: "si: A Package for Developing Spatial Interaction Models"
+# title: "sim: A Package for Developing Spatial Interaction Models"
 # output: rmarkdown::html_vignette
 # vignette: >
-#   %\VignetteIndexEntry{si: A Package for Developing Spatial Interaction Models}
+#   %\VignetteIndexEntry{sim: A Package for Developing Spatial Interaction Models}
 #   %\VignetteEngine{knitr::rmarkdown}
 #   %\VignetteEncoding{UTF-8}
   
@@ -38,7 +38,7 @@ author:
 title:
   formatted: "\\pkg{sim}: A Package for Developing Spatial Interaction Models"
   # If you use tex in the formatted title, also supply version without
-  plain:     "si: A Package for Developing Spatial Interaction Models"
+  plain:     "sim: A Package for Developing Spatial Interaction Models"
   # For running headers, if needed
   short:     "\\pkg{sim}: Spatial Interaction Models"
 abstract: >

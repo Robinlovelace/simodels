@@ -89,9 +89,9 @@ library(ggplot2)
 ```
 
 ```{r inputs}
-zones = si::si_zones
-centroids = si::si_centroids
-od = si::si_od_census
+zones = sim::si_zones
+centroids = sim::si_centroids
+od = sim::si_od_census
 tm_shape(zones) + tm_polygons("all", palette = "viridis")
 ```
 
