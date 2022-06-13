@@ -213,7 +213,7 @@ For details on what SIMs are and how they have been defined
 mathematically and in code from first principles, see the [`sims`
 vignette](https://robinlovelace.github.io/sim/articles/simms-first-principles.html).
 
-To dive straight into using {sim} to develop SIMs, see the [`si` Get
+To dive straight into using {sim} to develop SIMs, see the [`sim` Get
 started
 vignette](https://robinlovelace.github.io/sim/articles/sim.html).
 
