@@ -1,54 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://robinlovelace.github.io/si/404.html</loc>
+    <loc>https://robinlovelace.github.io/sim/404.html</loc>
   </url>
   <url>
-    <loc>https://robinlovelace.github.io/si/LICENSE.html</loc>
+    <loc>https://robinlovelace.github.io/sim/LICENSE.html</loc>
   </url>
   <url>
-    <loc>https://robinlovelace.github.io/si/articles/index.html</loc>
+    <loc>https://robinlovelace.github.io/sim/articles/index.html</loc>
   </url>
   <url>
-    <loc>https://robinlovelace.github.io/si/articles/si.html</loc>
+    <loc>https://robinlovelace.github.io/sim/articles/sim.html</loc>
   </url>
   <url>
-    <loc>https://robinlovelace.github.io/si/articles/sims-first-principles.html</loc>
+    <loc>https://robinlovelace.github.io/sim/articles/sims-first-principles.html</loc>
   </url>
   <url>
-    <loc>https://robinlovelace.github.io/si/articles/validation.html</loc>
+    <loc>https://robinlovelace.github.io/sim/articles/validation.html</loc>
   </url>
   <url>
-    <loc>https://robinlovelace.github.io/si/authors.html</loc>
+    <loc>https://robinlovelace.github.io/sim/authors.html</loc>
   </url>
   <url>
-    <loc>https://robinlovelace.github.io/si/index.html</loc>
+    <loc>https://robinlovelace.github.io/sim/index.html</loc>
   </url>
   <url>
-    <loc>https://robinlovelace.github.io/si/news/index.html</loc>
+    <loc>https://robinlovelace.github.io/sim/news/index.html</loc>
   </url>
   <url>
-    <loc>https://robinlovelace.github.io/si/reference/index.html</loc>
+    <loc>https://robinlovelace.github.io/sim/reference/index.html</loc>
   </url>
   <url>
-    <loc>https://robinlovelace.github.io/si/reference/si-package.html</loc>
+    <loc>https://robinlovelace.github.io/sim/reference/si-package.html</loc>
   </url>
   <url>
-    <loc>https://robinlovelace.github.io/si/reference/si_calculate.html</loc>
+    <loc>https://robinlovelace.github.io/sim/reference/si_calculate.html</loc>
   </url>
   <url>
-    <loc>https://robinlovelace.github.io/si/reference/si_od_census.html</loc>
+    <loc>https://robinlovelace.github.io/sim/reference/si_od_census.html</loc>
   </url>
   <url>
-    <loc>https://robinlovelace.github.io/si/reference/si_predict.html</loc>
+    <loc>https://robinlovelace.github.io/sim/reference/si_predict.html</loc>
   </url>
   <url>
-    <loc>https://robinlovelace.github.io/si/reference/si_pubs.html</loc>
+    <loc>https://robinlovelace.github.io/sim/reference/si_pubs.html</loc>
   </url>
   <url>
-    <loc>https://robinlovelace.github.io/si/reference/si_to_od.html</loc>
+    <loc>https://robinlovelace.github.io/sim/reference/si_to_od.html</loc>
   </url>
   <url>
-    <loc>https://robinlovelace.github.io/si/reference/si_zones.html</loc>
+    <loc>https://robinlovelace.github.io/sim/reference/si_zones.html</loc>
   </url>
 </urlset>
