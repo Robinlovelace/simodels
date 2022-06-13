@@ -1,9 +1,9 @@
-Using the sim package with different input classes
+Using the simodels package with different input classes
 ================
 
 ``` r
-# remotes::install_github("robinlovelace/sim")
-library(sim)
+# remotes::install_github("robinlovelace/simodels")
+library(simodels)
 # ?si_predict
 ```
 

@@ -1,5 +1,5 @@
 ---
-title: "Using the sim package with different input classes"
+title: "Using the simodels package with different input classes"
 output: github_document
 ---
 
@@ -11,8 +11,8 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-# remotes::install_github("robinlovelace/sim")
-library(sim)
+# remotes::install_github("robinlovelace/simodels")
+library(simodels)
 # ?si_predict
 ```
 

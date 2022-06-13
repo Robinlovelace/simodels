@@ -10,7 +10,7 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup, message=FALSE}
-library(sim)
+library(simodels)
 library(sf)
 library(od)
 library(tmap)

@@ -20,12 +20,12 @@ knitr::opts_chunk$set(
 # Prerequisites
 
 You need to have [installed R](https://cran.r-project.org/) and a suitable editor such as [RStudio](https://www.rstudio.com/products/rstudio/download/preview/) or [VSCode with R plugin](https://github.com/REditorSupport/vscode-R).
-See the package's [README](https://robinlovelace.github.io/sim/) for instructions on installing the {sim} package.
+See the package's [README](https://robinlovelace.github.io/simodels/) for instructions on installing the {simodels} package.
 
 <!--#  Test the necessary packages are installed by loading them (we will also use {dplyr}):-->
 
 ```{r setup}
-library(sim)
+library(simodels)
 library(dplyr)
 library(ggplot2)
 ```
@@ -36,7 +36,7 @@ This tutorial builds on a [reproducible](https://github.com/adamdennett/SIModell
 We start by importing open access data representing movement between zones in Australia (thanks to Adam Dennett for making the files accessible):
 
 ```{r import}
-u1 = "https://github.com/Robinlovelace/sim/releases/download/0.0.1/zones_aus.geojson"
+u1 = "https://github.com/Robinlovelace/simodels/releases/download/0.0.1/zones_aus.geojson"
 zones_aus = sf::read_sf(u1)
 u2 = "https://www.dropbox.com/s/wi3zxlq5pff1yda/AusMig2011.csv?raw=1"
 od_aus = read.csv(u2)
@@ -87,7 +87,7 @@ The results printed above show that:
     There are 13 columns in this dataset, the most important of which are `Orig_code`, `Dest_code`, and `Flow`, which we have captured in the minimal `od` dataset.
 
 Note: a useful convention with 'long form' OD datasets is for the first two columns to contain zone IDs that correspond to values in the first column of the zone dataset.
-The R package [{od}](https://itsleeds.github.io/od/), on which {sim} builds, assumes that inputs to its functions are in this form.
+The R package [{od}](https://itsleeds.github.io/od/), on which {simodels} builds, assumes that inputs to its functions are in this form.
 
 It is a good idea to verify that the origin and destination codes in the `od` dataset match the zone codes in `zones`:
 
@@ -100,7 +100,7 @@ It is clear from the above that we have 'clean' input datasets, let's begin with
 
 # Preparing a SIM
 
-Key to the workings of the {sim} package is the conversion of geographic objects representing origins and destinations into an OD dataset.
+Key to the workings of the {simodels} package is the conversion of geographic objects representing origins and destinations into an OD dataset.
 In this case, we already have an OD dataset, so this step is less relevant.
 However, we will take this step in any case because many SIMs start without such a comprehensive OD dataset as we have in this case.
 
@@ -191,7 +191,7 @@ cor(od_constrained_p$Flow, od_constrained_p$interaction)^2
 ```
 
 Progress!
-We have more than doubled the predictive ability of our model by using a 'production constrained' SIM, as defined mathematically in the [`sim-first-principles` vignette](https://robinlovelace.github.io/sim/articles/sims-first-principles.html).
+We have more than doubled the predictive ability of our model by using a 'production constrained' SIM, as defined mathematically in the [`simodels-first-principles` vignette](https://robinlovelace.github.io/simodels/articles/sims-first-principles.html).
 
 # Training a SIM
 

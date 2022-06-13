@@ -1,8 +1,8 @@
-# sim 0.0.4 (2022-06)
+# simodels 0.0.4 (2022-06)
 
 * Package renamed to avoid clash with existing `SI` package (#20)
 
-# sim 0.0.3
+# simodels 0.0.3
 
 * New `NEWS.md` file to track changes to the package.
 * New `intrazonal` argument in `od_to_si()` (@R-icntay #16)

@@ -1,9 +1,9 @@
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/robinlovelace/sim/workflows/R-CMD-check/badge.svg)](https://github.com/robinlovelace/sim/actions)
+[![R-CMD-check](https://github.com/robinlovelace/simodels/workflows/R-CMD-check/badge.svg)](https://github.com/robinlovelace/simodels/actions)
 <!-- badges: end -->
 
-The goal of {sim} is to provide a simple,
+The goal of {simodels} is to provide a simple,
 [tidy](https://www.tidyverse.org/), and flexible framework for
 developing spatial interaction models (SIMs). SIMs estimate the amount
 of movement between spatial entities and can be used for many things,
@@ -12,7 +12,7 @@ infrastructure and prioritisation of location options for public
 services.
 
 Unlike many software tools designed to support spatial interaction
-modelling, {sim} does not define (or even encourage use of) any
+modelling, {simodels} does not define (or even encourage use of) any
 particular functional forms or modelling frameworks for predicting
 movement between origins and destinations. Instead, it provides a
 framework enabling you to use model function forms or models of your
@@ -27,17 +27,17 @@ install.packages("remotes") # if not already installed
 ```
 
 ``` r
-remotes::install_github("robinlovelace/sim")
+remotes::install_github("robinlovelace/simodels")
 ```
 
 <!-- # Implementations in other languages -->
 
-## sim basics
+## simodels basics
 
 Run a basic SIM as follows:
 
 ``` r
-library(sim)
+library(simodels)
 library(dplyr)
 # prepare OD data
 od = si_to_od(
@@ -74,7 +74,7 @@ with `si_calculate()`. As the example above shows, the package
 allows/encourages you to define and use your own functions to estimate
 the amount of interaction/movement between places.
 
-The approach is also ‘tidy’, allowing use of {sim} functions in {dplyr}
+The approach is also ‘tidy’, allowing use of {simodels} functions in {dplyr}
 pipelines:
 
 ``` r
@@ -134,8 +134,8 @@ pre-processing stage. This is equally true for spatial interaction
 modelling as it is for other types of data intensive analysis/modelling
 work. So what does this function return?
 
-As documented in the [sim
-vignette](https://robinlovelace.github.io/sim/articles/sim.html), the
+As documented in the [simodels
+vignette](https://robinlovelace.github.io/simodels/articles/simodels.html), the
 function allows you to use any variable in the origin or destination
 data by joining all attributes onto the OD data frame, with column names
 appended with `origin` and `destination`.
@@ -211,10 +211,10 @@ it in another language feel free to get in touch via the issue tracker.
 
 For details on what SIMs are and how they have been defined
 mathematically and in code from first principles, see the [`sims`
-vignette](https://robinlovelace.github.io/sim/articles/sims-first-principles.html).
+vignette](https://robinlovelace.github.io/simodels/articles/sims-first-principles.html).
 
-To dive straight into using {sim} to develop SIMs, see the [`sim` Get
-started vignette](https://robinlovelace.github.io/sim/articles/sim.html).
+To dive straight into using {simodels} to develop SIMs, see the [`simodels` Get
+started vignette](https://robinlovelace.github.io/simodels/articles/simodels.html).
 
 For a detailed introduction to SIMs, support by reproducible R code, see
 Adam Dennett’s [2018 paper](https://doi.org/10.37970/aps.v2i2.38).

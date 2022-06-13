@@ -64,7 +64,7 @@ si_calculate = function(
   }
   od
 }
-#' Predict sim model based on pre-trained model
+#' Predict simodels model based on pre-trained model
 #' 
 #' @param model A model object, e.g. from [lm()] or [glm()]
 #' @inheritParams si_calculate

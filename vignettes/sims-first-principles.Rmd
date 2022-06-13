@@ -79,8 +79,8 @@ See @lenormand_systematic_2016 for a comparison of alternative approaches.
 # Implementation in R
 
 Before using the functions in this or other packages, it may be worth implementing SIMs from first principles, to gain an understanding of how they work.
-The code presented below was written before the functions in the `sim` package were developed, building on @dennett_estimating_2012.
-The aim is to demonstrate a common way of running SIMs, in a for loop, rather than using vectorised operations (used in the `sim` package) which can be faster.
+The code presented below was written before the functions in the `simodels` package were developed, building on @dennett_estimating_2012.
+The aim is to demonstrate a common way of running SIMs, in a for loop, rather than using vectorised operations (used in the `simodels` package) which can be faster.
 
 ```{r, message=FALSE}
 library(tmap)
@@ -89,9 +89,9 @@ library(ggplot2)
 ```
 
 ```{r inputs}
-zones = sim::si_zones
-centroids = sim::si_centroids
-od = sim::si_od_census
+zones = simodels::si_zones
+centroids = simodels::si_centroids
+od = simodels::si_od_census
 tm_shape(zones) + tm_polygons("all", palette = "viridis")
 ```
 
