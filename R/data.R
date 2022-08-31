@@ -36,3 +36,27 @@ NULL
 #' @examples
 #' head(si_pubs)
 NULL
+
+#' Example zones dataset: regions of Australia
+#'
+#' Example dataset from Australia
+#' @note Regenerate the data with scripts in the `data-raw` directory.
+#'
+#' @docType data
+#' @keywords datasets
+#' @name zones_aus
+#' @examples
+#' head(zones_aus)
+NULL
+
+#' Example OD dataset: flows between regions in Australia
+#'
+#' Example dataset from Australia
+#' @note Regenerate the data with scripts in the `data-raw` directory.
+#'
+#' @docType data
+#' @keywords datasets
+#' @name od_aus
+#' @examples
+#' head(od_aus)
+NULL
