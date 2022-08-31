@@ -1,3 +1,5 @@
+# simodels 0.0.5
+
 # simodels 0.0.4 (2022-06)
 
 * Package renamed to avoid clash with existing `SI` package (#20)
