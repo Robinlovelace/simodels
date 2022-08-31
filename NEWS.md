@@ -1,5 +1,7 @@
 # simodels 0.0.5
 
+* Remove dependency on files hosted on Dropbox for CRAN (#28)
+
 # simodels 0.0.4 (2022-06)
 
 * Package renamed to avoid clash with existing `SI` package (#20)
