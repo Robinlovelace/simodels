@@ -79,7 +79,7 @@ See @lenormand_systematic_2016 for a comparison of alternative approaches.
 # Implementation in R
 
 Before using the functions in this or other packages, it may be worth implementing SIMs from first principles, to gain an understanding of how they work.
-The code presented below was written before the functions in the `simodels` package were developed, building on @dennett_estimating_2012.
+The code presented below was written before the functions in the `simodels` package were developed, building on @dennett_modelling_2018.
 The aim is to demonstrate a common way of running SIMs, in a for loop, rather than using vectorised operations (used in the `simodels` package) which can be faster.
 
 ```{r, message=FALSE}
