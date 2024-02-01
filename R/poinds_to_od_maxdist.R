@@ -34,9 +34,10 @@ points_to_od_maxdist = function(p, pd = NULL, max_dist = Inf, max_dest = Inf, in
     max_dest = nrow(pd)
   }
   
-  nn <- nngeo::st_nn(p, pd, k = max_dest, maxdist = max_dist)
-  res = data.frame(O = rep(p[[1]], lengths(nn)),
-                   D = pd[[1]][unlist(nn, use.names = FALSE)])
+  nn <- nngeo::st_nn(p, pd, k = max_dest, maxdist = max_dist, returnDist = TRUE)
+  res = data.frame(O = rep(p[[1]], lengths(nn$nn)),
+                   D = pd[[1]][unlist(nn$nn, use.names = FALSE)],
+                   distance_euclidean = unlist(nn$dist, use.names = FALSE))
   
   if(intrazonal){
     res = res[res$O != res$D,]

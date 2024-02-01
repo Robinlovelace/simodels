@@ -44,28 +44,30 @@
 #' nrow(odsf) # no intrazonal flows
 #' plot(odsf)
 
-si_to_od = function(origins, destinations, max_dist = 10000, max_dest = Inf, intrazonal = TRUE) {
+si_to_od = function(origins, 
+                    destinations, 
+                    max_dist = 10000, 
+                    max_dest = Inf, 
+                    intrazonal = TRUE) {
   
   od_df = points_to_od_maxdist(origins, destinations, max_dist = max_dist, intrazonal = intrazonal, max_dest = max_dest)
   
-  #message("Hi")
-  od_sfc = od::odc_to_sfc(od_df[3:6])
-  sf::st_crs(od_sfc) = 4326 # todo: add CRS argument?
-  od_df = od_df[-c(3:6)]
-  #message("Hi2")
+  od_sfc = od::odc_to_sfc(od_df[4:7])
+  sf::st_crs(od_sfc) = sf::st_crs(origins)
+  od_df = od_df[-c(4:7)]
+  
   # join origin attributes
   origins_to_join = sf::st_drop_geometry(origins)
   names(origins_to_join) = paste0("origin_", names(origins_to_join))
   names(origins_to_join)[1] = names(od_df)[1]
   od_dfj = dplyr::inner_join(od_df, origins_to_join, by = "O")
-  #message("Hi3")
+  
   # join destination attributes
   destinations_to_join = sf::st_drop_geometry(destinations)
   names(destinations_to_join) = paste0("destination_", names(destinations_to_join)) # nolint
   names(destinations_to_join)[1] = names(od_df)[2]
   od_dfj = dplyr::inner_join(od_dfj, destinations_to_join, by = "D")
-  #message("Hi4")
-  # names(od_dfj)
+
   # create and return sf object
   sf::st_sf(od_dfj, geometry = od_sfc)
 }
