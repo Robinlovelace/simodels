@@ -53,7 +53,7 @@ si_calculate = function(
     ...
     ) {
   dots = rlang::enquos(...)
-  od = dplyr::mutate(od, {{output_col}} := fun(!!!dots))
+  od = dplyr::mutate(od, "{output_col}" := fun(!!!dots))
   if (!missing(constraint_production)) {
     od = constrain_production(od, output_col, {{constraint_production}})
   }
@@ -103,9 +103,19 @@ constrain_production = function(od, output_col, constraint_production) {
   od_grouped = dplyr::group_by_at(od, 1)
   od_grouped = dplyr::mutate(
     od_grouped,
-    {{output_col}} := .data[[output_col]] /
-      sum(.data[[output_col]]) * mean( {{constraint_production}} )
+    "{output_col}" := .data[[output_col]] /
+      sum(.data[[output_col]]) * first( {{constraint_production}} )
   )
+  # # Assert values are correct for test data:
+  # od_grouped |>
+  #   select(origin_all, interaction)
+  # od_grouped |>
+  #   sf::st_drop_geometry() |>
+  #   # group_by(1) |>
+  #   summarise(
+  #     sum = sum(interaction),
+  #     first = first(origin_all)
+  #   )
   od = dplyr::ungroup(od_grouped)
   od
 }
@@ -115,7 +125,7 @@ constrain_attraction = function(od, output_col, constraint_attraction) {
   od_grouped = dplyr::group_by_at(od, 2)
   od_grouped = dplyr::mutate(
     od_grouped,
-    {{output_col}} := .data[[output_col]] /
+    "{output_col}" := .data[[output_col]] /
       sum(.data[[output_col]]) * mean( {{constraint_attraction}} )
   )
   od = dplyr::ungroup(od_grouped)
