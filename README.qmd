@@ -36,6 +36,12 @@ install.packages("remotes") # if not already installed
 remotes::install_github("robinlovelace/simodels")
 ```
 
+To get the develoment version do:
+
+```{r}
+devtools::load_all()
+```
+
 <!-- # Implementations in other languages -->
 ## simodel basics
 
