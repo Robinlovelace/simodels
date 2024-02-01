@@ -41,7 +41,6 @@ od_pconst = si_calculate(od, fun = fun, beta = 0.3, O = "origin_all", n = "desti
 plot(od_pconst$distance_euclidean, od_pconst$res)
 plot(od_pconst["res"], logz = TRUE)
 si_model = function(od, fun, var_p, ...) {
-  browser()
   res = fun(...)
   od = dplyr::mutate(od, res = fun(...))
   od$res = fun(od, ...)
