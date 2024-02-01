@@ -104,8 +104,24 @@ constrain_production = function(od, output_col, constraint_production) {
   od_grouped = dplyr::mutate(
     od_grouped,
     "{output_col}" := .data[[output_col]] /
-      sum(.data[[output_col]]) * mean( {{constraint_production}} )
+      sum(.data[[output_col]]) * first( {{constraint_production}} )
   )
+  # # With base R and aggregate
+  # output_value = aggregate(
+  #   od[[eval(output_col)]],
+  #   by = list(od[[1]]),
+  #   FUN = function(x) x / sum(x) * od[[]][1]
+  # )
+  # od_grouped |>
+  #   select(origin_all, interaction)
+  # # Assert values are correct for test data
+  # od_grouped |>
+  #   sf::st_drop_geometry() |>
+  #   # group_by(1) |>
+  #   summarise(
+  #     sum = sum(interaction),
+  #     first = first(origin_all)
+  #   )
   od = dplyr::ungroup(od_grouped)
   od
 }
