@@ -1,3 +1,5 @@
+# simodels 0.1.0
+
 # simodels 0.0.5
 
 * Remove dependency on files hosted on Dropbox for CRAN (#28)
