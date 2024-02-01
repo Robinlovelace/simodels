@@ -106,15 +106,9 @@ constrain_production = function(od, output_col, constraint_production) {
     "{output_col}" := .data[[output_col]] /
       sum(.data[[output_col]]) * first( {{constraint_production}} )
   )
-  # # With base R and aggregate
-  # output_value = aggregate(
-  #   od[[eval(output_col)]],
-  #   by = list(od[[1]]),
-  #   FUN = function(x) x / sum(x) * od[[]][1]
-  # )
+  # # Assert values are correct for test data:
   # od_grouped |>
   #   select(origin_all, interaction)
-  # # Assert values are correct for test data
   # od_grouped |>
   #   sf::st_drop_geometry() |>
   #   # group_by(1) |>
