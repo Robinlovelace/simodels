@@ -55,13 +55,13 @@ si_calculate = function(
   dots = rlang::enquos(...)
   od = dplyr::mutate(od, "{output_col}" := fun(!!!dots))
   if (!missing(constraint_production)) {
-    od = constrain_production(od, output_col, {{constraint_production}})
+    od[[output_col]] = constrain(od[[1]], od[[output_col]], od[[constraint_production]])
   }
   if (!missing(constraint_attraction)) {
-    od = constrain_attraction(od, output_col, {{constraint_attraction}})
+    od[[output_col]] = constrain(od[[2]], od[[output_col]], od[[constraint_production]])
   }
   if (!missing(constraint_total)) {
-    od = constrain_total(od, output_col, constraint_total)
+    od[[output_col]] = constrain_total(od, output_col, constraint_total)
   }
   od
 }
@@ -87,10 +87,10 @@ si_predict = function(
 ) {
   od[[output_col]] = stats::predict(model, od)
   if (!missing(constraint_production)) {
-    od = constrain_production(od, output_col, {{constraint_production}})
+    od[[output_col]] = constrain(od[[1]], od[[output_col]], od[[constraint_production]])
   }
   if (!missing(constraint_attraction)) {
-    od = constrain_attraction(od, output_col, {{constraint_attraction}})
+    od[[output_col]] = constrain(od[[1]], od[[output_col]], od[[constraint_attraction]])
   }
   if (!missing(constraint_total)) {
     od = constrain_total(od, output_col, constraint_total)
@@ -98,38 +98,10 @@ si_predict = function(
   od
 }
 
-constrain_production = function(od, output_col, constraint_production) {
-  # todo: should the grouping var (the first column, 1) be an argument?
-  od_grouped = dplyr::group_by_at(od, 1)
-  od_grouped = dplyr::mutate(
-    od_grouped,
-    "{output_col}" := .data[[output_col]] /
-      sum(.data[[output_col]]) * first( {{constraint_production}} )
-  )
-  # # Assert values are correct for test data:
-  # od_grouped |>
-  #   select(origin_all, interaction)
-  # od_grouped |>
-  #   sf::st_drop_geometry() |>
-  #   # group_by(1) |>
-  #   summarise(
-  #     sum = sum(interaction),
-  #     first = first(origin_all)
-  #   )
-  od = dplyr::ungroup(od_grouped)
-  od
-}
-
-constrain_attraction = function(od, output_col, constraint_attraction) {
-  # todo: should the grouping var (the first column, 2) be an argument?
-  od_grouped = dplyr::group_by_at(od, 2)
-  od_grouped = dplyr::mutate(
-    od_grouped,
-    "{output_col}" := .data[[output_col]] /
-      sum(.data[[output_col]]) * mean( {{constraint_attraction}} )
-  )
-  od = dplyr::ungroup(od_grouped)
-  od
+constrain = function(grp, out, conts) {
+  dt = data.table::data.table(grp = grp, out = out, conts = conts)
+  dt = dt[,out := out / sum(out) * data.table::first(conts), grp]
+  return(dt$out)
 }
 
 constrain_total = function(od, output_col, constraint_total) {
