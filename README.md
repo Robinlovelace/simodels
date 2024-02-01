@@ -3,6 +3,7 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/robinlovelace/simodels/workflows/R-CMD-check/badge.svg)](https://github.com/robinlovelace/simodels/actions)
+[![R-CMD-check](https://github.com/Robinlovelace/simodels/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/Robinlovelace/simodels/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 The goal of {simodels} is to provide a simple,
