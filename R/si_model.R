@@ -104,7 +104,7 @@ constrain_production = function(od, output_col, constraint_production) {
   od_grouped = dplyr::mutate(
     od_grouped,
     "{output_col}" := .data[[output_col]] /
-      sum(.data[[output_col]]) * first( {{constraint_production}} )
+      sum(.data[[output_col]]) * dplyr::first( {{constraint_production}} )
   )
   # # Assert values are correct for test data:
   # od_grouped |>
@@ -126,10 +126,8 @@ constrain_attraction = function(od, output_col, constraint_attraction) {
   od_grouped = dplyr::mutate(
     od_grouped,
     "{output_col}" := .data[[output_col]] /
-      sum(.data[[output_col]]) * mean( {{constraint_attraction}} )
+      sum(.data[[output_col]]) * dplyr::first( {{constraint_attraction}} )
   )
-  od = dplyr::ungroup(od_grouped)
-  od
 }
 
 constrain_total = function(od, output_col, constraint_total) {
