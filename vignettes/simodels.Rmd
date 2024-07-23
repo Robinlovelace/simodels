@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 
 # Prerequisites
 
-You need to have [installed R](https://cran.r-project.org/) and a suitable editor such as [RStudio](https://www.rstudio.com/products/rstudio/download/preview/) or [VSCode with R plugin](https://github.com/REditorSupport/vscode-R).
+You need to have [installed R](https://cran.r-project.org/) and a suitable editor such as [RStudio](https://posit.co/download/rstudio-desktop/) or [VSCode with R plugin](https://github.com/REditorSupport/vscode-R).
 See the package's [README](https://robinlovelace.github.io/simodels/) for instructions on installing the {simodels} package.
 
 <!--#  Test the necessary packages are installed by loading them (we will also use {dplyr}):-->
