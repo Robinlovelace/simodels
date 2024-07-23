@@ -1,12 +1,11 @@
-pandoc: 2.19.2
-pkgdown: 2.0.7
+pandoc: 3.1.11
+pkgdown: 2.1.0
 pkgdown_sha: ~
 articles:
-  validation: validation.html
   simodels: simodels.html
   sims-first-principles: sims-first-principles.html
-last_built: 2024-02-01T21:46Z
+  articles/validation: validation.html
+last_built: 2024-07-23T12:07Z
 urls:
   reference: https://robinlovelace.github.io/simodels/reference
   article: https://robinlovelace.github.io/simodels/articles
-

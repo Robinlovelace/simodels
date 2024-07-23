@@ -1,54 +1,20 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://robinlovelace.github.io/simodels/404.html</loc>
-  </url>
-  <url>
-    <loc>https://robinlovelace.github.io/simodels/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>https://robinlovelace.github.io/simodels/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://robinlovelace.github.io/simodels/articles/simodels.html</loc>
-  </url>
-  <url>
-    <loc>https://robinlovelace.github.io/simodels/articles/sims-first-principles.html</loc>
-  </url>
-  <url>
-    <loc>https://robinlovelace.github.io/simodels/articles/validation.html</loc>
-  </url>
-  <url>
-    <loc>https://robinlovelace.github.io/simodels/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://robinlovelace.github.io/simodels/index.html</loc>
-  </url>
-  <url>
-    <loc>https://robinlovelace.github.io/simodels/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://robinlovelace.github.io/simodels/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://robinlovelace.github.io/simodels/reference/si_calculate.html</loc>
-  </url>
-  <url>
-    <loc>https://robinlovelace.github.io/simodels/reference/si_od_census.html</loc>
-  </url>
-  <url>
-    <loc>https://robinlovelace.github.io/simodels/reference/si_predict.html</loc>
-  </url>
-  <url>
-    <loc>https://robinlovelace.github.io/simodels/reference/si_pubs.html</loc>
-  </url>
-  <url>
-    <loc>https://robinlovelace.github.io/simodels/reference/si_to_od.html</loc>
-  </url>
-  <url>
-    <loc>https://robinlovelace.github.io/simodels/reference/si_zones.html</loc>
-  </url>
-  <url>
-    <loc>https://robinlovelace.github.io/simodels/reference/simodels-package.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://robinlovelace.github.io/simodels/404.html</loc></url>
+<url><loc>https://robinlovelace.github.io/simodels/LICENSE.html</loc></url>
+<url><loc>https://robinlovelace.github.io/simodels/articles/index.html</loc></url>
+<url><loc>https://robinlovelace.github.io/simodels/articles/simodels.html</loc></url>
+<url><loc>https://robinlovelace.github.io/simodels/articles/sims-first-principles.html</loc></url>
+<url><loc>https://robinlovelace.github.io/simodels/articles/validation.html</loc></url>
+<url><loc>https://robinlovelace.github.io/simodels/authors.html</loc></url>
+<url><loc>https://robinlovelace.github.io/simodels/index.html</loc></url>
+<url><loc>https://robinlovelace.github.io/simodels/news/index.html</loc></url>
+<url><loc>https://robinlovelace.github.io/simodels/reference/index.html</loc></url>
+<url><loc>https://robinlovelace.github.io/simodels/reference/si_calculate.html</loc></url>
+<url><loc>https://robinlovelace.github.io/simodels/reference/si_od_census.html</loc></url>
+<url><loc>https://robinlovelace.github.io/simodels/reference/si_predict.html</loc></url>
+<url><loc>https://robinlovelace.github.io/simodels/reference/si_pubs.html</loc></url>
+<url><loc>https://robinlovelace.github.io/simodels/reference/si_to_od.html</loc></url>
+<url><loc>https://robinlovelace.github.io/simodels/reference/si_zones.html</loc></url>
+<url><loc>https://robinlovelace.github.io/simodels/reference/simodels-package.html</loc></url>
 </urlset>
+
