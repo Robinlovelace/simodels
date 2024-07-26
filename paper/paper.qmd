@@ -28,7 +28,7 @@ format:
 #   i.e., avoid inclusion of packages/commands that are not necessary.
 #   For outlining the typical structure of a JSS article some brief text snippets are employed that have been inspired by @ZeileisKleiberJackman2008, discussing count data regression in [R]{.proglang}. Editorial comments and instructions are marked by vertical bars.
 abstract: |
-  This article introduces the `simodels` package for spatial interaction modelling in R. The package provides functions for estimating spatial interaction models, including unconstrained gravity models and models that are production-, attraction-, or doubly-constrained.
+  This article introduces the [simodels]{.pkg} package for spatial interaction modelling in R. The package provides functions for estimating spatial interaction models, including unconstrained gravity models and models that are production-, attraction-, or doubly-constrained.
 
 keywords: [JSS, style guide, comma-separated, not capitalized, R]
 keywords-formatted: [JSS, style guide, comma-separated, not capitalized, "[R]{.proglang}"]
@@ -293,7 +293,7 @@ See @lenormand_systematic_2016 for a comparison of alternative approaches.
 
 Before describing the functions in the package, it's worth implementing SIMs from first principles, to gain an understanding of how they work.
 The code presented below was written before the functions in the [simodels]{.pkg} package were developed, building on @dennett_modelling_2018.
-The aim is to demonstrate a common way of running SIMs, in a for loop, rather than using vectorised operations used in `simodels`.
+The aim is to demonstrate a common way of running SIMs, in a for loop, rather than using vectorised operations used in [simodels]{.pkg}.
 
 ```{r, message=FALSE}
 library(tmap)
