@@ -33,7 +33,10 @@ abstract: |
 keywords: [JSS, style guide, comma-separated, not capitalized, R]
 keywords-formatted: [JSS, style guide, comma-separated, not capitalized, "[R]{.proglang}"]
 
-bibliography: bibliography.bib  
+bibliography: bibliography.bib
+execute: 
+  messages: false
+  warning: false 
 ---
 
 <!-- ## Introduction: Count data regression in R {#sec-intro}
@@ -243,6 +246,7 @@ style to avoid confusions. JSS requires the following format.
 
 ::: -->
 
+## Introduction
 
 Spatial Interaction Models (SIMs) are mathematical models for estimating movement between spatial entities.
 First developed in the late 1960s and early 1970, SIMs have become a key tool for transport modelling with substantial practical applications [@boyce_forecasting_2015].
@@ -289,17 +293,30 @@ $O_i$ is analogous to the travel demand in zone $i$, which can be roughly approx
 More recent innovations in SIMs including the 'radiation model' @simini_universal_2012.
 See @lenormand_systematic_2016 for a comparison of alternative approaches.
 
-## Implementation in R
+The paper is structured as follows.
+@sec-base demonstrates how to implement an unconstrained SIM in base [R]{.proglang}, highlighting the need for a package to streamline the process.
+@sec-od describes the process of converting spatial data to Origin-Destination (OD) data, a key step in SIMs, and the functions in the package that facilitate this process.
+@sec-interaction describes the process of calculating interaction with pre-defined parameters with the `si_calculate()` function.
+
+## Basic implementation of SIMs {#sec-base}
 
 Before describing the functions in the package, it's worth implementing SIMs from first principles, to gain an understanding of how they work.
 The code presented below was written before the functions in the [simodels]{.pkg} package were developed, building on @dennett_modelling_2018.
 The aim is to demonstrate a common way of running SIMs, in a for loop, rather than using vectorised operations used in [simodels]{.pkg}.
+We will lust the following packages for data manipulation and manipulation, using only base [R]{.proglang} functions for the SIM calculations.
 
-```{r, message=FALSE}
+```{r}
+#| label: load-packages
 library(tmap)
 library(dplyr)
 library(ggplot2)
 ```
+
+The package contains a number of datasets that can be used to demonstrate the SIMs, as shown below:
+
+- `si_zones`: a dataset of zones with population data
+- `si_centroids`: a dataset of zone centroids
+- `si_od_census`: a dataset of Origin-Destination (OD) data for evaluating the SIMs
 
 ```{r inputs}
 zones = simodels::si_zones
@@ -308,14 +325,18 @@ od = simodels::si_od_census
 tm_shape(zones) + tm_polygons("all", palette = "viridis")
 ```
 
+We'll use the [od](.pkg) package to convert the geographic data to OD data.
+We set the `length` column to the length of the line between the centroids of the zones, in km, and set the coordinate reference system (CRS) to WGS84 (EPSG:4326).
+
 ```{r}
 od_df = od::points_to_od(centroids)
 od_sfc = od::odc_to_sfc(od_df[3:6])
 sf::st_crs(od_sfc) = 4326
 od_df$length = sf::st_length(od_sfc)
-od_df = od_df %>% transmute(
-  O, D, length = as.numeric(length) / 1000,
-  flow = NA, fc = NA
+od_df = od_df |>
+  transmute(
+    O, D, length = as.numeric(length) / 1000,
+    flow = NA, fc = NA
   )
 od_df = sf::st_sf(od_df, geometry = od_sfc, crs = 4326)
 ```
@@ -324,8 +345,6 @@ An unconstrained spatial interaction model can be written as follows, with a mor
 
 ```{r unconstrained}
 beta = 0.3
-i = 1
-j = 2
 for(i in seq(nrow(zones))) {
   for(j in seq(nrow(zones))) {
     O = zones$all[i]
@@ -335,21 +354,29 @@ for(i in seq(nrow(zones))) {
     od_df$flow[ij] = O * n * od_df$fc[ij]
   }
 }
-od_top = od_df %>% 
-  filter(O != D) %>% 
-  top_n(n = 2000, wt = flow)
+```
+
+The results of the unconstrained SIM are shown in @fig-unconstrained, with the geographic desire lines showing the interaction between zones and a scatter plot illustrating the 'friction of distance'.
+
+```{r}
+#| label: fig-unconstrained
+#| fig-cap: Unconstrained spatial interaction model
+#| fig-subcap: 
+#|   - "Geographic desire lines showing interaction between zones calculated by the unconstrained SIM"
+#|   - "Scatter plot illustrating the 'friction of distance' in the unconstrained SIM"
+#| layout-ncol: 2
+#| echo: false
+od_top = od_df |> 
+  filter(O != D) |> 
+  arrange(desc(flow)) |>
+  slice(seq(2000)) |>
+  arrange(flow)
 
 tm_shape(zones) +
   tm_borders() +
   tm_shape(od_top) +
   tm_lines("flow")
-```
-
-We can plot the 'distance decay' curve associated with this SIM is as follows:
-
-```{r distance_decay}
-summary(od_df$fc)
-od_df %>% 
+od_df |> 
   ggplot() +
   geom_point(aes(length, fc))
 ```
@@ -359,16 +386,18 @@ We can make this production constrained as follows:
 ```{r constrained}
 od_dfj = left_join(
   od_df,
-  zones %>% select(O = geo_code, all) %>% sf::st_drop_geometry()
+  zones |> select(O = geo_code, all) |> sf::st_drop_geometry()
 )
-od_dfj = od_dfj %>% 
-  group_by(O) %>% 
-  mutate(flow_constrained = flow / sum(flow) * first(all)) %>%
+od_dfj = od_dfj |> 
+  group_by(O) |> 
+  mutate(flow_constrained = flow / sum(flow) * first(all)) |>
   ungroup()
 sum(od_dfj$flow_constrained) == sum(zones$all)
-od_top = od_dfj %>% 
-  filter(O != D) %>% 
-  top_n(n = 2000, wt = flow_constrained)
+od_top = od_dfj |> 
+  filter(O != D) |> 
+  arrange(desc(flow_constrained)) |>
+  slice(seq(2000)) |>
+  arrange(flow_constrained)
 
 tm_shape(zones) +
   tm_borders() +
@@ -376,20 +405,20 @@ tm_shape(zones) +
   tm_lines("flow_constrained")
 ```
 
-# OD data preparation
+## OD data preparation {#sec-od}
 
-# Interaction calculation
+## Interaction calculation {#sec-interaction}
 
-# Interaction modelling
+## Interaction modelling {#sec-models}
 
-# Examples
+## Examples {#sec-examples}
 
 ```{r validation}
-od_dfjc = inner_join(od_dfj %>% select(-all), od)
-od_dfjc %>% 
+od_dfjc = inner_join(od_dfj |> select(-all), od)
+od_dfjc |> 
   ggplot() +
   geom_point(aes(all, flow_constrained))
 cor(od_dfjc$all, od_dfjc$flow_constrained)^2
 ```
 
-# Conclusions
+## Conclusions
