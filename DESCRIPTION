@@ -25,7 +25,9 @@ Imports:
     geodist,
     od (>= 0.4.0),
     rlang,
-    sf
+    sf,
+    nngeo,
+    data.table
 Suggests: 
     ggplot2,
     knitr,
