@@ -4,3 +4,5 @@
 .Ruserdata
 *.gpkg
 *.pdf
+*.html
+paper/paper_files/

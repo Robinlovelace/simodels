@@ -114,16 +114,30 @@ constrain_production = function(od, output_col, constraint_production) {
     "{output_col}" := .data[[output_col]] /
       sum(.data[[output_col]]) * dplyr::first( {{constraint_production}} )
   )
+  # browser()
   # # Assert values are correct for test data:
   # od_grouped |>
-  #   select(origin_all, interaction)
-  # od_grouped |>
+  #   select({{constraint_production}}, interaction)
+  # origin_totals = od_grouped |>
+  #   sf::st_drop_geometry() |>
   #   sf::st_drop_geometry() |>
   #   # group_by(1) |>
   #   summarise(
   #     sum = sum(interaction),
-  #     first = first(origin_all)
+  #     first = first({{constraint_production}})
   #   )
+  # cor(origin_totals$sum, origin_totals$first)
+  # # Test for york data:
+  # zone_totals = left_join(
+  #   zones_york |>
+  #     sf::st_drop_geometry() |>
+  #     rename(O = LSOA21CD) |>
+  #     select(O, pupils_estimated),
+  #   origin_totals
+  # )
+
+  
+  
   od = dplyr::ungroup(od_grouped)
   od
 }

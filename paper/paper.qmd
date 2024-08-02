@@ -37,9 +37,432 @@ bibliography: bibliography.bib
 execute: 
   messages: false
   warning: false 
+  echo: false
 ---
 
-<!-- ## Introduction: Count data regression in R {#sec-intro}
+
+## Introduction
+
+Spatial Interaction Models (SIMs) are mathematical models for estimating movement between spatial entities.
+First developed in the late 1960s and early 1970, SIMs have become a key tool for transport modelling with substantial practical applications [@boyce_forecasting_2015].
+
+An early and highly influential type of SIM was the 'gravity model', defined by @wilson_family_1971 as follows (in a paper that explored many extensions of this formulation and is influential enough to merit being quoted at length):
+
+$$
+T_{i j}=K \frac{W_{i}^{(1)} W_{j}^{(2)}}{c_{i j}^{n}}
+$$
+
+"where $T_{i j}$ is a measure of the interaction between zones $i$ and $W_{i}^{(1)}$ is a measure of the 'mass term' associated with zone $z_i$, $W_{j}^{(2)}$ is a measure of the 'mass term' associated with zone $z_j$, and $c_{ij}$ is a measure of the distance, or generalised cost of travel, between zone $i$ and zone $j$".
+$K$ is a 'constant of proportionality' and $n$ is a parameter to be estimated.
+
+We follow @simini_universal_2012 in replacing the $W$ terms above with $m$ and $n$ for origins and destinations respectively.
+This seminal definition of the unconstrained 'gravity model' can be written in its "multiplicative form" as follows @dennett_modelling_2018, notation that we will use in this paper:
+
+$$
+T_{ij} = k m_i^{\mu} n_j^{*} d_{ij} \beta
+$$
+
+It is unconstrained because there is no limit on the amount of interaction (we will refer to the more concrete but semantically equivalent term "number of trips") in this paper.
+There are four main types of traditional SIMs  [@wilson_family_1971]:
+
+- Unconstrained
+- Production-constrained
+- Attraction-constrained
+- Doubly-constrained
+
+For the purposes of this project, we will focus on production-constrained SIMs.
+These can be defined as follows [@wilson_family_1971]:
+
+$$
+T_{ij} = A_iO_in_jf(c_{ij})
+$$
+
+where $A$ is a balancing factor defined as:
+
+$$
+A_{i}=\frac{1}{\sum_{j} m_{j} \mathrm{f}\left(c_{i j}\right)}
+$$
+
+$O_i$ is analogous to the travel demand in zone $i$, which can be roughly approximated by its population.
+
+More recent innovations in SIMs including the 'radiation model' @simini_universal_2012.
+See @lenormand_systematic_2016 for a comparison of alternative approaches.
+The purpose of the package is not to implement all available models, but to provide a flexible framework to speed-up the process of implementing SIMs in [R]{.proglang}.
+The package supports a wide range of models and can be used to fit unconstrained, production-constrained, attraction-constrained, and doubly-constrained models.
+Furthermore, the package works equally well for 'bipartite' SIMs, in which origin and destination points are different (Hasova et al. [2022](https://lenkahas.com/files/preprint.pdf)).
+
+The paper is structured as follows.
+@sec-base demonstrates how to implement an unconstrained SIM in base [R]{.proglang}, highlighting the need for a package to streamline the process.
+@sec-od describes the process of converting spatial data to Origin-Destination (OD) data, a key step in SIMs, and the functions in the package that facilitate this process.
+@sec-interaction describes the process of calculating interaction with pre-defined parameters with the `si_calculate()` function.
+
+## Basic implementation of SIMs {#sec-base}
+
+Before describing the functions in the package, it's worth implementing SIMs from first principles, to gain an understanding of how they work and to highlight the benefits of using the package.
+The code presented below was written before the functions in the [simodels]{.pkg} package were developed, building on @dennett_modelling_2018.
+The aim is to demonstrate a common way of running SIMs, in a for loop, rather than using vectorised operations used in [simodels]{.pkg}.
+In this section we the [tmap]{.pkg} and [tidyverse]{.pkg} packages for data manipulation and visualisation, using only base [R]{.proglang} functions for the SIM calculations (see the paper's source code for details).
+
+```{r}
+#| label: load-packages
+library(tmap)
+library(tidyverse)
+library(patchwork)
+devtools::load_all()
+```
+
+The package contains a number of datasets that can be used to demonstrate the SIMs, as shown below:
+
+- `si_zones`: a dataset of zones with population data
+- `si_centroids`: a dataset of zone centroids
+- `si_od_census`: a dataset of Origin-Destination (OD) data for evaluating the SIMs
+- `zones_york`: a dataset of zones in York
+- `destinations_york`: a dataset of school locations in York with information on number of pupils attending, enabling destination-constrained and doubly-constrained SIMs to be implemented
+
+```{r inputs}
+zones = simodels::si_zones
+centroids = simodels::si_centroids
+od = simodels::si_od_census
+tm_shape(zones) + tm_polygons("all", palette = "viridis")
+```
+
+We'll use the [od](.pkg) package to convert the geographic data to OD data.
+We set the `length` column to the length of the line between the centroids of the zones, in km, and set the coordinate reference system (CRS) to WGS84 (EPSG:4326), as follows:
+
+```{r}
+#| echo: true
+od_df = od::points_to_od(centroids)
+od_sfc = od::odc_to_sfc(od_df[3:6])
+sf::st_crs(od_sfc) = 4326
+od_df$length = sf::st_length(od_sfc)
+od_df = od_df |>
+  transmute(
+    O, D, length = as.numeric(length) / 1000,
+    flow = NA, fc = NA
+  )
+od_df = sf::st_sf(od_df, geometry = od_sfc, crs = 4326)
+```
+
+An unconstrained spatial interaction model can be written as follows, with a more-or-less arbitrary value for `beta` which can be optimised later:
+
+```{r}
+#| label: unconstrained
+#| echo: true
+beta = 0.3
+for(i in seq(nrow(zones))) {
+  for(j in seq(nrow(zones))) {
+    O = zones$all[i]
+    n = zones$all[j]
+    ij = which(od_df$O == zones$geo_code[i] & od_df$D == zones$geo_code[j])
+    od_df$fc[ij] = exp(-beta * od_df$length[ij])
+    od_df$flow[ij] = O * n * od_df$fc[ij]
+  }
+}
+```
+
+The results of the unconstrained SIM are shown in @fig-unconstrained, with the geographic desire lines showing the interaction between zones and a scatter plot illustrating the 'friction of distance'.
+
+```{r}
+#| label: fig-unconstrained
+#| fig-cap: Unconstrained spatial interaction model
+#| fig-subcap: 
+#|   - "Geographic desire lines showing interaction between zones calculated by the unconstrained SIM"
+#|   - "Scatter plot illustrating the 'friction of distance' in the unconstrained SIM"
+#| layout-ncol: 2
+#| echo: false
+od_top = od_df |> 
+  filter(O != D) |> 
+  arrange(desc(flow)) |>
+  slice(seq(2000)) |>
+  arrange(flow)
+
+tm_shape(zones) +
+  tm_borders() +
+  tm_shape(od_top) +
+  tm_lines("flow")
+od_df |> 
+  ggplot() +
+  geom_point(aes(length, fc))
+```
+
+We can make this production constrained by dividing the estimated interaction by the difference between the sum of the estimated interactions and the sum of the observed interactions per origin.
+
+```{r}
+#| label: constrained
+#| include: false
+od_dfj = left_join(
+  od_df,
+  zones |> select(O = geo_code, all) |> sf::st_drop_geometry()
+)
+od_dfj = od_dfj |> 
+  group_by(O) |> 
+  mutate(flow_constrained = flow / sum(flow) * first(all)) |>
+  ungroup()
+sum(od_dfj$flow_constrained) == sum(zones$all)
+od_top = od_dfj |> 
+  filter(O != D) |> 
+  arrange(desc(flow_constrained)) |>
+  slice(seq(2000)) |>
+  arrange(flow_constrained)
+
+tm_shape(zones) +
+  tm_borders() +
+  tm_shape(od_top) +
+  tm_lines("flow_constrained")
+```
+
+## OD data preparation {#sec-od}
+
+## Interaction calculation {#sec-interaction}
+
+
+
+
+```{r}
+#| label: inputs-york
+g1 = zones_york |>
+  ggplot() +
+  geom_sf() +
+  labs(title = "Zones")
+g2 = destinations_york |>
+    ggplot() +
+    geom_sf() +
+    labs(title = "Destinations")
+g1 + g2
+```
+
+Before we run any models let's compare the total number of pupils in the zones dataset and the destinations dataset (they should be the same):
+
+```{r}
+#| label: compare-totals
+#| echo: true
+zone_overestimate_factor = 
+  (sum(zones_york$f0_to_15) + sum(zones_york$m0_to_15)) /
+    sum(destinations_york$n_pupils)
+zone_overestimate_factor
+```
+
+As one would expect, the total number of pupils in the zones dataset is a bit bigger than the total number of pupils in the destinations dataset: not all people aged 0 to 15 go to school, especially those under school age.
+To tackle this issue we'll create a new variables called `pupils_estimated` in the zones dataset, which is the sum of the number of pupils in the zones dataset and the number of pupils in the destinations dataset.
+
+```{r}
+#| label: add-pupils-estimated
+#| echo: true
+zones_york = zones_york |>
+  dplyr::mutate(
+    pupils_estimated = (f0_to_15 + m0_to_15) / zone_overestimate_factor
+  )
+```
+
+After the adjustment shown above, the totals in the origin and destination columns should be the same:
+
+```{r}
+#| label: compare-totals-after
+#| echo: true
+sum(zones_york$pupils_estimated)
+sum(destinations_york$n_pupils)
+```
+
+Based on these inputs the `si_to_od()` function generates the OD data, as shown below (note: 2 versions are created, one with a maximum distance constraint for speed of processing, important when working with large datasets).
+
+```{r}
+#| echo: true
+max_dist = 5000 # meters
+od_from_si_full = simodels::si_to_od(zones_york, destinations_york)
+od_from_si = simodels::si_to_od(zones_york, destinations_york, max_dist = max_dist)
+```
+
+```{r}
+#| label: plot-od-all
+#| layout-ncol: 2
+m1 = od_from_si_full |>
+  ggplot() +
+  geom_sf(alpha = 0.1)
+m2 = od_from_si |>
+  ggplot() +
+  geom_sf(alpha = 0.1)
+m1
+m2
+```
+
+The output OD dataset has column names taken from both the origin and destination datasets, with the following column names:
+
+```{r}
+names(od_from_si)
+```
+
+Let's run a simple model:
+
+
+```{r}
+#| label: simple-model-york
+#| echo: true
+gravity_model = function(beta, d, m, n) {
+  m * n * exp(-beta * d / 1000)
+} 
+# perform SIM
+od_res = simodels::si_calculate(
+  od_from_si,
+  fun = gravity_model,
+  d = distance_euclidean,
+  m = origin_pupils_estimated,
+  n = destination_n_pupils,
+#   constraint_production = origin_all,
+  beta = 0.9
+  )
+```
+
+We'll make one adjustment to the output dataset, renaming the `interaction` column to `trips`, and setting the total number of trips to be the same as the total number of pupils in the destinations dataset:
+
+```{r}
+#| label: adjust-output-york
+#| echo: true
+interaction_overestimate_factor = sum(destinations_york$n_pupils) / sum(od_res$interaction)
+od_res = od_res |>
+  dplyr::mutate(
+    trips = interaction * interaction_overestimate_factor
+  )
+```
+
+
+We can assess the model fit at three levels: the origin level (number of students departing from each zone), the destination level (the number arriving at each school in the input dataset) and the origin-destination level.
+
+```{r}
+#| label: r-squared-york
+res_o = od_res |>
+  group_by(O) |>
+  summarise(
+    Observed = first(origin_pupils_estimated),
+    Modelled = sum(trips),
+    Type = "Origin"
+  )
+res_d = od_res |>
+  group_by(D) |>
+  summarise(
+    Observed = first(destination_n_pupils),
+    Modelled = sum(trips),
+    Type = "Destination"
+  )
+res_combined = bind_rows(res_o, res_d) |>
+  # Create ordered factor with types:
+  mutate(
+    Type = factor(Type, levels = c("Origin", "Destination"))
+  )
+g_combined = res_combined |>
+  ggplot() +
+    geom_point(aes(x = Observed, y = Modelled)) +
+    geom_smooth(aes(x = Observed, y = Modelled), method = "lm") +
+    facet_wrap(~Type, scales = "free") +
+    labs(
+      title = "Model fit at origin, destination and OD levels (unconstrained)",
+      x = "Observed",
+      y = "Modelled"
+    ) 
+g_combined
+```
+
+Let's see if making the model production constrained can help:
+
+```{r}
+#| label: constrained-york
+#| echo: true
+od_res_constrained = simodels::si_calculate(
+  od_from_si,
+  fun = gravity_model,
+  d = distance_euclidean,
+  m = origin_pupils_estimated,
+  n = destination_n_pupils,
+  constraint_production = origin_pupils_estimated,
+  beta = 0.9
+  )
+```
+
+```{r}
+#| label: r-squared-constrained
+res_o = od_res_constrained |>
+  group_by(O) |>
+  summarise(
+    Observed = first(origin_pupils_estimated),
+    Modelled = sum(interaction),
+    Type = "Origin"
+  )
+res_d = od_res_constrained |>
+  group_by(D) |>
+  summarise(
+    Observed = first(destination_n_pupils),
+    Modelled = sum(interaction),
+    Type = "Destination"
+  )
+res_combined = bind_rows(res_o, res_d) |>
+  mutate(
+    Type = factor(Type, levels = c("Origin", "Destination"))
+  )
+res_combined |>
+  ggplot() +
+    geom_point(aes(x = Observed, y = Modelled)) +
+    geom_smooth(aes(x = Observed, y = Modelled), method = "lm") +
+    facet_wrap(~Type, scales = "free") +
+    labs(
+      title = "Model fit at origin, destination and OD levels (production constrained)",
+      x = "Observed",
+      y = "Modelled"
+    )
+```
+
+## Interaction modelling {#sec-models}
+
+## Examples {#sec-examples}
+
+```{r validation}
+od_dfjc = inner_join(od_dfj |> select(-all), od)
+od_dfjc |> 
+  ggplot() +
+  geom_point(aes(all, flow_constrained))
+cor(od_dfjc$all, od_dfjc$flow_constrained)^2
+```
+
+## Conclusions
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--
+
+From paper-writing docs:
+ ## Introduction: Count data regression in R {#sec-intro}
 
 ::: callout
 The introduction is in principle "as usual". However, it should usually embed both the implemented *methods* and the *software* into the respective relevant literature. For the latter both competing and complementary software should be discussed (within the same software environment and beyond), bringing out relative (dis)advantages. All software mentioned should be properly `@cited`'d. (See also [Using BibTeX] for more details on {{< bibtex >}}.)
@@ -245,180 +668,3 @@ style to avoid confusions. JSS requires the following format.
 - item Software should be properly cited as well. For [R]{.proglang} packages `citation("pkgname")` typically provides a good starting point.
 
 ::: -->
-
-## Introduction
-
-Spatial Interaction Models (SIMs) are mathematical models for estimating movement between spatial entities.
-First developed in the late 1960s and early 1970, SIMs have become a key tool for transport modelling with substantial practical applications [@boyce_forecasting_2015].
-
-An early and highly influential type of SIM was the 'gravity model', defined by @wilson_family_1971 as follows (in a paper that explored many extensions of this formulation and is influential enough to merit being quoted at length):
-
-$$
-T_{i j}=K \frac{W_{i}^{(1)} W_{j}^{(2)}}{c_{i j}^{n}}
-$$
-
-"where $T_{i j}$ is a measure of the interaction between zones $i$ and $W_{i}^{(1)}$ is a measure of the 'mass term' associated with zone $z_i$, $W_{j}^{(2)}$ is a measure of the 'mass term' associated with zone $z_j$, and $c_{ij}$ is a measure of the distance, or generalised cost of travel, between zone $i$ and zone $j$".
-$K$ is a 'constant of proportionality' and $n$ is a parameter to be estimated.
-
-We follow @simini_universal_2012 in replacing the $W$ terms above with $m$ and $n$ for origins and destinations respectively.
-This seminal definition of the unconstrained 'gravity model' can be written in its "multiplicative form" as follows @dennett_modelling_2018, notation that we will use in this paper:
-
-$$
-T_{ij} = k m_i^{\mu} n_j^{*} d_{ij} \beta
-$$
-
-It is unconstrained because there is no limit on the amount of interaction (we will refer to the more concrete but semantically equivalent term "number of trips") in this paper.
-There are four main types of traditional SIMs  [@wilson_family_1971]:
-
-- Unconstrained
-- Production-constrained
-- Attraction-constrained
-- Doubly-constrained
-
-For the purposes of this project, we will focus on production-constrained SIMs.
-These can be defined as follows [@wilson_family_1971]:
-
-$$
-T_{ij} = A_iO_in_jf(c_{ij})
-$$
-
-where $A$ is a balancing factor defined as:
-
-$$
-A_{i}=\frac{1}{\sum_{j} m_{j} \mathrm{f}\left(c_{i j}\right)}
-$$
-
-$O_i$ is analogous to the travel demand in zone $i$, which can be roughly approximated by its population.
-
-More recent innovations in SIMs including the 'radiation model' @simini_universal_2012.
-See @lenormand_systematic_2016 for a comparison of alternative approaches.
-
-The paper is structured as follows.
-@sec-base demonstrates how to implement an unconstrained SIM in base [R]{.proglang}, highlighting the need for a package to streamline the process.
-@sec-od describes the process of converting spatial data to Origin-Destination (OD) data, a key step in SIMs, and the functions in the package that facilitate this process.
-@sec-interaction describes the process of calculating interaction with pre-defined parameters with the `si_calculate()` function.
-
-## Basic implementation of SIMs {#sec-base}
-
-Before describing the functions in the package, it's worth implementing SIMs from first principles, to gain an understanding of how they work.
-The code presented below was written before the functions in the [simodels]{.pkg} package were developed, building on @dennett_modelling_2018.
-The aim is to demonstrate a common way of running SIMs, in a for loop, rather than using vectorised operations used in [simodels]{.pkg}.
-We will lust the following packages for data manipulation and manipulation, using only base [R]{.proglang} functions for the SIM calculations.
-
-```{r}
-#| label: load-packages
-library(tmap)
-library(dplyr)
-library(ggplot2)
-```
-
-The package contains a number of datasets that can be used to demonstrate the SIMs, as shown below:
-
-- `si_zones`: a dataset of zones with population data
-- `si_centroids`: a dataset of zone centroids
-- `si_od_census`: a dataset of Origin-Destination (OD) data for evaluating the SIMs
-
-```{r inputs}
-zones = simodels::si_zones
-centroids = simodels::si_centroids
-od = simodels::si_od_census
-tm_shape(zones) + tm_polygons("all", palette = "viridis")
-```
-
-We'll use the [od](.pkg) package to convert the geographic data to OD data.
-We set the `length` column to the length of the line between the centroids of the zones, in km, and set the coordinate reference system (CRS) to WGS84 (EPSG:4326).
-
-```{r}
-od_df = od::points_to_od(centroids)
-od_sfc = od::odc_to_sfc(od_df[3:6])
-sf::st_crs(od_sfc) = 4326
-od_df$length = sf::st_length(od_sfc)
-od_df = od_df |>
-  transmute(
-    O, D, length = as.numeric(length) / 1000,
-    flow = NA, fc = NA
-  )
-od_df = sf::st_sf(od_df, geometry = od_sfc, crs = 4326)
-```
-
-An unconstrained spatial interaction model can be written as follows, with a more-or-less arbitrary value for `beta` which can be optimised later:
-
-```{r unconstrained}
-beta = 0.3
-for(i in seq(nrow(zones))) {
-  for(j in seq(nrow(zones))) {
-    O = zones$all[i]
-    n = zones$all[j]
-    ij = which(od_df$O == zones$geo_code[i] & od_df$D == zones$geo_code[j])
-    od_df$fc[ij] = exp(-beta * od_df$length[ij])
-    od_df$flow[ij] = O * n * od_df$fc[ij]
-  }
-}
-```
-
-The results of the unconstrained SIM are shown in @fig-unconstrained, with the geographic desire lines showing the interaction between zones and a scatter plot illustrating the 'friction of distance'.
-
-```{r}
-#| label: fig-unconstrained
-#| fig-cap: Unconstrained spatial interaction model
-#| fig-subcap: 
-#|   - "Geographic desire lines showing interaction between zones calculated by the unconstrained SIM"
-#|   - "Scatter plot illustrating the 'friction of distance' in the unconstrained SIM"
-#| layout-ncol: 2
-#| echo: false
-od_top = od_df |> 
-  filter(O != D) |> 
-  arrange(desc(flow)) |>
-  slice(seq(2000)) |>
-  arrange(flow)
-
-tm_shape(zones) +
-  tm_borders() +
-  tm_shape(od_top) +
-  tm_lines("flow")
-od_df |> 
-  ggplot() +
-  geom_point(aes(length, fc))
-```
-
-We can make this production constrained as follows:
-
-```{r constrained}
-od_dfj = left_join(
-  od_df,
-  zones |> select(O = geo_code, all) |> sf::st_drop_geometry()
-)
-od_dfj = od_dfj |> 
-  group_by(O) |> 
-  mutate(flow_constrained = flow / sum(flow) * first(all)) |>
-  ungroup()
-sum(od_dfj$flow_constrained) == sum(zones$all)
-od_top = od_dfj |> 
-  filter(O != D) |> 
-  arrange(desc(flow_constrained)) |>
-  slice(seq(2000)) |>
-  arrange(flow_constrained)
-
-tm_shape(zones) +
-  tm_borders() +
-  tm_shape(od_top) +
-  tm_lines("flow_constrained")
-```
-
-## OD data preparation {#sec-od}
-
-## Interaction calculation {#sec-interaction}
-
-## Interaction modelling {#sec-models}
-
-## Examples {#sec-examples}
-
-```{r validation}
-od_dfjc = inner_join(od_dfj |> select(-all), od)
-od_dfjc |> 
-  ggplot() +
-  geom_point(aes(all, flow_constrained))
-cor(od_dfjc$all, od_dfjc$flow_constrained)^2
-```
-
-## Conclusions
