@@ -9,6 +9,6 @@ See data-raw/zones_york.qmd for details on the data source.
 }
 \examples{
 head(zones_york)
-plot(zones_york$geometry)
+sf:::plot.sfg(zones_york$geometry)
 }
 \keyword{datasets}

@@ -193,4 +193,5 @@ bench::mark(
 usethis::use_github_action("check-standard")
 # Add pkgdown action:
 usethis::use_github_action("pkgdown")
+usethis::use_data_raw("si_oa_wpz")
 ```
