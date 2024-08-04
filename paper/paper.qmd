@@ -1,5 +1,12 @@
 ---
 title: "simodels: A package for Spatial Interaction Modelling"
+---
+
+
+<!-- 
+# Note: you need to have the relevant quarto extension installed:
+quarto add quarto-journals/jss
+After that put the following in the yaml:
 format:
     jss-pdf:
         keep-tex: true
@@ -38,13 +45,16 @@ execute:
   messages: false
   warning: false 
   echo: false
----
-
-
-<!-- 
-# Note: you need to have the relevant quarto extension installed:
-quarto add quarto-journals/jss
 -->
+
+```{r}
+#| include: false
+knitr::opts_chunk$set(
+  message = FALSE,
+  warning = FALSE,
+  echo = FALSE
+)
+```
 
 ## Introduction
 
