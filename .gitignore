@@ -6,3 +6,6 @@
 *.pdf
 *.html
 paper/paper_files/
+*.zip
+*.geojson
+*cache*
