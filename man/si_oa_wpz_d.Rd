@@ -7,6 +7,10 @@
 \description{
 This dataset contains the number of trips destined for each workplace zone (WPZ) in Leeds.
 }
+\details{
+See \href{https://wicid.ukdataservice.ac.uk/flowdata/cider/wicid/downloads.php}{wicid.ukdataservice.ac.uk} for details on the data source
+and \href{data-raw/si_oa_wpz.qmd}{data-raw/leeds_wpz.R} for details on how the example dataset was generated.
+}
 \examples{
 head(si_oa_wpz_d)
 sf:::plot.sf(si_oa_wpz_d["n_d"])
