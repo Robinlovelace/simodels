@@ -14,7 +14,7 @@ The schema data can be (re-)generated using code in \code{data-raw}
 }
 \examples{
 si_zones
-plot(si_zones$geometry)
-plot(si_centroids$geometry, add = TRUE)
+sf:::plot.sfg(si_zones$geometry)
+sf:::plot.sfg(si_centroids$geometry, add = TRUE)
 }
 \keyword{datasets}

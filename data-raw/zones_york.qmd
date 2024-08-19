@@ -1,0 +1,177 @@
+---
+title: code to prepare `zones_york` dataset goes here
+---
+
+```{r}
+library(tidyverse)
+library(sf)
+library(tmap)
+```
+
+```{r}
+## code to prepare `zones_york` dataset goes here
+
+if (!file.exists("lsoas_2021.geojson")) {
+
+lsoas_2021 = sf::read_sf("https://services1.arcgis.com/ESMARspQHYMw9BZ9/arcgis/rest/services/Lower_layer_Super_Output_Areas_December_2021_Boundaries_EW_BSC_V4/FeatureServer/0/query?outFields=*&where=1%3D1&f=geojson")
+sf::write_sf(lsoas_2021, "lsoas_2021.geojson")
+
+}
+lsoas_2021 = sf::read_sf("lsoas_2021.geojson") |>
+  select(LSOA21CD, LSOA21NM) 
+# names(lsoas_2021)
+zones_york = lsoas_2021 |>
+  filter(str_detect(LSOA21NM, "^York")) 
+
+# Population in each zone:
+u_xls = "https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/populationandmigration/populationestimates/datasets/lowersuperoutputareamidyearpopulationestimatesnationalstatistics/mid2021andmid2022/sapelsoabroadagetablefinal.xlsx"
+
+if (!file.exists("sapelsoabroadagetablefinal.xlsx")) {
+  download.file(u_xls, "sapelsoabroadagetablefinal.xlsx")
+}
+
+lsoa_populations = readxl::read_excel("sapelsoabroadagetablefinal.xlsx", sheet = 6, skip = 3)
+names(lsoa_populations)
+#  [1] "LAD 2021 Code"  "LAD 2021 Name"  "LSOA 2021 Code" "LSOA 2021 Name"
+#  [5] "Total"          "F0 to 15"       "F16 to 29"      "F30 to 44"     
+#  [9] "F45 to 64"      "F65 and over"   "M0 to 15"       "M16 to 29"     
+# [13] "M30 to 44"      "M45 to 64"      "M65 and over"  
+
+summary(zones_york$LSOA21CD %in% lsoa_populations$`LSOA 2021 Code`)
+# all are in there!
+# Add 0-15 to zones_york
+lsoa_populations_to_join = lsoa_populations |>
+  select(-`LAD 2021 Code`, -`LAD 2021 Name`, -`LSOA 2021 Name`) |>
+  janitor::clean_names()  |>
+  rename(
+    LSOA21CD = `lsoa_2021_code`
+  )
+
+zones_york = left_join(
+  zones_york,
+  lsoa_populations_to_join
+)
+zones_york = sf::st_sf(
+  sf::st_drop_geometry(zones_york),
+  geometry = zones_york$geometry
+)
+
+names(zones_york)
+
+usethis::use_data(zones_york, overwrite = TRUE)
+```
+
+We'll get schools data from https://www.get-information-schools.service.gov.uk/Downloads resulting in the following plot:
+
+```{r}
+#| label: schools-york
+schooldata = read_csv("extract.zip")
+# names(schooldata)
+#   [1] "URN"                              "LA (code)"                       
+#   [3] "LA (name)"                        "EstablishmentNumber"             
+#   [5] "EstablishmentName"                "TypeOfEstablishment (code)"      
+#   [7] "TypeOfEstablishment (name)"       "EstablishmentTypeGroup (code)"   
+#   [9] "EstablishmentTypeGroup (name)"    "EstablishmentStatus (code)"      
+#  [11] "EstablishmentStatus (name)"       "ReasonEstablishmentOpened (code)"
+#  [13] "ReasonEstablishmentOpened (name)" "OpenDate"                        
+#  [15] "ReasonEstablishmentClosed (code)" "ReasonEstablishmentClosed (name)"
+#  [17] "CloseDate"                        "PhaseOfEducation (code)"         
+#  [19] "PhaseOfEducation (name)"          "StatutoryLowAge"                 
+#  [21] "StatutoryHighAge"                 "Boarders (code)"                 
+#  [23] "Boarders (name)"                  "NurseryProvision (name)"         
+#  [25] "OfficialSixthForm (code)"         "OfficialSixthForm (name)"        
+#  [27] "Gender (code)"                    "Gender (name)"                   
+#  [29] "ReligiousCharacter (code)"        "ReligiousCharacter (name)"       
+#  [31] "ReligiousEthos (name)"            "Diocese (code)"                  
+#  [33] "Diocese (name)"                   "AdmissionsPolicy (code)"         
+#  [35] "AdmissionsPolicy (name)"          "SchoolCapacity"                  
+#  [37] "SpecialClasses (code)"            "SpecialClasses (name)"           
+#  [39] "CensusDate"                       "NumberOfPupils"                  
+#  [41] "NumberOfBoys"                     "NumberOfGirls"                   
+#  [43] "PercentageFSM"                    "TrustSchoolFlag (code)"          
+#  [45] "TrustSchoolFlag (name)"           "Trusts (code)"                   
+#  [47] "Trusts (name)"                    "SchoolSponsorFlag (name)"        
+#  [49] "SchoolSponsors (name)"            "FederationFlag (name)"           
+#  [51] "Federations (code)"               "Federations (name)"              
+#  [53] "UKPRN"                            "FEHEIdentifier"                  
+#  [55] "FurtherEducationType (name)"      "OfstedLastInsp"                  
+#  [57] "OfstedSpecialMeasures (code)"     "OfstedSpecialMeasures (name)"    
+#  [59] "LastChangedDate"                  "Street"                          
+#  [61] "Locality"                         "Address3"                        
+#  [63] "Town"                             "County (name)"                   
+#  [65] "Postcode"                         "SchoolWebsite"                   
+#  [67] "TelephoneNum"                     "HeadTitle (name)"                
+#  [69] "HeadFirstName"                    "HeadLastName"                    
+#  [71] "HeadPreferredJobTitle"            "BSOInspectorateName (name)"      
+#  [73] "InspectorateReport"               "DateOfLastInspectionVisit"       
+#  [75] "NextInspectionVisit"              "TeenMoth (name)"                 
+#  [77] "TeenMothPlaces"                   "CCF (name)"                      
+#  [79] "SENPRU (name)"                    "EBD (name)"                      
+#  [81] "PlacesPRU"                        "FTProv (name)"                   
+#  [83] "EdByOther (name)"                 "Section41Approved (name)"        
+#  [85] "SEN1 (name)"                      "SEN2 (name)"                     
+#  [87] "SEN3 (name)"                      "SEN4 (name)"                     
+#  [89] "SEN5 (name)"                      "SEN6 (name)"                     
+#  [91] "SEN7 (name)"                      "SEN8 (name)"                     
+#  [93] "SEN9 (name)"                      "SEN10 (name)"                    
+#  [95] "SEN11 (name)"                     "SEN12 (name)"                    
+#  [97] "SEN13 (name)"                     "TypeOfResourcedProvision (name)" 
+#  [99] "ResourcedProvisionOnRoll"         "ResourcedProvisionCapacity"      
+# [101] "SenUnitOnRoll"                    "SenUnitCapacity"                 
+# [103] "GOR (code)"                       "GOR (name)"                      
+# [105] "DistrictAdministrative (code)"    "DistrictAdministrative (name)"   
+# [107] "AdministrativeWard (code)"        "AdministrativeWard (name)"       
+# [109] "ParliamentaryConstituency (code)" "ParliamentaryConstituency (name)"
+# [111] "UrbanRural (code)"                "UrbanRural (name)"               
+# [113] "GSSLACode (name)"                 "Easting"                         
+# [115] "Northing"                         "MSOA (name)"                     
+# [117] "LSOA (name)"                      "InspectorateName (name)"         
+# [119] "SENStat"                          "SENNoStat"                       
+# [121] "BoardingEstablishment (name)"     "PropsName"                       
+# [123] "PreviousLA (code)"                "PreviousLA (name)"               
+# [125] "PreviousEstablishmentNumber"      "OfstedRating (name)"             
+# [127] "Country (name)"                   "UPRN"                            
+# [129] "SiteName"                         "QABName (code)"                  
+# [131] "QABName (name)"                   "EstablishmentAccredited (code)"  
+# [133] "EstablishmentAccredited (name)"   "QABReport"                       
+# [135] "CHNumber"                         "MSOA (code)"                     
+# [137] "LSOA (code)"                      "FSM"                             
+# [139] "AccreditationExpiryDate"   
+# table(od_raw$CensusTermKey)
+schooldata_geo = schooldata |>
+  filter(!is.na(Easting) & !is.na(Northing)) |>
+  # Remove closed schools:
+  filter(`EstablishmentStatus (name)` == "Open")
+# nrow(schooldata) - nrow(schooldata_geo) # 1605 schools with no location - TODO: explore
+schooldata_sf = sf::st_as_sf(schooldata_geo, coords = c("Easting", "Northing"), crs = "EPSG:27700") |>
+  sf::st_transform("EPSG:4326")
+schooldata_york = schooldata_sf |>
+  st_filter(zones_york)
+qtm(zones_york) +
+  qtm(schooldata_york, col = "red", size = 1)
+```
+
+We'll create minimal versions of the LSOA and school data for the spatial interaction model.
+
+```{r}
+school_minimal = schooldata_york |>
+  select(
+    URN,
+    n_pupils = NumberOfPupils,
+    phase = `PhaseOfEducation (name)`,
+    type_of_establishment = `TypeOfEstablishment (name)`
+  )
+# Save the minimal example datasets:
+sf::write_sf(zones_york, "zones_york.geojson", delete_dsn = TRUE)
+sf::write_sf(school_minimal, "school_minimal.geojson", delete_dsn = TRUE)
+# # Release the data
+# system("gh release list")
+# system("gh release upload v0.1.0 zones_york.geojson school_minimal.geojson --clobber")
+```
+
+```{r}
+destinations_york = school_minimal |>
+  filter(!is.na(n_pupils))
+
+usethis::use_data(destinations_york, overwrite = TRUE)
+```

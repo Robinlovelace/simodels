@@ -1,0 +1,121 @@
+---
+cache: true
+---
+
+```{r}
+library(sf)
+library(tidyverse)
+library(tmap)
+tmap_mode("view")
+```
+
+```{r}
+od_data_oa_wpz_all = readr::read_csv("wf01aew_oa_v1.zip", col_names = c("OA11CD", "wz11cd", "n"))
+
+# Workplace zone boundaries:
+# https://geoportal.statistics.gov.uk/datasets/5ed6104f204944b6b60780842cbdaa5c_0/explore
+wpz_all = sf::read_sf("Workplace_Zones_Dec_2011_GCB_in_England_and_Wales_2022_4617806297229452276.geojson")
+wpz_all = wpz_all |>
+  sf::st_transform("EPSG:4326")
+names(wpz_all)
+# [1] "OBJECTID" "wz11cd"   "lad11cd"  "lad11nm"  "lad11nmw" "GlobalID" "geometry"
+# Keep only wz11cd and geometry:
+wpz_all = wpz_all["wz11cd"]
+
+summary(unique(od_data_oa_wpz_all$wz11cd) %in% wpz_all$wz11cd)
+# and the other way around:
+summary(unique(wpz_all$wz11cd) %in% od_data_oa_wpz_all$wz11cd)
+
+# Take a 3km radius around Leeds:
+sf::sf_use_s2(FALSE)
+wpz_centroids = sf::st_centroid(wpz_all)
+sf::sf_use_s2(TRUE)
+leeds_boundary = zonebuilder::zb_zone("Leeds", n_circles = 2)
+wpz_centroids_leeds = wpz_centroids[leeds_boundary, ]
+
+# tmap::qtm(wpz_centroids_leeds)
+si_wpz_leeds = wpz_all |>
+  filter(wz11cd %in% wpz_centroids_leeds$wz11cd)
+qtm(si_wpz_leeds)
+```
+
+```{r}
+# Get OA data:
+oa_all = sf::read_sf("/data/bronze/geoportal.gov.uk/Output_Areas_Dec_2011_Boundaries_EW_BGC_2022_7971430631129549274.gpkg")
+oa_all = oa_all |>
+  sf::st_transform("EPSG:4326")
+oa_all_centroids = sf::st_centroid(oa_all)
+oa_centroids_leeds = oa_all_centroids[leeds_boundary, ]
+si_oa_leeds = oa_all |>
+  filter(OA11CD %in% oa_centroids_leeds$OA11CD) |>
+  select(OA11CD)
+qtm(si_oa_leeds)
+```
+
+
+```{r}
+#| label: od-data-leeds
+si_oa_wpz = od_data_oa_wpz_all |>
+  filter(wz11cd %in% si_wpz_leeds$wz11cd & OA11CD %in% si_oa_leeds$OA11CD)
+sum(si_oa_wpz$n)
+```
+
+
+```{r}
+#| label: od-origin-destination
+si_oa_wpz_o = si_oa_wpz |>
+  group_by(OA11CD) |>
+  summarise(n = sum(n)) |>
+  rename(n_o = n)
+# join with origin data:
+si_oa_wpz_o = si_oa_leeds |>
+  left_join(si_oa_wpz_o) 
+# tm_shape(si_oa_wpz_o) +
+#   tm_polygons(col = "n_o")
+plot(si_oa_wpz_o["n_o"])
+```
+
+```{r}
+#| label: od-destination
+si_oa_wpz_d = si_oa_wpz |>
+  group_by(wz11cd) |>
+  summarise(n = sum(n)) |>
+  rename(n_d = n)
+
+si_oa_wpz_d = si_wpz_leeds |>
+    left_join(si_oa_wpz_d)
+
+plot(si_oa_wpz_d["n_d"])
+```
+
+Now check the data:
+
+```{r}
+si_oa_wpz
+si_oa_wpz_o
+si_oa_wpz_d
+```
+
+More logical column names:
+
+```{r}
+si_oa_wpz_o = sf::st_sf(
+  sf::st_drop_geometry(si_oa_wpz_o),
+  geometry = sf::st_geometry(si_oa_wpz_o)
+)
+si_oa_wpz_d = sf::st_sf(
+  sf::st_drop_geometry(si_oa_wpz_d),
+  geometry = sf::st_geometry(si_oa_wpz_d)
+)
+sum(si_oa_wpz_o$n_o)
+sum(si_oa_wpz_d$n_d)
+sum(si_oa_wpz$n)
+```
+
+Save with usethis:
+
+```{r}
+usethis::use_data(si_oa_wpz, overwrite = TRUE)
+usethis::use_data(si_oa_wpz_o, overwrite = TRUE)
+usethis::use_data(si_oa_wpz_d, overwrite = TRUE)
+```

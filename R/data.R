@@ -9,8 +9,8 @@
 #' @aliases si_centroids
 #' @examples
 #' si_zones
-#' plot(si_zones$geometry)
-#' plot(si_centroids$geometry, add = TRUE)
+#' sf:::plot.sfg(si_zones$geometry)
+#' sf:::plot.sfg(si_centroids$geometry, add = TRUE)
 NULL
 
 #' Example OD dataset
@@ -59,4 +59,67 @@ NULL
 #' @name od_aus
 #' @examples
 #' head(od_aus)
+NULL
+
+#' Example zones dataset: administrative zones of York
+#' 
+#' See data-raw/zones_york.qmd for details on the data source.
+#' 
+#' @docType data
+#' @keywords datasets
+#' @name zones_york
+#' @examples
+#' head(zones_york)
+#' sf:::plot.sfg(zones_york$geometry)
+NULL
+
+#' Example destinations dataset: schools in York
+#' 
+#' Example dataset from York, UK
+#' 
+#' See data-raw/zones_york.qmd for details on the data source.
+#' 
+#' @docType data
+#' @keywords datasets
+#' @name destinations_york
+#' @examples
+#' head(destinations_york)
+NULL
+
+#' Origin-Destination Data for Leeds
+#' 
+#' This dataset contains origin-destination data for Leeds, including the number of trips between output areas (OAs) and workplace zones (WPZs).
+#' 
+#' @docType data
+#' @keywords datasets
+#' @name si_oa_wpz
+#' @examples
+#' head(si_oa_wpz)
+NULL
+
+#' Origin Data for Leeds
+#' 
+#' This dataset contains the number of trips originating from each output area (OA) in Leeds.
+#' 
+#' @docType data
+#' @keywords datasets
+#' @name si_oa_wpz_o
+#' @examples
+#' head(si_oa_wpz_o)
+#' sf:::plot.sf(si_oa_wpz_o["n_o"])
+NULL
+
+#' Destination Data for Leeds
+#' 
+#' This dataset contains the number of trips destined for each workplace zone (WPZ) in Leeds.
+#' 
+#' See [wicid.ukdataservice.ac.uk](https://wicid.ukdataservice.ac.uk/flowdata/cider/wicid/downloads.php) for details on the data source
+#' and [data-raw/leeds_wpz.R](data-raw/si_oa_wpz.qmd) for details on how the example dataset was generated.
+#' 
+#' @docType data
+#' @keywords datasets
+#' @name si_oa_wpz_d
+#' @examples
+#' head(si_oa_wpz_d)
+#' sf:::plot.sf(si_oa_wpz_d["n_d"])
 NULL

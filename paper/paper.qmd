@@ -1,0 +1,685 @@
+---
+title: "simodels: A package for Spatial Interaction Modelling"
+---
+
+
+<!-- 
+# Note: you need to have the relevant quarto extension installed:
+quarto add quarto-journals/jss
+After that put the following in the yaml:
+format:
+    jss-pdf:
+        keep-tex: true
+    jss-html: default
+# author:
+#   - name: Achim Zeileis
+#     affiliations:
+#       - name: Universität Innsbruck
+#         department: Department of Statistics
+#         address: Universitätsstr. 15
+#         city: Innsbruck
+#         country: Austria
+#         postal-code: 6020
+#       - Journal of Statistical Software
+#     orcid: 0000-0003-0918-3766
+#     email: Achim.Zeileis@R-project.org
+#     url: https://www.zeileis.org/
+#   - name: Second  Author
+#     affiliations:
+#       - Plus Affiliation
+# abstract: |
+#   This short article illustrates how to write a manuscript for the
+#   _Journal of Statistical Software_ (JSS) using its {{< latex >}} style files.
+#   Generally, we ask to follow JSS's style guide and FAQs precisely. Also,
+#   it is recommended to keep the {{< latex >}} code as simple as possible,
+#   i.e., avoid inclusion of packages/commands that are not necessary.
+#   For outlining the typical structure of a JSS article some brief text snippets are employed that have been inspired by @ZeileisKleiberJackman2008, discussing count data regression in [R]{.proglang}. Editorial comments and instructions are marked by vertical bars.
+abstract: |
+  This article introduces the [simodels]{.pkg} package for spatial interaction modelling in R. The package provides functions for estimating spatial interaction models, including unconstrained gravity models and models that are production-, attraction-, or doubly-constrained.
+
+keywords: [JSS, style guide, comma-separated, not capitalized, R]
+keywords-formatted: [JSS, style guide, comma-separated, not capitalized, "[R]{.proglang}"]
+
+bibliography: bibliography.bib
+execute: 
+  messages: false
+  warning: false 
+  echo: false
+-->
+
+```{r}
+#| include: false
+knitr::opts_chunk$set(
+  message = FALSE,
+  warning = FALSE,
+  echo = FALSE
+)
+```
+
+## Introduction
+
+Spatial Interaction Models (SIMs) are mathematical models for estimating movement between spatial entities.
+First developed in the late 1960s and early 1970, SIMs have become a key tool for transport modelling with substantial practical applications [@boyce_forecasting_2015].
+
+An early and highly influential type of SIM was the 'gravity model', defined by @wilson_family_1971 as follows (in a paper that explored many extensions of this formulation and is influential enough to merit being quoted at length):
+
+$$
+T_{i j}=K \frac{W_{i}^{(1)} W_{j}^{(2)}}{c_{i j}^{n}}
+$$
+
+"where $T_{i j}$ is a measure of the interaction between zones $i$ and $W_{i}^{(1)}$ is a measure of the 'mass term' associated with zone $z_i$, $W_{j}^{(2)}$ is a measure of the 'mass term' associated with zone $z_j$, and $c_{ij}$ is a measure of the distance, or generalised cost of travel, between zone $i$ and zone $j$".
+$K$ is a 'constant of proportionality' and $n$ is a parameter to be estimated.
+
+We follow @simini_universal_2012 in replacing the $W$ terms above with $m$ and $n$ for origins and destinations respectively.
+This seminal definition of the unconstrained 'gravity model' can be written in its "multiplicative form" as follows @dennett_modelling_2018, notation that we will use in this paper:
+
+$$
+T_{ij} = k m_i^{\mu} n_j^{*} d_{ij} \beta
+$$
+
+It is unconstrained because there is no limit on the amount of interaction (we will refer to the more concrete but semantically equivalent term "number of trips") in this paper.
+There are four main types of traditional SIMs  [@wilson_family_1971]:
+
+- Unconstrained
+- Production-constrained
+- Attraction-constrained
+- Doubly-constrained
+
+For the purposes of this project, we will focus on production-constrained SIMs.
+These can be defined as follows [@wilson_family_1971]:
+
+$$
+T_{ij} = A_iO_in_jf(c_{ij})
+$$
+
+where $A$ is a balancing factor defined as:
+
+$$
+A_{i}=\frac{1}{\sum_{j} m_{j} \mathrm{f}\left(c_{i j}\right)}
+$$
+
+$O_i$ is analogous to the travel demand in zone $i$, which can be roughly approximated by its population.
+
+More recent innovations in SIMs including the 'radiation model' @simini_universal_2012.
+See @lenormand_systematic_2016 for a comparison of alternative approaches.
+The purpose of the package is not to implement all available models, but to provide a flexible framework to speed-up the process of implementing SIMs in [R]{.proglang}.
+The package supports a wide range of models and can be used to fit unconstrained, production-constrained, attraction-constrained, and doubly-constrained models.
+Furthermore, the package works equally well for 'bipartite' SIMs, in which origin and destination points are different (Hasova et al. [2022](https://lenkahas.com/files/preprint.pdf)).
+
+The paper is structured as follows.
+@sec-base demonstrates how to implement an unconstrained SIM in base [R]{.proglang}, highlighting the need for a package to streamline the process.
+@sec-od describes the process of converting spatial data to Origin-Destination (OD) data, a key step in SIMs, and the functions in the package that facilitate this process.
+@sec-interaction describes the process of calculating interaction with pre-defined parameters with the `si_calculate()` function.
+
+## Basic implementation of SIMs {#sec-base}
+
+Before describing the functions in the package, it's worth implementing SIMs from first principles, to gain an understanding of how they work and to highlight the benefits of using the package.
+The code presented below was written before the functions in the [simodels]{.pkg} package were developed, building on @dennett_modelling_2018.
+The aim is to demonstrate a common way of running SIMs, in a for loop, rather than using vectorised operations used in [simodels]{.pkg}.
+In this section we the [tmap]{.pkg} and [tidyverse]{.pkg} packages for data manipulation and visualisation, using only base [R]{.proglang} functions for the SIM calculations (see the paper's source code for details).
+
+```{r}
+#| label: load-packages
+library(tmap)
+library(tidyverse)
+library(patchwork)
+devtools::load_all()
+```
+
+The package contains a number of datasets that can be used to demonstrate the SIMs, as shown below:
+
+- `si_zones`: a dataset of zones with population data
+- `si_centroids`: a dataset of zone centroids
+- `si_od_census`: a dataset of Origin-Destination (OD) data for evaluating the SIMs
+- `zones_york`: a dataset of zones in York
+- `destinations_york`: a dataset of school locations in York with information on number of pupils attending, enabling destination-constrained and doubly-constrained SIMs to be implemented
+
+```{r inputs}
+zones = simodels::si_zones
+centroids = simodels::si_centroids
+od = simodels::si_od_census
+tm_shape(zones) + tm_polygons("all", palette = "viridis")
+```
+
+We'll use the [od](.pkg) package to convert the geographic data to OD data.
+We set the `length` column to the length of the line between the centroids of the zones, in km, and set the coordinate reference system (CRS) to WGS84 (EPSG:4326), as follows:
+
+```{r}
+#| echo: true
+od_df = od::points_to_od(centroids)
+od_sfc = od::odc_to_sfc(od_df[3:6])
+sf::st_crs(od_sfc) = 4326
+od_df$length = sf::st_length(od_sfc)
+od_df = od_df |>
+  transmute(
+    O, D, length = as.numeric(length) / 1000,
+    flow = NA, fc = NA
+  )
+od_df = sf::st_sf(od_df, geometry = od_sfc, crs = 4326)
+```
+
+An unconstrained spatial interaction model can be written as follows, with a more-or-less arbitrary value for `beta` which can be optimised later:
+
+```{r}
+#| label: unconstrained
+#| echo: true
+beta = 0.3
+for(i in seq(nrow(zones))) {
+  for(j in seq(nrow(zones))) {
+    O = zones$all[i]
+    n = zones$all[j]
+    ij = which(od_df$O == zones$geo_code[i] & od_df$D == zones$geo_code[j])
+    od_df$fc[ij] = exp(-beta * od_df$length[ij])
+    od_df$flow[ij] = O * n * od_df$fc[ij]
+  }
+}
+```
+
+The results of the unconstrained SIM are shown in @fig-unconstrained, with the geographic desire lines showing the interaction between zones and a scatter plot illustrating the 'friction of distance'.
+
+```{r}
+#| label: fig-unconstrained
+#| fig-cap: Unconstrained spatial interaction model
+#| fig-subcap: 
+#|   - "Geographic desire lines showing interaction between zones calculated by the unconstrained SIM"
+#|   - "Scatter plot illustrating the 'friction of distance' in the unconstrained SIM"
+#| layout-ncol: 2
+#| echo: false
+od_top = od_df |> 
+  filter(O != D) |> 
+  arrange(desc(flow)) |>
+  slice(seq(2000)) |>
+  arrange(flow)
+
+tm_shape(zones) +
+  tm_borders() +
+  tm_shape(od_top) +
+  tm_lines("flow")
+od_df |> 
+  ggplot() +
+  geom_point(aes(length, fc))
+```
+
+We can make this production constrained by dividing the estimated interaction by the difference between the sum of the estimated interactions and the sum of the observed interactions per origin.
+
+```{r}
+#| label: constrained
+#| include: false
+od_dfj = left_join(
+  od_df,
+  zones |> select(O = geo_code, all) |> sf::st_drop_geometry()
+)
+od_dfj = od_dfj |> 
+  group_by(O) |> 
+  mutate(flow_constrained = flow / sum(flow) * first(all)) |>
+  ungroup()
+sum(od_dfj$flow_constrained) == sum(zones$all)
+od_top = od_dfj |> 
+  filter(O != D) |> 
+  arrange(desc(flow_constrained)) |>
+  slice(seq(2000)) |>
+  arrange(flow_constrained)
+
+tm_shape(zones) +
+  tm_borders() +
+  tm_shape(od_top) +
+  tm_lines("flow_constrained")
+```
+
+## OD data preparation {#sec-od}
+
+## Interaction calculation {#sec-interaction}
+
+
+
+
+```{r}
+#| label: inputs-york
+g1 = zones_york |>
+  ggplot() +
+  geom_sf() +
+  labs(title = "Zones")
+g2 = destinations_york |>
+    ggplot() +
+    geom_sf() +
+    labs(title = "Destinations")
+g1 + g2
+```
+
+Before we run any models let's compare the total number of pupils in the zones dataset and the destinations dataset (they should be the same):
+
+```{r}
+#| label: compare-totals
+#| echo: true
+zone_overestimate_factor = 
+  (sum(zones_york$f0_to_15) + sum(zones_york$m0_to_15)) /
+    sum(destinations_york$n_pupils)
+zone_overestimate_factor
+```
+
+As one would expect, the total number of pupils in the zones dataset is a bit bigger than the total number of pupils in the destinations dataset: not all people aged 0 to 15 go to school, especially those under school age.
+To tackle this issue we'll create a new variables called `pupils_estimated` in the zones dataset, which is the sum of the number of pupils in the zones dataset and the number of pupils in the destinations dataset.
+
+```{r}
+#| label: add-pupils-estimated
+#| echo: true
+zones_york = zones_york |>
+  dplyr::mutate(
+    pupils_estimated = (f0_to_15 + m0_to_15) / zone_overestimate_factor
+  )
+```
+
+After the adjustment shown above, the totals in the origin and destination columns should be the same:
+
+```{r}
+#| label: compare-totals-after
+#| echo: true
+sum(zones_york$pupils_estimated)
+sum(destinations_york$n_pupils)
+```
+
+Based on these inputs the `si_to_od()` function generates the OD data, as shown below (note: 2 versions are created, one with a maximum distance constraint for speed of processing, important when working with large datasets).
+
+```{r}
+#| echo: true
+max_dist = 5000 # meters
+od_from_si_full = simodels::si_to_od(zones_york, destinations_york)
+od_from_si = simodels::si_to_od(zones_york, destinations_york, max_dist = max_dist)
+```
+
+```{r}
+#| label: plot-od-all
+#| layout-ncol: 2
+m1 = od_from_si_full |>
+  ggplot() +
+  geom_sf(alpha = 0.1)
+m2 = od_from_si |>
+  ggplot() +
+  geom_sf(alpha = 0.1)
+m1
+m2
+```
+
+The output OD dataset has column names taken from both the origin and destination datasets, with the following column names:
+
+```{r}
+names(od_from_si)
+```
+
+Let's run a simple model:
+
+
+```{r}
+#| label: simple-model-york
+#| echo: true
+gravity_model = function(beta, d, m, n) {
+  m * n * exp(-beta * d / 1000)
+} 
+# perform SIM
+od_res = simodels::si_calculate(
+  od_from_si,
+  fun = gravity_model,
+  d = distance_euclidean,
+  m = origin_pupils_estimated,
+  n = destination_n_pupils,
+#   constraint_production = origin_all,
+  beta = 0.9
+  )
+```
+
+We'll make one adjustment to the output dataset, renaming the `interaction` column to `trips`, and setting the total number of trips to be the same as the total number of pupils in the destinations dataset:
+
+```{r}
+#| label: adjust-output-york
+#| echo: true
+interaction_overestimate_factor = sum(destinations_york$n_pupils) / sum(od_res$interaction)
+od_res = od_res |>
+  dplyr::mutate(
+    trips = interaction * interaction_overestimate_factor
+  )
+```
+
+
+We can assess the model fit at three levels: the origin level (number of students departing from each zone), the destination level (the number arriving at each school in the input dataset) and the origin-destination level.
+
+```{r}
+#| label: r-squared-york
+res_o = od_res |>
+  group_by(O) |>
+  summarise(
+    Observed = first(origin_pupils_estimated),
+    Modelled = sum(trips),
+    Type = "Origin"
+  )
+res_d = od_res |>
+  group_by(D) |>
+  summarise(
+    Observed = first(destination_n_pupils),
+    Modelled = sum(trips),
+    Type = "Destination"
+  )
+res_combined = bind_rows(res_o, res_d) |>
+  # Create ordered factor with types:
+  mutate(
+    Type = factor(Type, levels = c("Origin", "Destination"))
+  )
+g_combined = res_combined |>
+  ggplot() +
+    geom_point(aes(x = Observed, y = Modelled)) +
+    geom_smooth(aes(x = Observed, y = Modelled), method = "lm") +
+    facet_wrap(~Type, scales = "free") +
+    labs(
+      title = "Model fit at origin, destination and OD levels (unconstrained)",
+      x = "Observed",
+      y = "Modelled"
+    ) 
+g_combined
+```
+
+Let's see if making the model production constrained can help:
+
+```{r}
+#| label: constrained-york
+#| echo: true
+od_res_constrained = simodels::si_calculate(
+  od_from_si,
+  fun = gravity_model,
+  d = distance_euclidean,
+  m = origin_pupils_estimated,
+  n = destination_n_pupils,
+  constraint_production = origin_pupils_estimated,
+  beta = 0.9
+  )
+```
+
+```{r}
+#| label: r-squared-constrained
+res_o = od_res_constrained |>
+  group_by(O) |>
+  summarise(
+    Observed = first(origin_pupils_estimated),
+    Modelled = sum(interaction),
+    Type = "Origin"
+  )
+res_d = od_res_constrained |>
+  group_by(D) |>
+  summarise(
+    Observed = first(destination_n_pupils),
+    Modelled = sum(interaction),
+    Type = "Destination"
+  )
+res_combined = bind_rows(res_o, res_d) |>
+  mutate(
+    Type = factor(Type, levels = c("Origin", "Destination"))
+  )
+res_combined |>
+  ggplot() +
+    geom_point(aes(x = Observed, y = Modelled)) +
+    geom_smooth(aes(x = Observed, y = Modelled), method = "lm") +
+    facet_wrap(~Type, scales = "free") +
+    labs(
+      title = "Model fit at origin, destination and OD levels (production constrained)",
+      x = "Observed",
+      y = "Modelled"
+    )
+```
+
+## Interaction modelling {#sec-models}
+
+## Examples {#sec-examples}
+
+```{r validation}
+od_dfjc = inner_join(od_dfj |> select(-all), od)
+od_dfjc |> 
+  ggplot() +
+  geom_point(aes(all, flow_constrained))
+cor(od_dfjc$all, od_dfjc$flow_constrained)^2
+```
+
+## Conclusions
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--
+
+From paper-writing docs:
+ ## Introduction: Count data regression in R {#sec-intro}
+
+::: callout
+The introduction is in principle "as usual". However, it should usually embed both the implemented *methods* and the *software* into the respective relevant literature. For the latter both competing and complementary software should be discussed (within the same software environment and beyond), bringing out relative (dis)advantages. All software mentioned should be properly `@cited`'d. (See also [Using BibTeX] for more details on {{< bibtex >}}.)
+
+For writing about software JSS requires authors to use the markup `[]{.proglang}` (programming languages and large programmable systems), `[]{.pkg}` (software packages), back ticks like \`code\` for code (functions, commands, arguments, etc.).
+
+If there is such markup in (sub)section titles (as above), a plain text version has to be provided in the {{< latex >}} command as well. Below we also illustrate how abbrevations should be introduced and citation commands can be employed. See the {{< latex >}} code for more details.
+:::
+
+Modeling count variables is a common task in economics and the social sciences. The classical Poisson regression model for count data is often of limited use in these disciplines because empirical count data sets typically exhibit overdispersion and/or an excess number of zeros. The former issue can be addressed by extending the plain Poisson regression model in various directions: e.g., using sandwich covariances or estimating an additional dispersion parameter (in a so-called quasi-Poisson model). Another more formal way is to use a negative binomial (NB) regression. All of these models belong to the family of generalized linear models (GLMs). However, although these models typically can capture overdispersion rather well, they are in many applications not sufficient for modeling excess zeros. Since @Mullahy1986 there is increased interest in zero-augmented models that address this issue by a second model component capturing zero counts. An overview of count data models in econometrics, including hurdle and zero-inflated models, is provided in @CameronTrivedi2013.
+
+In [R]{.proglang} @R, GLMs are provided by the model fitting functions [glm]{.fct} in the [stats]{.pkg} package and [glm.nb]{.fct} in the [MASS]{.pkg} package [@VenablesRipley2002] along with associated methods for diagnostics and inference. The manuscript that this document is based on [@ZeileisKleiberJackman2008] then introduced hurdle and zero-inflated count models in the functions [hurdle]{.fct} and [zeroinfl]{.fct} in the [pcsl]{.pkg} package @Jackman2015. Of course, much more software could be discussed here, including (but not limited to) generalized additive models for count data as available in the [R]{.proglang} packages [mgcv]{.pkg} @Wood2006, [gamlss]{.pkg} @StasinopoulosRigby2007, or [VGAM]{.pkg} @Yee2009.
+
+## Models and software {#sec-models}
+
+The basic Poisson regression model for count data is a special case of the GLM framework @McCullaghNelder1989. It describes the dependence of a count response variable $y_i$ ($i = 1, \dots, n$) by assuming a Poisson distribution $y_i \sim \mathrm{Pois}(\mu_i)$. The dependence of the conditional mean $E[y_i \, | \, x_i] = \mu_i$ on the regressors $x_i$ is then specified via a log link and a linear predictor
+
+$$
+\log(\mu_i) \quad = \quad x_i^\top \beta,
+$$ {#eq-mean}
+
+where the regression coefficients $\beta$ are estimated by maximum likelihood (ML) using the iterative weighted least squares (IWLS) algorithm.
+
+::: callout
+TODO: Note that around the equation above there should be no spaces (avoided in the {{< latex >}} code by `%` lines) so that "normal" spacing is used and not a new paragraph started.
+:::
+
+[R]{.proglang} provides a very flexible implementation of the general GLM framework in the function [glm]{.fct} @ChambersHastie1992 in the [stats]{.pkg} package. Its most important arguments are
+
+```r
+glm(formula, data, subset, na.action, weights, offset,
+  family = gaussian, start = NULL, control = glm.control(…),
+  model = TRUE, y = TRUE, x = FALSE, …)
+```
+
+where `formula` plus `data` is the now standard way of specifying regression relationships in [R]{.proglang}/[S]{.proglang} introduced in @ChambersHastie1992. The remaining arguments in the first line (`subset`, `na.action`, `weights`, and `offset`) are also standard for setting up formula-based regression models in [R]{.proglang}/[S]{.proglang}. The arguments in the second line control aspects specific to GLMs while the arguments in the last line specify which components are returned in the fitted model object (of class [glm]{.class} which inherits from [lm]{.class}). For further arguments to [glm]{.fct} (including alternative specifications of starting values) see `?glm`. For estimating a Poisson model `family = poisson` has to be specified.
+
+::: callout
+As the synopsis above is a code listing that is not meant to be executed, one can use either the dedicated `{Code}` environment or a simple `{verbatim}` environment for this. Again, spaces before and after should be avoided.
+
+Finally, there might be a reference to a `{table}` such as @tbl-overview. Usually, these are placed at the top of the page (`[t!]`), centered (`\centering`), with a caption below the table, column headers and captions in sentence style, and if possible avoiding vertical lines.
+:::
+
+| Type           | Distribution | Method   | Description                                                                                                                                                                                  |
+|---------|---------|---------|-----------------------------------------------|
+| GLM            | Poisson      | ML       | Poisson regression: classical GLM, estimated by maximum likelihood (ML)                                                                                                                      |
+|                |              | Quasi    | "Quasi-Poisson regression'': same mean function, estimated by quasi-ML (QML) or equivalently generalized estimating equations (GEE), inference adjustment via estimated dispersion parameter |
+|                |              | Adjusted | "Adjusted Poisson regression'': same mean function, estimated by QML/GEE, inference adjustment via sandwich covariances                                                                      |
+|                | NB           | ML       | NB regression: extended GLM, estimated by ML including additional shape parameter                                                                                                            |
+| Zero-augmented | Poisson      | ML       | Zero-inflated Poisson (ZIP), hurdle Poisson                                                                                                                                                  |
+|                | NB           | ML       | Zero-inflated NB (ZINB), hurdle NB                                                                                                                                                           |
+: Overview of various count regression models. The table is usually placed at the top of the page (`[t!]`), centered (`centering`), has a caption below the table, column headers and captions are in sentence style, and if possible vertical lines should be avoided. {#tbl-overview}
+
+## Illustrations {#sec-illustrations}
+
+For a simple illustration of basic Poisson and NB count regression the
+`quine` data from the [MASS]{.pkg} package is used. This provides the number
+of `Days` that children were absent from school in Australia in a
+particular year, along with several covariates that can be employed as regressors. The data can be loaded by
+
+```{R}
+#| prompt: true
+data("quine", package = "MASS")
+```
+and a basic frequency distribution of the response variable is displayed in
+@fig-quine.
+
+:::{.callout}
+For code input and output, the style files provide dedicated environments.
+Either the "agnostic" `{CodeInput}` and `{CodeOutput}` can be used
+or, equivalently, the environments `{Sinput}` and `{Soutput}` as
+produced by [Sweave]{.fct} or [knitr]{.pkg} when using the `render_sweave()`
+hook. Please make sure that all code is properly spaced, e.g., using
+`y = a + b * x` and _not_ `y=a+b*x`. Moreover, code input should use "the usual" command prompt in the respective software system. For
+[R]{.proglang} code, the prompt `R> ` should be used with `+  ` as
+the continuation prompt. Generally, comments within the code chunks should be
+avoided -- and made in the regular {{< latex >}} text instead. Finally, empty lines before and after code input/output should be avoided (see above).
+:::
+
+::: {#fig-quine}
+
+![](article-visualization.pdf)
+
+Frequency distribution for number of days absent from school.
+:::
+
+As a first model for the `quine` data, we fit the basic Poisson regression
+model. (Note that JSS prefers when the second line of code is indented by two
+spaces.)
+
+```{R}
+#| prompt: true
+m_pois <- glm(Days ~ (Eth + Sex + Age + Lrn)^2, data = quine, family = poisson)
+```
+
+To account for potential overdispersion we also consider a negative binomial
+GLM.
+
+```{R}
+#| prompt: true
+library("MASS")
+m_nbin <- glm.nb(Days ~ (Eth + Sex + Age + Lrn)^2, data = quine)
+```
+
+In a comparison with the BIC the latter model is clearly preferred.
+
+```{R}
+#| prompt: true
+library("MASS")
+BIC(m_pois, m_nbin)
+```
+
+Hence, the full summary of that model is shown below.
+
+```{R}
+#| prompt: true
+summary(m_nbin)
+```
+
+## Summary and discussion {#sec-summary}
+
+:::{.callout}
+
+As usual…
+
+:::
+
+## Computational details {.unnumbered}
+
+:::{.callout}
+
+If necessary or useful, information about certain computational details
+such as version numbers, operating systems, or compilers could be included
+in an unnumbered section. Also, auxiliary packages (say, for visualizations,
+maps, tables, …) that are not cited in the main text can be credited here.
+
+:::
+
+The results in this paper were obtained using [R]{.proglang}~3.4.1 with the
+[MASS]{.pkg}~7.3.47 package. [R]{.proglang} itself and all packages used are available from the Comprehensive [R]{.proglang} Archive Network (CRAN) at
+[https://CRAN.R-project.org/].
+
+
+## Acknowledgments {.unnumbered}
+
+:::{.callout}
+
+All acknowledgments (note the AE spelling) should be collected in this
+unnumbered section before the references. It may contain the usual information
+about funding and feedback from colleagues/reviewers/etc. Furthermore,
+information such as relative contributions of the authors may be added here
+(if any).
+
+:::
+
+## References {.unnumbered}
+
+:::{#refs}
+
+:::
+
+{{< pagebreak >}}
+
+## More technical details {#sec-techdetails .unnumbered}
+
+:::{.callout}
+
+Appendices can be included after the bibliography (with a page break). Each
+section within the appendix should have a proper section title (rather than
+just _Appendix_).
+
+For more technical style details, please check out JSS's style FAQ at
+[https://www.jstatsoft.org/pages/view/style#frequently-asked-questions]
+which includes the following topics:
+
+- Title vs. sentence case.
+- Graphics formatting.
+- Naming conventions.
+- Turning JSS manuscripts into [R]{.proglang} package vignettes.
+- Trouble shooting.
+- Many other potentially helpful details…
+
+:::
+
+## Using BibTeX {#sec-bibtex .unnumbered}
+
+:::{.callout}
+
+References need to be provided in a {{< bibtex >}} file (`.bib`). All
+references should be made with `@cite` syntax. This commands yield different
+formats of author-year citations and allow to include additional details (e.g.,pages, chapters, \dots) in brackets. In case you are not familiar with these
+commands see the JSS style FAQ for details.
+
+Cleaning up {{< bibtex >}} files is a somewhat tedious task -- especially
+when acquiring the entries automatically from mixed online sources. However,
+it is important that informations are complete and presented in a consistent
+style to avoid confusions. JSS requires the following format.
+
+- item JSS-specific markup (`\proglang`, `\pkg`, `\code`) should be used in the references.
+- item Titles should be in title case.
+- item Journal titles should not be abbreviated and in title case.
+- item DOIs should be included where available.
+- item Software should be properly cited as well. For [R]{.proglang} packages `citation("pkgname")` typically provides a good starting point.
+
+::: -->

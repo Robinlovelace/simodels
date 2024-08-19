@@ -2,3 +2,10 @@
 .Rhistory
 .RData
 .Ruserdata
+*.gpkg
+*.pdf
+*.html
+paper/paper_files/
+*.zip
+*.geojson
+*cache*

@@ -1,4 +1,4 @@
-First submission to CRAN after various checks.
+Updated URL release.
 
 ## R CMD check results
 

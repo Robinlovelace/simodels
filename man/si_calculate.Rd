@@ -50,7 +50,7 @@ and user-specified function
 \examples{
 od = si_to_od(si_zones, si_zones, max_dist = 4000)
 fun_dd = function(d = "distance_euclidean", beta = 0.3) exp(-beta * d / 1000)
-fun_dd(d = (1:5)*1000)
+fun_dd(d = (1:5) * 1000)
 od_dd = si_calculate(od, fun = fun_dd, d = distance_euclidean)
 plot(od$distance_euclidean, od_dd$interaction)
 fun = function(O, n, d, beta) O * n * exp(-beta * d / 1000)
@@ -60,6 +60,14 @@ head(od_output)
 plot(od$distance_euclidean, od_output$interaction)
 od_pconst = si_calculate(od, fun = fun, beta = 0.3, O = origin_all,
   n = destination_all, d = distance_euclidean, constraint_production = origin_all)
+# Origin totals in OD data should equal origin totals in zone data
+library(dplyr)
+origin_totals_zones = od_pconst |>
+  group_by(geo_code = O) |>
+  summarise(all_od = sum(interaction)) |>
+  sf::st_drop_geometry()
+zones_joined = left_join(si_zones, origin_totals_zones)
+plot(zones_joined$all, zones_joined$all_od)
 plot(od_pconst$distance_euclidean, od_pconst$interaction)
 plot(od_pconst["interaction"], logz = TRUE)
 od_dd = si_calculate(od, fun = fun_dd, d = distance_euclidean, output_col = "res")
