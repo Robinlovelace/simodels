@@ -5,7 +5,7 @@ articles:
   simodels: simodels.html
   sims-first-principles: sims-first-principles.html
   articles/validation: validation.html
-last_built: 2024-08-21T12:20Z
+last_built: 2024-08-21T12:26Z
 urls:
   reference: https://robinlovelace.github.io/simodels/reference
   article: https://robinlovelace.github.io/simodels/articles
