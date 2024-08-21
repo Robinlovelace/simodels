@@ -1,3 +1,5 @@
+# simodels 0.2.0
+
 # simodels 0.1.0 (2024-01)
 
 * Fix silent bug introduced by updatream changes to `dplyr`
