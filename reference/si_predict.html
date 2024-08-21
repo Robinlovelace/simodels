@@ -110,8 +110,8 @@ column. <code>"interaction"</code> by default.</p></dd>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">od</span> <span class="op">=</span> <span class="fu"><a href="si_to_od.html">si_to_od</a></span><span class="op">(</span><span class="va">si_zones</span>, <span class="va">si_zones</span>, max_dist <span class="op">=</span> <span class="fl">4000</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 1695 OD pairs remaining after removing those with a distance greater than 4000 meters:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 15% of all possible OD pairs</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Converting p to centroids</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> lon-lat points</span>
 <span class="r-in"><span><span class="va">m</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">od</span><span class="op">$</span><span class="va">origin_all</span> <span class="op">~</span> <span class="va">od</span><span class="op">$</span><span class="va">origin_bicycle</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">od_updated</span> <span class="op">=</span> <span class="fu">si_predict</span><span class="op">(</span><span class="va">od</span>, <span class="va">m</span><span class="op">)</span></span></span>
 </code></pre></div>
