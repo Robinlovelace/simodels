@@ -1,21 +1,21 @@
 #' Prepare OD data frame
 #'
 #' Prepares an OD data frame that next could be used to
-#' estimate movement between origins and destinations 
+#' estimate movement between origins and destinations
 #' with a spatial interaction model.
-#' 
+#'
 #' In most origin-destination datasets the spatial entities that constitute
 #' origins (typically administrative zones) also represent destinations.
 #' In this 'unipartite' case `origins` and `destinations` should be passed
 #' the same object, an `sf` data frame representing administrative zones.
-#' 
+#'
 #' 'Bipartite' datasets, by contrast, represent
 #' "spatial interaction systems where origins cannot act as
-#' destinations and vice versa" (Hasova et al. [2022](https://lenkahas.com/files/preprint.pdf)). 
-#' 
+#' destinations and vice versa" (Hasova et al. [2022](https://lenkahas.com/files/preprint.pdf)).
+#'
 #'  a different
 #' `sf` object can be passed to the `destinations` argument.
-#' 
+#'
 #' @param origins `sf` object representing origin locations/zones
 #' @param destinations `sf` object representing destination locations/zones
 #' @param max_dist Euclidean distance in meters (numeric).
@@ -45,18 +45,31 @@
 #' nrow(odsf) # no intrazonal flows
 #' plot(odsf)
 si_to_od = function(origins, destinations, max_dist = Inf, intrazonal = TRUE) {
-  if(identical(origins, destinations)) {
-    od_df = od::points_to_od(origins)
-  } else {
-    od_df = od::points_to_od(origins, destinations)
+  nngeo_installed = requireNamespace("nngeo", quietly = TRUE)
+  if (!nngeo_installed && max_dist < Inf) {
+    message("The nngeo package is required for fast nearest neighbor search")
   }
+  if (max_dist < Inf && nngeo_installed) {
+    if (identical(origins, destinations)) {
+      od_df = od::points_to_od(origins, max_dist = max_dist)
+    } else {
+      od_df = od::points_to_od(origins, destinations, max_dist = max_dist)
+    }
+  } else {
+    if (identical(origins, destinations)) {
+      od_df = od::points_to_od(origins)
+    } else {
+      od_df = od::points_to_od(origins, destinations)
+    }
+  }
+
   od_df$distance_euclidean = geodist::geodist(
     x = od_df[c("ox", "oy")],
     y = od_df[c("dx", "dy")],
     paired = TRUE
   )
   # Max dist check
-  if(max(od_df$distance_euclidean) > max_dist) {
+  if (max(od_df$distance_euclidean) > max_dist && !nngeo_installed) {
     nrow_before = nrow(od_df)
     od_df = od_df[od_df$distance_euclidean <= max_dist, ]
     nrow_after = nrow(od_df)
@@ -68,16 +81,16 @@ si_to_od = function(origins, destinations, max_dist = Inf, intrazonal = TRUE) {
       pct_kept, "% of all possible OD pairs"
     )
   }
-  
+
   # Intrazonal check
-  if(!intrazonal){
+  if (!intrazonal) {
     od_df = dplyr::filter(od_df, distance_euclidean > 0)
   }
-  
+
   od_sfc = od::odc_to_sfc(od_df[3:6])
   sf::st_crs(od_sfc) = 4326 # todo: add CRS argument?
   od_df = od_df[-c(3:6)]
-  
+
   # join origin attributes
   origins_to_join = sf::st_drop_geometry(origins)
   names(origins_to_join) = paste0("origin_", names(origins_to_join))

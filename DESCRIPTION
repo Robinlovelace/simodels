@@ -30,6 +30,7 @@ Suggests:
     ggplot2,
     knitr,
     minpack.lm,
+    nngeo,
     rmarkdown,
     tmap
 VignetteBuilder: 
