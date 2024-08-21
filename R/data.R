@@ -114,7 +114,7 @@ NULL
 #' This dataset contains the number of trips destined for each workplace zone (WPZ) in Leeds.
 #' 
 #' See [wicid.ukdataservice.ac.uk](https://wicid.ukdataservice.ac.uk/flowdata/cider/wicid/downloads.php) for details on the data source
-#' and [data-raw/leeds_wpz.R](data-raw/si_oa_wpz.qmd) for details on how the example dataset was generated.
+#' and the file `data-raw/si_oa_wpz.qmd` in the package repo for details on how the example dataset was generated.
 #' 
 #' @docType data
 #' @keywords datasets
