@@ -23,7 +23,7 @@ Depends:
 Imports: 
     dplyr,
     geodist,
-    od (>= 0.4.0),
+    od (>= 0.5.1),
     rlang,
     sf
 Suggests: 
