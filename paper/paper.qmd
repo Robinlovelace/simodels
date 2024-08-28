@@ -232,6 +232,137 @@ tm_shape(zones) +
 ## Interaction calculation {#sec-interaction}
 
 
+## Interaction modelling {#sec-models}
+
+## Examples {#sec-examples}
+
+```{r validation}
+# od_dfjc = inner_join(od_dfj |> select(-all), od)
+# od_dfjc |> 
+#   ggplot() +
+#   geom_point(aes(all, flow_constrained))
+# cor(od_dfjc$all, od_dfjc$flow_constrained)^2
+```
+
+### Commuter flows in Leeds, UK
+
+See https://github.com/acteng/netgen/blob/main/odgen.md for ideas on this with pupils data.
+
+And https://github.com/acteng/netgen/pull/10/files
+
+```{r}
+od_observed = simodels::si_oa_wpz
+dim(od_observed)
+zones = simodels::si_oa_wpz_o
+destinations = simodels::si_oa_wpz_d
+```
+
+```{r}
+od_modelled_max_5km = si_to_od(zones, destinations)
+od_modelled = si_to_od(zones, destinations, max_dist = 5000)
+dim(od_modelled)
+names(od_modelled)
+```
+
+```{r}
+#| label: simple-model
+#| echo: true
+gravity_model = function(beta, d, m, n) {
+  m * n * exp(-beta * d / 1000)
+} 
+# perform SIM
+od_res = simodels::si_calculate(
+  od_modelled,
+  fun = gravity_model,
+  d = distance_euclidean,
+  m = origin_n_o,
+  n = destination_n_d,
+#   constraint_production = origin_all,
+  beta = 0.8
+  )
+od_res_df = od_res |>
+  sf::st_drop_geometry()
+```
+
+```{r}
+names(od_observed)
+od_joined = left_join(
+  od_res_df,
+  od_observed |>
+    select(O = OA11CD, D = wz11cd, n_observed = n)
+)
+```
+
+
+```{r}
+#| label: plot_od_fit
+#| include: false
+# Aim: create function that takes in od_res and returns a ggplot object
+plot_od_fit = function(od_res, title = "(unconstrained)") {
+  res_o = od_res |>
+    group_by(O) |>
+    summarise(
+      Observed = first(origin_n_o),
+      Modelled = sum(interaction),
+      Type = "Origin"
+    )
+  res_d = od_res |>
+    group_by(D) |>
+    summarise(
+      Observed = first(destination_n_d),
+      Modelled = sum(interaction),
+      Type = "Destination"
+    )
+  res_od = od_res |>
+    transmute(
+      Observed = n_observed,
+      Modelled = interaction,
+      Type = "OD"
+    )
+  res_combined = bind_rows(res_o, res_d, res_od) |>
+    # Create ordered factor with types:
+    mutate(
+      Type = factor(Type, levels = c("Origin", "Destination", "OD"))
+    )
+  rsq_o = cor(res_o$Observed, res_o$Modelled, use = "complete.obs")^2
+  rsq_d = cor(res_d$Observed, res_d$Modelled, use = "complete.obs")^2
+  rsq_od = cor(res_od$Observed, res_od$Modelled, use = "complete.obs")^2
+  rsq_summary = data.frame(
+    rsq = c(rsq_o, rsq_d, rsq_od) |> round(3),
+    Type = c("Origin", "Destination", "OD")
+  )
+  g_combined = res_combined |>
+    left_join(rsq_summary) |>
+    # Add rsquared info:
+    mutate(Type = paste0(Type, " (R-squared: ", rsq, ")")) |>
+    # Update factor so it's ordered (reverse order):
+    mutate(
+      Type = factor(Type, levels = unique(Type))
+    ) |>
+    ggplot() +
+      geom_point(aes(x = Observed, y = Modelled)) +
+      geom_smooth(aes(x = Observed, y = Modelled), method = "lm") +
+      facet_wrap(~Type, scales = "free") +
+      labs(
+        title = paste0("Model fit at origin, destination and OD levels ", title),
+        x = "Observed",
+        y = "Modelled"
+      )
+  g_combined
+}
+# Test it:
+g = plot_od_fit(od_joined)
+```
+
+```{r}
+#| label: plot-od-fit
+#| fig-cap: Model fit at origin, destination and OD levels
+g
+```
+
+### Travel to school in York, UK
+
+
 
 
 ```{r}
@@ -423,18 +554,6 @@ res_combined |>
       x = "Observed",
       y = "Modelled"
     )
-```
-
-## Interaction modelling {#sec-models}
-
-## Examples {#sec-examples}
-
-```{r validation}
-od_dfjc = inner_join(od_dfj |> select(-all), od)
-od_dfjc |> 
-  ggplot() +
-  geom_point(aes(all, flow_constrained))
-cor(od_dfjc$all, od_dfjc$flow_constrained)^2
 ```
 
 ## Conclusions
