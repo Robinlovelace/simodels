@@ -1,6 +1,24 @@
 ---
 title: "simodels: A package for Spatial Interaction Modelling"
-# Note: you need to have the relevant quarto extension installed:
+bibliography: bibliography.bib
+execute: 
+  messages: false
+  warning: false 
+  echo: false
+---
+
+```{r}
+#| eval: false
+#| echo: false
+# Compile to docx and jss-pdf formats:
+quarto::quarto_render("paper/paper.qmd", output_format = "docx")
+quarto::quarto_render("paper/paper.qmd", output_format = "jss-pdf")
+system("gh release upload v0.1.0 paper/paper.docx --clobber")
+system("gh release upload v0.1.0 paper/paper.pdf --clobber")
+```
+
+<!-- 
+# Note: you need to have the relevant quarto extension installed for the JSS version:
 # quarto add quarto-journals/jss
 # After that put the following in the yaml:
 format:
@@ -35,18 +53,17 @@ abstract: |
 
 keywords: [JSS, style guide, comma-separated, not capitalized, R]
 keywords-formatted: [JSS, style guide, comma-separated, not capitalized, "[R]{.proglang}"]
-
-bibliography: bibliography.bib
-execute: 
-  messages: false
-  warning: false 
-  echo: false
----
-
-
-<!-- 
-
 -->
+
+
+## Ideas 
+
+- Conceptual diagram showing decision points when developing SIMs, e.g.:
+  - Unipartite or bipartite?
+  - Unconstrained, production-constrained, attraction-constrained, or doubly-constrained? Or other?
+  - Calculation and parameter optimisation or regression model?
+- Open access dataset?
+
 
 ```{r}
 #| include: false
@@ -112,7 +129,7 @@ The paper is structured as follows.
 @sec-od describes the process of converting spatial data to Origin-Destination (OD) data, a key step in SIMs, and the functions in the package that facilitate this process.
 @sec-interaction describes the process of calculating interaction with pre-defined parameters with the `si_calculate()` function.
 
-## Basic implementation of SIMs {#sec-base}
+### Basic implementation of SIMs {#sec-base}
 
 Before describing the functions in the package, it's worth implementing SIMs from first principles, to gain an understanding of how they work and to highlight the benefits of using the package.
 The code presented below was written before the functions in the [simodels]{.pkg} package were developed, building on @dennett_modelling_2018.
@@ -227,12 +244,20 @@ tm_shape(zones) +
   tm_lines("flow_constrained")
 ```
 
-## OD data preparation {#sec-od}
+## The simodels package {#sec-simodels}
 
-## Interaction calculation {#sec-interaction}
+### OD data preparation {#sec-od}
+
+### Interaction calculation {#sec-interaction}
 
 
-## Interaction modelling {#sec-models}
+### Interaction modelling {#sec-models}
+
+### Optimising/parameter estimation {#sec-optimisation}
+
+See https://github.com/acteng/netgen/blob/main/odgen.md#optimising-the-value-of-beta for ideas on this.
+
+### Network distance measures {#sec-network}
 
 ## Examples {#sec-examples}
 
@@ -244,7 +269,17 @@ tm_shape(zones) +
 # cor(od_dfjc$all, od_dfjc$flow_constrained)^2
 ```
 
-### Commuter flows in Leeds, UK
+### Commuter flows between large areas in Leeds, UK
+
+```{r}
+od = simodels::si_od_census
+zones = simodels::si_zones
+nrow(od)
+sum(od$all)
+sum(zones$all)
+```
+
+### Commuter flows between small areas in Leeds, UK
 
 See https://github.com/acteng/netgen/blob/main/odgen.md for ideas on this with pupils data.
 
@@ -258,10 +293,46 @@ destinations = simodels::si_oa_wpz_d
 ```
 
 ```{r}
-od_modelled_max_5km = si_to_od(zones, destinations)
-od_modelled = si_to_od(zones, destinations, max_dist = 5000)
+#| echo: false
+#| eval: false
+od_observed_o = od_observed |> 
+  group_by(OA11CD) |> 
+  summarise(n = sum(n))
+od_observed_d = od_observed |> 
+  group_by(wz11cd) |> 
+  summarise(n = sum(n))
+zones_joined = left_join(
+  zones |>
+    select(OA11CD, n_o) |>
+    sf::st_drop_geometry(),
+  od_observed_o
+)
+head(zones_joined)
+cor(zones_joined$n_o, zones_joined$n)
+
+# For destinations:
+destinations_joined = left_join(
+  destinations |>
+    select(wz11cd, n_d) |>
+    sf::st_drop_geometry(),
+  od_observed_d
+)
+cor(destinations_joined$n_d, destinations_joined$n)
+```
+
+```{r}
+# TODO: test if the max_dist arg actually makes it faster for large datasets
+system.time({
+  od_modelled = si_to_od(zones, destinations)
+})
+od_modelled = si_to_od(zones, destinations)
+system.time({
+  od_modelled_max_5km = si_to_od(zones, destinations, max_dist = 3000)
+})
+od_modelled_max_5km = si_to_od(zones, destinations, max_dist = 3000)
 dim(od_modelled)
 names(od_modelled)
+dim(od_modelled_max_5km)
 ```
 
 ```{r}
@@ -439,7 +510,6 @@ names(od_from_si)
 ```
 
 Let's run a simple model:
-
 
 ```{r}
 #| label: simple-model-york
