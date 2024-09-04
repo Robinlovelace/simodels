@@ -58,6 +58,7 @@ keywords-formatted: [JSS, style guide, comma-separated, not capitalized, "[R]{.p
 
 
 ## Ideas 
+xx
 
 - Conceptual diagram showing decision points when developing SIMs, e.g.:
   - Unipartite or bipartite?
