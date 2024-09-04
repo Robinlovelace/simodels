@@ -1,6 +1,7 @@
 ---
 title: "simodels: A package for Spatial Interaction Modelling"
 bibliography: bibliography.bib
+number-sections: true
 execute: 
   messages: false
   warning: false 
@@ -271,13 +272,26 @@ See https://github.com/acteng/netgen/blob/main/odgen.md#optimising-the-value-of-
 
 ### Commuter flows between large areas in Leeds, UK
 
+The package comes with an example OD dataset from Leeds, UK, which can be used to demonstrate the SIMs.
+Let's model travel to work in a major UK city.
+We'll first load the inputs, representing administrative zones in Leeds (`si_zones`) and the OD data (`si_od_census`), which we will rename for clarity:
+
 ```{r}
+#| echo: true
 od = simodels::si_od_census
 zones = simodels::si_zones
 nrow(od)
 sum(od$all)
 sum(zones$all)
+names(od)
 ```
+
+As shown in the code and outputs above, the input dataset represents the commutes made by `r sum(od$all) |> format(big.mark = ",")` people in Leeds.
+We have the breakdown of trips by mode, with `r sum(od$car_driver) |> format(big.mark = ",")` people driving to work, `r sum(od$car_passenger) |> format(big.mark = ",")` people car sharing, `r sum(od$bus) |> format(big.mark = ",")`, `r sum(od$bicycle) |> format(big.mark = ",")` cycling, and `r sum(od$foot) |> format(big.mark = ",")` people walking.
+A hypothetical research question to inform policy with reference to this dataset is: "How would travel demand change if transport costs increase?".
+Before answering this question, we need to develop a baseline model to predict the travel between origins and destinations as a function of distance (and other factors).
+<!-- (Note: key other factors to test are 'network distance' representing intervening opportunities, and 'population' representing the number of potential travellers). -->
+
 
 ### Commuter flows between small areas in Leeds, UK
 
