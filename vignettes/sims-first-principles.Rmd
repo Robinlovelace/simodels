@@ -100,9 +100,10 @@ od_df = od::points_to_od(centroids)
 od_sfc = od::odc_to_sfc(od_df[3:6])
 sf::st_crs(od_sfc) = 4326
 od_df$length = sf::st_length(od_sfc)
-od_df = od_df %>% transmute(
-  O, D, length = as.numeric(length) / 1000,
-  flow = NA, fc = NA
+od_df = od_df %>%
+  transmute(
+    O, D, length = as.numeric(length) / 1000,
+    flow = NA, fc = NA
   )
 od_df = sf::st_sf(od_df, geometry = od_sfc, crs = 4326)
 ```
