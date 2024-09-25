@@ -446,9 +446,9 @@ g = plot_od_fit(od_joined)
 g
 ```
 
-### Travel to school in York, UK
+### Travel to school in London
 
-
+<!-- TODO: rewrite with London data: https://data.london.gov.uk/dataset/london-schools-atlas -->
 
 
 ```{r}
