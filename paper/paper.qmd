@@ -50,7 +50,7 @@ format:
 #   i.e., avoid inclusion of packages/commands that are not necessary.
 #   For outlining the typical structure of a JSS article some brief text snippets are employed that have been inspired by @ZeileisKleiberJackman2008, discussing count data regression in [R]{.proglang}. Editorial comments and instructions are marked by vertical bars.
 abstract: |
-  This article introduces the [simodels]{.pkg} package for spatial interaction modelling in R. The package provides functions for estimating spatial interaction models, including unconstrained gravity models and models that are production-, attraction-, or doubly-constrained.
+  This article introduces the [simodels]{.pkg} package for spatial interaction modelling in R. The package provides a flexible framework for estimating various types of spatial interaction models, including unconstrained gravity models and models that are production-, attraction-, or doubly-constrained. [simodels]{.pkg} offers efficient implementations of traditional spatial interaction models as well as more recent innovations, supporting both 'monopartite' and 'bipartite' spatial interaction scenarios. By streamlining the process of implementing SIMs in R, the package enables researchers and practitioners to more easily explore, analyze, and predict spatial interactions in various contexts, from transportation planning to economic geography.
 
 keywords: [JSS, style guide, comma-separated, not capitalized, R]
 keywords-formatted: [JSS, style guide, comma-separated, not capitalized, "[R]{.proglang}"]
@@ -78,65 +78,63 @@ knitr::opts_chunk$set(
 
 ## Introduction
 
-Spatial Interaction Models (SIMs) are mathematical models for estimating movement between spatial entities.
-First developed in the late 1960s and early 1970, SIMs have become a key tool for transport modelling with substantial practical applications [@boyce_forecasting_2015].
+Spatial Interaction Models (SIMs) are mathematical models for estimating movement between spatial entities. First developed in the late 1960s and early 1970s, SIMs have become a key tool for transport modelling with substantial practical applications [@boyce_forecasting_2015]. These models have wide-ranging applications in urban planning, transportation studies, migration analysis, and various other fields where understanding and predicting spatial flows is crucial.
 
-An early and highly influential type of SIM was the 'gravity model', defined by @wilson_family_1971 as follows (in a paper that explored many extensions of this formulation and is influential enough to merit being quoted at length):
+The 'gravity model', an early and highly influential type of SIM, was defined by @wilson_family_1971 as follows:
 
 $$
 T_{i j}=K \frac{W_{i}^{(1)} W_{j}^{(2)}}{c_{i j}^{n}}
 $$
 
-"where $T_{i j}$ is a measure of the interaction between zones $i$ and $W_{i}^{(1)}$ is a measure of the 'mass term' associated with zone $z_i$, $W_{j}^{(2)}$ is a measure of the 'mass term' associated with zone $z_j$, and $c_{ij}$ is a measure of the distance, or generalised cost of travel, between zone $i$ and zone $j$".
-$K$ is a 'constant of proportionality' and $n$ is a parameter to be estimated.
+where $T_{i j}$ is a measure of the interaction between zones $i$ and $j$, $W_{i}^{(1)}$ and $W_{j}^{(2)}$ are 'mass terms' associated with zones $i$ and $j$ respectively, $c_{ij}$ is a measure of the distance or generalized cost of travel between the zones, $K$ is a 'constant of proportionality', and $n$ is a parameter to be estimated.
 
-We follow @simini_universal_2012 in replacing the $W$ terms above with $m$ and $n$ for origins and destinations respectively.
-This seminal definition of the unconstrained 'gravity model' can be written in its "multiplicative form" as follows @dennett_modelling_2018, notation that we will use in this paper:
+Following @simini_universal_2012, we replace the $W$ terms with $m$ and $n$ for origins and destinations respectively. The unconstrained 'gravity model' can then be written in its "multiplicative form" as:
 
 $$
 T_{ij} = k m_i^{\mu} n_j^{*} d_{ij} \beta
 $$
 
-It is unconstrained because there is no limit on the amount of interaction (we will refer to the more concrete but semantically equivalent term "number of trips") in this paper.
-There are four main types of traditional SIMs  [@wilson_family_1971]:
+where $k$ is a balancing factor, $m_i$ and $n_j$ are origin and destination masses respectively, $d_{ij}$ is the distance between $i$ and $j$, and $\beta$ is a distance decay parameter [@dennett_modelling_2018].
 
-- Unconstrained
-- Production-constrained
-- Attraction-constrained
-- Doubly-constrained
+There are four main types of traditional SIMs [@wilson_family_1971]:
 
-For the purposes of this project, we will focus on production-constrained SIMs.
-These can be defined as follows [@wilson_family_1971]:
+1. Unconstrained
+2. Production-constrained
+3. Attraction-constrained
+4. Doubly-constrained
+
+This paper focuses primarily on production-constrained SIMs, defined as:
 
 $$
 T_{ij} = A_iO_in_jf(c_{ij})
 $$
 
-where $A$ is a balancing factor defined as:
+where $A_i$ is a balancing factor:
 
 $$
 A_{i}=\frac{1}{\sum_{j} m_{j} \mathrm{f}\left(c_{i j}\right)}
 $$
 
-$O_i$ is analogous to the travel demand in zone $i$, which can be roughly approximated by its population.
+and $O_i$ represents the total outflows from origin $i$, which can be approximated by its population in many applications.
 
-More recent innovations in SIMs including the 'radiation model' @simini_universal_2012.
-See @lenormand_systematic_2016 for a comparison of alternative approaches.
-The purpose of the package is not to implement all available models, but to provide a flexible framework to speed-up the process of implementing SIMs in [R]{.proglang}.
-The package supports a wide range of models and can be used to fit unconstrained, production-constrained, attraction-constrained, and doubly-constrained models.
-Furthermore, the package works equally well for 'bipartite' SIMs, in which origin and destination points are different (Hasova et al. [2022](https://lenkahas.com/files/preprint.pdf)).
+Recent innovations in SIMs include the 'radiation model' [@simini_universal_2012], and various hybrid approaches [@lenormand_systematic_2016]. While the [simodels]{.pkg} package does not aim to implement all available models, it provides a flexible framework to speed up the process of implementing SIMs in [R]{.proglang}.
 
-The paper is structured as follows.
-@sec-base demonstrates how to implement an unconstrained SIM in base [R]{.proglang}, highlighting the need for a package to streamline the process.
-@sec-od describes the process of converting spatial data to Origin-Destination (OD) data, a key step in SIMs, and the functions in the package that facilitate this process.
-@sec-interaction describes the process of calculating interaction with pre-defined parameters with the `si_calculate()` function.
+The package supports a wide range of models and can be used to fit unconstrained, production-constrained, attraction-constrained, and doubly-constrained models. Furthermore, it works equally well for 'bipartite' SIMs, where origin and destination points are different [@hasova2022].
 
-### Basic implementation of SIMs {#sec-base}
+This paper is structured as follows:
 
-Before describing the functions in the package, it's worth implementing SIMs from first principles, to gain an understanding of how they work and to highlight the benefits of using the package.
-The code presented below was written before the functions in the [simodels]{.pkg} package were developed, building on @dennett_modelling_2018.
-The aim is to demonstrate a common way of running SIMs, in a for loop, rather than using vectorised operations used in [simodels]{.pkg}.
-In this section we the [tmap]{.pkg} and [tidyverse]{.pkg} packages for data manipulation and visualisation, using only base [R]{.proglang} functions for the SIM calculations (see the paper's source code for details).
+- Section 2 demonstrates how to implement an unconstrained SIM in base [R]{.proglang}, highlighting the need for a package to streamline the process.
+- Section 3 describes the process of converting spatial data to Origin-Destination (OD) data, a key step in SIMs, and the functions in the package that facilitate this process.
+- Section 4 explains the process of calculating interaction with pre-defined parameters using the `si_calculate()` function.
+- Section 5 explores various interaction models that can be implemented using the package.
+- Section 6 provides examples of applying the package to real-world datasets.
+- Section 7 concludes with a summary of the package's capabilities and its potential impact on the field of spatial interaction modeling.
+
+## Basic implementation of SIMs
+
+Before describing the functions in the [simodels]{.pkg} package, it's worth implementing SIMs from first principles to gain an understanding of how they work and to highlight the benefits of using the package. The code presented below was written before the functions in the [simodels]{.pkg} package were developed, building on @dennett_modelling_2018. The aim is to demonstrate a common way of running SIMs using a for loop, rather than the vectorized operations used in [simodels]{.pkg}.
+
+We'll use the [tmap]{.pkg} and [tidyverse]{.pkg} packages for data manipulation and visualization, using only base [R]{.proglang} functions for the SIM calculations.
 
 ```{r}
 #| label: load-packages
@@ -146,7 +144,7 @@ library(patchwork)
 devtools::load_all()
 ```
 
-The package contains a number of datasets that can be used to demonstrate the SIMs, as shown below:
+The [simodels]{.pkg} package contains several datasets that can be used to demonstrate SIMs:
 
 - `si_zones`: a dataset of zones with population data
 - `si_centroids`: a dataset of zone centroids
@@ -161,8 +159,7 @@ od = simodels::si_od_census
 tm_shape(zones) + tm_polygons("all", palette = "viridis")
 ```
 
-We'll use the [od](.pkg) package to convert the geographic data to OD data.
-We set the `length` column to the length of the line between the centroids of the zones, in km, and set the coordinate reference system (CRS) to WGS84 (EPSG:4326), as follows:
+We'll use the [od]{.pkg} package to convert the geographic data to OD data. We set the `length` column to the length of the line between the centroids of the zones, in km, and set the coordinate reference system (CRS) to WGS84 (EPSG:4326):
 
 ```{r}
 #| echo: true
@@ -178,7 +175,7 @@ od_df = od_df |>
 od_df = sf::st_sf(od_df, geometry = od_sfc, crs = 4326)
 ```
 
-An unconstrained spatial interaction model can be written as follows, with a more-or-less arbitrary value for `beta` which can be optimised later:
+An unconstrained spatial interaction model can be implemented as follows, with an initial arbitrary value for `beta` which can be optimized later:
 
 ```{r}
 #| label: unconstrained
@@ -220,11 +217,13 @@ od_df |>
   geom_point(aes(length, fc))
 ```
 
-We can make this production constrained by dividing the estimated interaction by the difference between the sum of the estimated interactions and the sum of the observed interactions per origin.
+These visualizations provide insights into the spatial patterns of interactions predicted by the model. The desire lines map shows the strongest predicted flows, while the scatter plot reveals the exponential decay of interaction strength with distance.
+
+We can make this model production-constrained by dividing the estimated interaction by the difference between the sum of the estimated interactions and the sum of the observed interactions per origin:
 
 ```{r}
 #| label: constrained
-#| include: false
+#| echo: true
 od_dfj = left_join(
   od_df,
   zones |> select(O = geo_code, all) |> sf::st_drop_geometry()
@@ -234,225 +233,19 @@ od_dfj = od_dfj |>
   mutate(flow_constrained = flow / sum(flow) * first(all)) |>
   ungroup()
 sum(od_dfj$flow_constrained) == sum(zones$all)
-od_top = od_dfj |> 
-  filter(O != D) |> 
-  arrange(desc(flow_constrained)) |>
-  slice(seq(2000)) |>
-  arrange(flow_constrained)
-
-tm_shape(zones) +
-  tm_borders() +
-  tm_shape(od_top) +
-  tm_lines("flow_constrained")
 ```
 
-## The simodels package {#sec-simodels}
+This constraint ensures that the total outflows from each origin in the model match the observed total outflows, providing a more realistic representation of the spatial interactions.
 
-### OD data preparation {#sec-od}
+## OD data preparation
 
-### Interaction calculation {#sec-interaction}
+Origin-Destination (OD) data is fundamental to spatial interaction modeling. It represents the flows or interactions between pairs of geographic locations, typically stored as a matrix or long-format dataset. The [simodels]{.pkg} package provides functions to facilitate the preparation and manipulation of OD data.
 
-
-### Interaction modelling {#sec-models}
-
-### Optimising/parameter estimation {#sec-optimisation}
-
-See https://github.com/acteng/netgen/blob/main/odgen.md#optimising-the-value-of-beta for ideas on this.
-
-### Network distance measures {#sec-network}
-
-## Examples {#sec-examples}
-
-```{r validation}
-# od_dfjc = inner_join(od_dfj |> select(-all), od)
-# od_dfjc |> 
-#   ggplot() +
-#   geom_point(aes(all, flow_constrained))
-# cor(od_dfjc$all, od_dfjc$flow_constrained)^2
-```
-
-### Commuter flows between large areas in Leeds, UK
-
-The package comes with an example OD dataset from Leeds, UK, which can be used to demonstrate the SIMs.
-Let's model travel to work in a major UK city.
-We'll first load the inputs, representing administrative zones in Leeds (`si_zones`) and the OD data (`si_od_census`), which we will rename for clarity:
-
-```{r}
-#| echo: true
-od = simodels::si_od_census
-zones = simodels::si_zones
-nrow(od)
-sum(od$all)
-sum(zones$all)
-names(od)
-```
-
-As shown in the code and outputs above, the input dataset represents the commutes made by `r sum(od$all) |> format(big.mark = ",")` people in Leeds.
-We have the breakdown of trips by mode, with `r sum(od$car_driver) |> format(big.mark = ",")` people driving to work, `r sum(od$car_passenger) |> format(big.mark = ",")` people car sharing, `r sum(od$bus) |> format(big.mark = ",")`, `r sum(od$bicycle) |> format(big.mark = ",")` cycling, and `r sum(od$foot) |> format(big.mark = ",")` people walking.
-A hypothetical research question to inform policy with reference to this dataset is: "How would travel demand change if transport costs increase?".
-Before answering this question, we need to develop a baseline model to predict the travel between origins and destinations as a function of distance (and other factors).
-<!-- (Note: key other factors to test are 'network distance' representing intervening opportunities, and 'population' representing the number of potential travellers). -->
-
-
-### Commuter flows between small areas in Leeds, UK
-
-See https://github.com/acteng/netgen/blob/main/odgen.md for ideas on this with pupils data.
-
-And https://github.com/acteng/netgen/pull/10/files
-
-```{r}
-od_observed = simodels::si_oa_wpz
-dim(od_observed)
-zones = simodels::si_oa_wpz_o
-destinations = simodels::si_oa_wpz_d
-```
-
-```{r}
-#| echo: false
-#| eval: false
-od_observed_o = od_observed |> 
-  group_by(OA11CD) |> 
-  summarise(n = sum(n))
-od_observed_d = od_observed |> 
-  group_by(wz11cd) |> 
-  summarise(n = sum(n))
-zones_joined = left_join(
-  zones |>
-    select(OA11CD, n_o) |>
-    sf::st_drop_geometry(),
-  od_observed_o
-)
-head(zones_joined)
-cor(zones_joined$n_o, zones_joined$n)
-
-# For destinations:
-destinations_joined = left_join(
-  destinations |>
-    select(wz11cd, n_d) |>
-    sf::st_drop_geometry(),
-  od_observed_d
-)
-cor(destinations_joined$n_d, destinations_joined$n)
-```
-
-```{r}
-# TODO: test if the max_dist arg actually makes it faster for large datasets
-system.time({
-  od_modelled = si_to_od(zones, destinations)
-})
-od_modelled = si_to_od(zones, destinations)
-system.time({
-  od_modelled_max_5km = si_to_od(zones, destinations, max_dist = 3000)
-})
-od_modelled_max_5km = si_to_od(zones, destinations, max_dist = 3000)
-dim(od_modelled)
-names(od_modelled)
-dim(od_modelled_max_5km)
-```
-
-```{r}
-#| label: simple-model
-#| echo: true
-gravity_model = function(beta, d, m, n) {
-  m * n * exp(-beta * d / 1000)
-} 
-# perform SIM
-od_res = simodels::si_calculate(
-  od_modelled,
-  fun = gravity_model,
-  d = distance_euclidean,
-  m = origin_n_o,
-  n = destination_n_d,
-#   constraint_production = origin_all,
-  beta = 0.8
-  )
-od_res_df = od_res |>
-  sf::st_drop_geometry()
-```
-
-```{r}
-names(od_observed)
-od_joined = left_join(
-  od_res_df,
-  od_observed |>
-    select(O = OA11CD, D = wz11cd, n_observed = n)
-)
-```
-
-
-```{r}
-#| label: plot_od_fit
-#| include: false
-# Aim: create function that takes in od_res and returns a ggplot object
-plot_od_fit = function(od_res, title = "(unconstrained)") {
-  res_o = od_res |>
-    group_by(O) |>
-    summarise(
-      Observed = first(origin_n_o),
-      Modelled = sum(interaction),
-      Type = "Origin"
-    )
-  res_d = od_res |>
-    group_by(D) |>
-    summarise(
-      Observed = first(destination_n_d),
-      Modelled = sum(interaction),
-      Type = "Destination"
-    )
-  res_od = od_res |>
-    transmute(
-      Observed = n_observed,
-      Modelled = interaction,
-      Type = "OD"
-    )
-  res_combined = bind_rows(res_o, res_d, res_od) |>
-    # Create ordered factor with types:
-    mutate(
-      Type = factor(Type, levels = c("Origin", "Destination", "OD"))
-    )
-  rsq_o = cor(res_o$Observed, res_o$Modelled, use = "complete.obs")^2
-  rsq_d = cor(res_d$Observed, res_d$Modelled, use = "complete.obs")^2
-  rsq_od = cor(res_od$Observed, res_od$Modelled, use = "complete.obs")^2
-  rsq_summary = data.frame(
-    rsq = c(rsq_o, rsq_d, rsq_od) |> round(3),
-    Type = c("Origin", "Destination", "OD")
-  )
-  g_combined = res_combined |>
-    left_join(rsq_summary) |>
-    # Add rsquared info:
-    mutate(Type = paste0(Type, " (R-squared: ", rsq, ")")) |>
-    # Update factor so it's ordered (reverse order):
-    mutate(
-      Type = factor(Type, levels = unique(Type))
-    ) |>
-    ggplot() +
-      geom_point(aes(x = Observed, y = Modelled)) +
-      geom_smooth(aes(x = Observed, y = Modelled), method = "lm") +
-      facet_wrap(~Type, scales = "free") +
-      labs(
-        title = paste0("Model fit at origin, destination and OD levels ", title),
-        x = "Observed",
-        y = "Modelled"
-      )
-  g_combined
-}
-# Test it:
-g = plot_od_fit(od_joined)
-```
-
-```{r}
-#| label: plot-od-fit
-#| fig-cap: Model fit at origin, destination and OD levels
-g
-```
-
-### Travel to school in London
-
-<!-- TODO: rewrite with London data: https://data.london.gov.uk/dataset/london-schools-atlas -->
-
+The `si_to_od()` function is a key tool in the package for generating OD data from spatial datasets. Let's demonstrate its use with the York schools dataset:
 
 ```{r}
 #| label: inputs-york
+#| echo: true
 g1 = zones_york |>
   ggplot() +
   geom_sf() +
@@ -464,7 +257,7 @@ g2 = destinations_york |>
 g1 + g2
 ```
 
-Before we run any models let's compare the total number of pupils in the zones dataset and the destinations dataset (they should be the same):
+Before running any models, it's important to compare the total number of pupils in the zones dataset and the destinations dataset:
 
 ```{r}
 #| label: compare-totals
@@ -475,8 +268,7 @@ zone_overestimate_factor =
 zone_overestimate_factor
 ```
 
-As one would expect, the total number of pupils in the zones dataset is a bit bigger than the total number of pupils in the destinations dataset: not all people aged 0 to 15 go to school, especially those under school age.
-To tackle this issue we'll create a new variables called `pupils_estimated` in the zones dataset, which is the sum of the number of pupils in the zones dataset and the number of pupils in the destinations dataset.
+As expected, the total number of pupils in the zones dataset is slightly larger than the total number of pupils in the destinations dataset, likely due to including children who are not yet of school age. To address this, we'll create a new variable called `pupils_estimated` in the zones dataset:
 
 ```{r}
 #| label: add-pupils-estimated
@@ -487,7 +279,7 @@ zones_york = zones_york |>
   )
 ```
 
-After the adjustment shown above, the totals in the origin and destination columns should be the same:
+After this adjustment, the totals in the origin and destination columns should match:
 
 ```{r}
 #| label: compare-totals-after
@@ -496,7 +288,7 @@ sum(zones_york$pupils_estimated)
 sum(destinations_york$n_pupils)
 ```
 
-Based on these inputs the `si_to_od()` function generates the OD data, as shown below (note: 2 versions are created, one with a maximum distance constraint for speed of processing, important when working with large datasets).
+Now we can use the `si_to_od()` function to generate the OD data:
 
 ```{r}
 #| echo: true
@@ -504,6 +296,8 @@ max_dist = 5000 # meters
 od_from_si_full = simodels::si_to_od(zones_york, destinations_york)
 od_from_si = simodels::si_to_od(zones_york, destinations_york, max_dist = max_dist)
 ```
+
+The function creates two versions of the OD dataset: one with all possible origin-destination pairs, and another with a maximum distance constraint for computational efficiency.
 
 ```{r}
 #| label: plot-od-all
@@ -518,13 +312,11 @@ m1
 m2
 ```
 
-The output OD dataset has column names taken from both the origin and destination datasets, with the following column names:
+These plots visualize the difference between the full OD dataset and the distance-constrained version, highlighting the efficiency gains of using a maximum distance threshold in large-scale analyses.
 
-```{r}
-names(od_from_si)
-```
+## Interaction calculation
 
-Let's run a simple model:
+The `si_calculate()` function is a core component of the [simodels]{.pkg} package, allowing for flexible and efficient calculation of spatial interactions. Let's demonstrate its use with a simple gravity model:
 
 ```{r}
 #| label: simple-model-york
@@ -539,12 +331,17 @@ od_res = simodels::si_calculate(
   d = distance_euclidean,
   m = origin_pupils_estimated,
   n = destination_n_pupils,
-#   constraint_production = origin_all,
   beta = 0.9
   )
 ```
 
-We'll make one adjustment to the output dataset, renaming the `interaction` column to `trips`, and setting the total number of trips to be the same as the total number of pupils in the destinations dataset:
+The `si_calculate()` function takes several arguments:
+- `od_from_si`: the OD dataset
+- `fun`: the interaction model function
+- `d`, `m`, `n`: column names for distance, origin mass, and destination mass
+- `beta`: the distance decay parameter
+
+We can adjust the output to ensure the total number of trips matches the total number of pupils:
 
 ```{r}
 #| label: adjust-output-york
@@ -556,8 +353,13 @@ od_res = od_res |>
   )
 ```
 
+## Interaction modeling
 
-We can assess the model fit at three levels: the origin level (number of students departing from each zone), the destination level (the number arriving at each school in the input dataset) and the origin-destination level.
+The [simodels]{.pkg} package supports various types of spatial interaction models. In this section, we'll explore unconstrained and production-constrained models, demonstrating how to implement and compare them using the package.
+
+### Unconstrained Model
+
+We've already implemented a basic unconstrained gravity model. Let's assess its performance:
 
 ```{r}
 #| label: r-squared-york
@@ -576,7 +378,6 @@ res_d = od_res |>
     Type = "Destination"
   )
 res_combined = bind_rows(res_o, res_d) |>
-  # Create ordered factor with types:
   mutate(
     Type = factor(Type, levels = c("Origin", "Destination"))
   )
@@ -586,14 +387,18 @@ g_combined = res_combined |>
     geom_smooth(aes(x = Observed, y = Modelled), method = "lm") +
     facet_wrap(~Type, scales = "free") +
     labs(
-      title = "Model fit at origin, destination and OD levels (unconstrained)",
+      title = "Model fit at origin and destination levels (unconstrained)",
       x = "Observed",
       y = "Modelled"
     ) 
 g_combined
 ```
 
-Let's see if making the model production constrained can help:
+This plot shows the model's performance at both origin and destination levels. The unconstrained model seems to perform reasonably well, but there's room for improvement, particularly at the origin level.
+
+### Production-Constrained Model
+
+Now, let's implement a production-constrained model using the `si_calculate()` function:
 
 ```{r}
 #| label: constrained-york
@@ -608,6 +413,8 @@ od_res_constrained = simodels::si_calculate(
   beta = 0.9
   )
 ```
+
+Let's assess the performance of this constrained model:
 
 ```{r}
 #| label: r-squared-constrained
@@ -635,256 +442,118 @@ res_combined |>
     geom_smooth(aes(x = Observed, y = Modelled), method = "lm") +
     facet_wrap(~Type, scales = "free") +
     labs(
-      title = "Model fit at origin, destination and OD levels (production constrained)",
+      title = "Model fit at origin and destination levels (production constrained)",
       x = "Observed",
       y = "Modelled"
     )
 ```
 
+The production-constrained model shows a perfect fit at the origin level, as expected, while maintaining a good fit at the destination level. This demonstrates the power of constrained models in certain applications where preserving total outflows is crucial.
+
+## Examples
+
+To further illustrate the versatility of the [simodels]{.pkg} package, let's explore a few more examples using different datasets and model specifications.
+
+### Example 1: Commuter Flows
+
+Let's use the `si_od_census` dataset, which contains commuter flow data, to demonstrate how to fit a doubly-constrained model.
+
+```{r}
+#| echo: true
+data("si_od_census", package = "simodels")
+data("si_zones", package = "simodels")
+
+# Prepare the data
+od_commute = si_to_od(si_zones, si_zones)
+od_commute = left_join(od_commute, si_od_census, by = c("O", "D"))
+
+# Fit a doubly-constrained model
+dc_model = si_calculate(
+  od_commute,
+  fun = gravity_model,
+  d = distance_euclidean,
+  m = origin_all,
+  n = destination_all,
+  constraint_production = origin_all,
+  constraint_attraction = destination_all,
+  beta = 1.5
+)
+
+# Evaluate the model
+plot(dc_model$interaction, od_commute$all,
+     xlab = "Predicted Flows", ylab = "Observed Flows",
+     main = "Doubly-Constrained Model: Predicted vs Observed Flows")
+abline(0, 1, col = "red")
+```
+
+This example demonstrates how to use the package to model commuter flows with a doubly-constrained model, which ensures that both the total outflows from origins and total inflows to destinations match the observed data.
+
+### Example 2: Distance Decay Function Comparison
+
+The [simodels]{.pkg} package allows for easy comparison of different distance decay functions. Let's compare the performance of exponential and power law decay functions using the York schools dataset.
+
+```{r}
+#| echo: true
+# Exponential decay function
+exp_decay = function(beta, d, m, n) {
+  m * n * exp(-beta * d / 1000)
+}
+
+# Power law decay function
+power_decay = function(beta, d, m, n) {
+  m * n * (d / 1000)^(-beta)
+}
+
+# Fit models with different decay functions
+od_exp = si_calculate(od_from_si, fun = exp_decay,
+                      d = distance_euclidean, m = origin_pupils_estimated, n = destination_n_pupils,
+                      beta = 0.9)
+
+od_power = si_calculate(od_from_si, fun = power_decay,
+                        d = distance_euclidean, m = origin_pupils_estimated, n = destination_n_pupils,
+                        beta = 1.5)
+
+# Compare model performance
+rsq_exp = cor(od_exp$interaction, od_from_si$all)^2
+rsq_power = cor(od_power$interaction, od_from_si$all)^2
+
+cat("R-squared (Exponential decay):", rsq_exp, "\n")
+cat("R-squared (Power law decay):", rsq_power, "\n")
+
+# Visualize the decay functions
+d_seq = seq(0, 10, by = 0.1)
+plot(d_seq, exp(-0.9 * d_seq), type = "l", col = "blue",
+     xlab = "Distance (km)", ylab = "Interaction Strength",
+     main = "Comparison of Distance Decay Functions")
+lines(d_seq, d_seq^(-1.5), col = "red")
+legend("topright", legend = c("Exponential", "Power Law"),
+       col = c("blue", "red"), lty = 1)
+```
+
+This example showcases how easily different distance decay functions can be compared using the [simodels]{.pkg} package, allowing researchers to choose the most appropriate function for their specific application.
+
 ## Conclusions
 
+The [simodels]{.pkg} package provides a flexible and efficient framework for implementing spatial interaction models in R. Through this paper, we've demonstrated its capabilities in handling various types of SIMs, from basic unconstrained gravity models to more complex constrained models.
 
+Key features of the package include:
 
+1. Efficient OD data preparation with the `si_to_od()` function.
+2. Flexible interaction calculation using `si_calculate()`, which supports custom model specifications.
+3. Built-in support for different types of constraints (production, attraction, and doubly-constrained).
+4. Easy integration with other R packages for data manipulation and visualization.
 
+The examples provided in this paper illustrate how [simodels]{.pkg} can be applied to real-world datasets, such as school attendance and commuter flows. The package's flexibility allows researchers to easily experiment with different model specifications, distance decay functions, and constraints, facilitating more comprehensive analyses of spatial interactions.
 
+Future developments of the package could include:
 
+- Implementation of more advanced SIM variants, such as the radiation model.
+- Integration of calibration methods for parameter estimation.
+- Enhanced visualization tools for spatial interaction patterns.
 
+By providing a standardized and extensible framework for spatial interaction modeling, [simodels]{.pkg} has the potential to accelerate research and applications in fields such as transportation planning, urban studies, and economic geography. We encourage researchers and practitioners to explore the package and contribute to its ongoing development.
 
+## References
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<!--
-
-From paper-writing docs:
- ## Introduction: Count data regression in R {#sec-intro}
-
-::: callout
-The introduction is in principle "as usual". However, it should usually embed both the implemented *methods* and the *software* into the respective relevant literature. For the latter both competing and complementary software should be discussed (within the same software environment and beyond), bringing out relative (dis)advantages. All software mentioned should be properly `@cited`'d. (See also [Using BibTeX] for more details on {{< bibtex >}}.)
-
-For writing about software JSS requires authors to use the markup `[]{.proglang}` (programming languages and large programmable systems), `[]{.pkg}` (software packages), back ticks like \`code\` for code (functions, commands, arguments, etc.).
-
-If there is such markup in (sub)section titles (as above), a plain text version has to be provided in the {{< latex >}} command as well. Below we also illustrate how abbrevations should be introduced and citation commands can be employed. See the {{< latex >}} code for more details.
+::: {#refs}
 :::
-
-Modeling count variables is a common task in economics and the social sciences. The classical Poisson regression model for count data is often of limited use in these disciplines because empirical count data sets typically exhibit overdispersion and/or an excess number of zeros. The former issue can be addressed by extending the plain Poisson regression model in various directions: e.g., using sandwich covariances or estimating an additional dispersion parameter (in a so-called quasi-Poisson model). Another more formal way is to use a negative binomial (NB) regression. All of these models belong to the family of generalized linear models (GLMs). However, although these models typically can capture overdispersion rather well, they are in many applications not sufficient for modeling excess zeros. Since @Mullahy1986 there is increased interest in zero-augmented models that address this issue by a second model component capturing zero counts. An overview of count data models in econometrics, including hurdle and zero-inflated models, is provided in @CameronTrivedi2013.
-
-In [R]{.proglang} @R, GLMs are provided by the model fitting functions [glm]{.fct} in the [stats]{.pkg} package and [glm.nb]{.fct} in the [MASS]{.pkg} package [@VenablesRipley2002] along with associated methods for diagnostics and inference. The manuscript that this document is based on [@ZeileisKleiberJackman2008] then introduced hurdle and zero-inflated count models in the functions [hurdle]{.fct} and [zeroinfl]{.fct} in the [pcsl]{.pkg} package @Jackman2015. Of course, much more software could be discussed here, including (but not limited to) generalized additive models for count data as available in the [R]{.proglang} packages [mgcv]{.pkg} @Wood2006, [gamlss]{.pkg} @StasinopoulosRigby2007, or [VGAM]{.pkg} @Yee2009.
-
-## Models and software {#sec-models}
-
-The basic Poisson regression model for count data is a special case of the GLM framework @McCullaghNelder1989. It describes the dependence of a count response variable $y_i$ ($i = 1, \dots, n$) by assuming a Poisson distribution $y_i \sim \mathrm{Pois}(\mu_i)$. The dependence of the conditional mean $E[y_i \, | \, x_i] = \mu_i$ on the regressors $x_i$ is then specified via a log link and a linear predictor
-
-$$
-\log(\mu_i) \quad = \quad x_i^\top \beta,
-$$ {#eq-mean}
-
-where the regression coefficients $\beta$ are estimated by maximum likelihood (ML) using the iterative weighted least squares (IWLS) algorithm.
-
-::: callout
-TODO: Note that around the equation above there should be no spaces (avoided in the {{< latex >}} code by `%` lines) so that "normal" spacing is used and not a new paragraph started.
-:::
-
-[R]{.proglang} provides a very flexible implementation of the general GLM framework in the function [glm]{.fct} @ChambersHastie1992 in the [stats]{.pkg} package. Its most important arguments are
-
-```r
-glm(formula, data, subset, na.action, weights, offset,
-  family = gaussian, start = NULL, control = glm.control(…),
-  model = TRUE, y = TRUE, x = FALSE, …)
-```
-
-where `formula` plus `data` is the now standard way of specifying regression relationships in [R]{.proglang}/[S]{.proglang} introduced in @ChambersHastie1992. The remaining arguments in the first line (`subset`, `na.action`, `weights`, and `offset`) are also standard for setting up formula-based regression models in [R]{.proglang}/[S]{.proglang}. The arguments in the second line control aspects specific to GLMs while the arguments in the last line specify which components are returned in the fitted model object (of class [glm]{.class} which inherits from [lm]{.class}). For further arguments to [glm]{.fct} (including alternative specifications of starting values) see `?glm`. For estimating a Poisson model `family = poisson` has to be specified.
-
-::: callout
-As the synopsis above is a code listing that is not meant to be executed, one can use either the dedicated `{Code}` environment or a simple `{verbatim}` environment for this. Again, spaces before and after should be avoided.
-
-Finally, there might be a reference to a `{table}` such as @tbl-overview. Usually, these are placed at the top of the page (`[t!]`), centered (`\centering`), with a caption below the table, column headers and captions in sentence style, and if possible avoiding vertical lines.
-:::
-
-| Type           | Distribution | Method   | Description                                                                                                                                                                                  |
-|---------|---------|---------|-----------------------------------------------|
-| GLM            | Poisson      | ML       | Poisson regression: classical GLM, estimated by maximum likelihood (ML)                                                                                                                      |
-|                |              | Quasi    | "Quasi-Poisson regression'': same mean function, estimated by quasi-ML (QML) or equivalently generalized estimating equations (GEE), inference adjustment via estimated dispersion parameter |
-|                |              | Adjusted | "Adjusted Poisson regression'': same mean function, estimated by QML/GEE, inference adjustment via sandwich covariances                                                                      |
-|                | NB           | ML       | NB regression: extended GLM, estimated by ML including additional shape parameter                                                                                                            |
-| Zero-augmented | Poisson      | ML       | Zero-inflated Poisson (ZIP), hurdle Poisson                                                                                                                                                  |
-|                | NB           | ML       | Zero-inflated NB (ZINB), hurdle NB                                                                                                                                                           |
-: Overview of various count regression models. The table is usually placed at the top of the page (`[t!]`), centered (`centering`), has a caption below the table, column headers and captions are in sentence style, and if possible vertical lines should be avoided. {#tbl-overview}
-
-## Illustrations {#sec-illustrations}
-
-For a simple illustration of basic Poisson and NB count regression the
-`quine` data from the [MASS]{.pkg} package is used. This provides the number
-of `Days` that children were absent from school in Australia in a
-particular year, along with several covariates that can be employed as regressors. The data can be loaded by
-
-```{R}
-#| prompt: true
-data("quine", package = "MASS")
-```
-and a basic frequency distribution of the response variable is displayed in
-@fig-quine.
-
-:::{.callout}
-For code input and output, the style files provide dedicated environments.
-Either the "agnostic" `{CodeInput}` and `{CodeOutput}` can be used
-or, equivalently, the environments `{Sinput}` and `{Soutput}` as
-produced by [Sweave]{.fct} or [knitr]{.pkg} when using the `render_sweave()`
-hook. Please make sure that all code is properly spaced, e.g., using
-`y = a + b * x` and _not_ `y=a+b*x`. Moreover, code input should use "the usual" command prompt in the respective software system. For
-[R]{.proglang} code, the prompt `R> ` should be used with `+  ` as
-the continuation prompt. Generally, comments within the code chunks should be
-avoided -- and made in the regular {{< latex >}} text instead. Finally, empty lines before and after code input/output should be avoided (see above).
-:::
-
-::: {#fig-quine}
-
-![](article-visualization.pdf)
-
-Frequency distribution for number of days absent from school.
-:::
-
-As a first model for the `quine` data, we fit the basic Poisson regression
-model. (Note that JSS prefers when the second line of code is indented by two
-spaces.)
-
-```{R}
-#| prompt: true
-m_pois <- glm(Days ~ (Eth + Sex + Age + Lrn)^2, data = quine, family = poisson)
-```
-
-To account for potential overdispersion we also consider a negative binomial
-GLM.
-
-```{R}
-#| prompt: true
-library("MASS")
-m_nbin <- glm.nb(Days ~ (Eth + Sex + Age + Lrn)^2, data = quine)
-```
-
-In a comparison with the BIC the latter model is clearly preferred.
-
-```{R}
-#| prompt: true
-library("MASS")
-BIC(m_pois, m_nbin)
-```
-
-Hence, the full summary of that model is shown below.
-
-```{R}
-#| prompt: true
-summary(m_nbin)
-```
-
-## Summary and discussion {#sec-summary}
-
-:::{.callout}
-
-As usual…
-
-:::
-
-## Computational details {.unnumbered}
-
-:::{.callout}
-
-If necessary or useful, information about certain computational details
-such as version numbers, operating systems, or compilers could be included
-in an unnumbered section. Also, auxiliary packages (say, for visualizations,
-maps, tables, …) that are not cited in the main text can be credited here.
-
-:::
-
-The results in this paper were obtained using [R]{.proglang}~3.4.1 with the
-[MASS]{.pkg}~7.3.47 package. [R]{.proglang} itself and all packages used are available from the Comprehensive [R]{.proglang} Archive Network (CRAN) at
-[https://CRAN.R-project.org/].
-
-
-## Acknowledgments {.unnumbered}
-
-:::{.callout}
-
-All acknowledgments (note the AE spelling) should be collected in this
-unnumbered section before the references. It may contain the usual information
-about funding and feedback from colleagues/reviewers/etc. Furthermore,
-information such as relative contributions of the authors may be added here
-(if any).
-
-:::
-
-## References {.unnumbered}
-
-:::{#refs}
-
-:::
-
-{{< pagebreak >}}
-
-## More technical details {#sec-techdetails .unnumbered}
-
-:::{.callout}
-
-Appendices can be included after the bibliography (with a page break). Each
-section within the appendix should have a proper section title (rather than
-just _Appendix_).
-
-For more technical style details, please check out JSS's style FAQ at
-[https://www.jstatsoft.org/pages/view/style#frequently-asked-questions]
-which includes the following topics:
-
-- Title vs. sentence case.
-- Graphics formatting.
-- Naming conventions.
-- Turning JSS manuscripts into [R]{.proglang} package vignettes.
-- Trouble shooting.
-- Many other potentially helpful details…
-
-:::
-
-## Using BibTeX {#sec-bibtex .unnumbered}
-
-:::{.callout}
-
-References need to be provided in a {{< bibtex >}} file (`.bib`). All
-references should be made with `@cite` syntax. This commands yield different
-formats of author-year citations and allow to include additional details (e.g.,pages, chapters, \dots) in brackets. In case you are not familiar with these
-commands see the JSS style FAQ for details.
-
-Cleaning up {{< bibtex >}} files is a somewhat tedious task -- especially
-when acquiring the entries automatically from mixed online sources. However,
-it is important that informations are complete and presented in a consistent
-style to avoid confusions. JSS requires the following format.
-
-- item JSS-specific markup (`\proglang`, `\pkg`, `\code`) should be used in the references.
-- item Titles should be in title case.
-- item Journal titles should not be abbreviated and in title case.
-- item DOIs should be included where available.
-- item Software should be properly cited as well. For [R]{.proglang} packages `citation("pkgname")` typically provides a good starting point.
-
-::: -->
