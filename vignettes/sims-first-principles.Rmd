@@ -97,6 +97,9 @@ tm_shape(zones) + tm_polygons("all", palette = "viridis")
 
 ```{r}
 od_df = od::points_to_od(centroids)
+p = od::od_data_centroids[1:3, ]
+od::points_to_od(p)
+
 od_sfc = od::odc_to_sfc(od_df[3:6])
 sf::st_crs(od_sfc) = 4326
 od_df$length = sf::st_length(od_sfc)
