@@ -1,11 +1,27 @@
 ---
 title: "simodels: A package for Spatial Interaction Modelling"
+bibliography: bibliography.bib
+number-sections: true
+execute: 
+  messages: false
+  warning: false 
+  echo: false
 ---
 
+```{r}
+#| eval: false
+#| echo: false
+# Compile to docx and jss-pdf formats:
+quarto::quarto_render("paper/paper.qmd", output_format = "docx")
+quarto::quarto_render("paper/paper.qmd", output_format = "jss-pdf")
+system("gh release upload v0.1.0 paper/paper.docx --clobber")
+system("gh release upload v0.1.0 paper/paper.pdf --clobber")
+```
+
 <!-- 
-# Note: you need to have the relevant quarto extension installed:
-quarto add quarto-journals/jss
-After that put the following in the yaml:
+# Note: you need to have the relevant quarto extension installed for the JSS version:
+# quarto add quarto-journals/jss
+# After that put the following in the yaml:
 format:
     jss-pdf:
         keep-tex: true
@@ -36,15 +52,20 @@ format:
 abstract: |
   This article introduces the [simodels]{.pkg} package for spatial interaction modelling in R. The package provides a flexible framework for estimating various types of spatial interaction models, including unconstrained gravity models and models that are production-, attraction-, or doubly-constrained. [simodels]{.pkg} offers efficient implementations of traditional spatial interaction models as well as more recent innovations, supporting both 'monopartite' and 'bipartite' spatial interaction scenarios. By streamlining the process of implementing SIMs in R, the package enables researchers and practitioners to more easily explore, analyze, and predict spatial interactions in various contexts, from transportation planning to economic geography.
 
-keywords: [spatial interaction models, R, transportation modelling, gravity models, origin-destination data]
-keywords-formatted: [spatial interaction models, "[R]{.proglang}", transportation modelling, gravity models, origin-destination data]
-
-bibliography: bibliography.bib
-execute: 
-  messages: false
-  warning: false 
-  echo: false
+keywords: [JSS, style guide, comma-separated, not capitalized, R]
+keywords-formatted: [JSS, style guide, comma-separated, not capitalized, "[R]{.proglang}"]
 -->
+
+
+## Ideas 
+xx
+
+- Conceptual diagram showing decision points when developing SIMs, e.g.:
+  - Unipartite or bipartite?
+  - Unconstrained, production-constrained, attraction-constrained, or doubly-constrained? Or other?
+  - Calculation and parameter optimisation or regression model?
+- Open access dataset?
+
 
 ```{r}
 #| include: false

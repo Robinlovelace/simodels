@@ -1,3 +1,8 @@
+# simodels 0.2.0 (2024-08)
+
+* Updated use of `max_dist` to make use of updates the {od} package (#38)
+  * `si_to_od()` is now much/infinitely faster for large datasets
+
 # simodels 0.1.0 (2024-01)
 
 * Fix silent bug introduced by updatream changes to `dplyr`
