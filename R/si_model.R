@@ -158,6 +158,5 @@ constrain_total = function(od, output_col, constraint_total) {
     od[[output_col]][od[[output_col]] < 0] = 0
   }
   od[[output_col]] = od[[output_col]] / sum(od[[output_col]]) * constraint_total
-  od = dplyr::ungroup(od_grouped)
   od
 }

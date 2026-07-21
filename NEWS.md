@@ -1,3 +1,8 @@
+# simodels 0.2.1 (2025-07)
+
+* Fix: `constrain_attraction()` now correctly ungroups the result to match
+  `constrain_production()` (#45, @UgyenNorbu)
+
 # simodels 0.2.0 (2024-08)
 
 * Updated use of `max_dist` to make use of updates the {od} package (#38)
