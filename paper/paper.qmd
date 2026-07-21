@@ -6,6 +6,7 @@ execute:
   messages: false
   warning: false 
   echo: false
+toc: true
 ---
 
 ```{r}
@@ -57,7 +58,7 @@ keywords-formatted: [JSS, style guide, comma-separated, not capitalized, "[R]{.p
 -->
 
 
-## Ideas 
+## Ideas {-}
 xx
 
 - Conceptual diagram showing decision points when developing SIMs, e.g.:
@@ -292,6 +293,22 @@ We have the breakdown of trips by mode, with `r sum(od$car_driver) |> format(big
 A hypothetical research question to inform policy with reference to this dataset is: "How would travel demand change if transport costs increase?".
 Before answering this question, we need to develop a baseline model to predict the travel between origins and destinations as a function of distance (and other factors).
 <!-- (Note: key other factors to test are 'network distance' representing intervening opportunities, and 'population' representing the number of potential travellers). -->
+
+We can set-up the OD model based on the origins and destinations as follows:
+
+```{r}
+od_modelled = si_to_od(origins = zones, destinations = zones)
+m1 = od_modelled |> 
+  lm(origin_all ~ distance_euclidean, data = _)
+od_constrained = si_predict(
+  od_modelled,
+  model = m1,
+  d = distance_euclidean,
+  constraint_production = origin_all
+)
+sum(od_constrained$interaction)
+sum(zones$all)
+```
 
 
 ### Commuter flows between small areas in Leeds, UK
@@ -644,7 +661,7 @@ res_combined |>
 ## Conclusions
 
 
-
+- Things the package doesn't do
 
 
 
